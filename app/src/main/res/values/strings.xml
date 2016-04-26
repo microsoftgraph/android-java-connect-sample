@@ -1,3 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <resources>
-    <string name="app_name">Connect</string>
+
+    <!-- Regular UI text -->
+    <string name="app_name">Microsoft Graph Connect sample</string>
+    <string name="connect_button_text">Connect to Office 365</string>
+    <string name="send_mail_button_text">Send e-mail</string>
+    <string name="disconnect_menu_item_text">Disconnect</string>
+    <string name="title_text">Hi\u00A0</string>
+    <string name="description_text">\nYou\'re now connected to Office 365. Tap the button below to send a message from your account using the Microsoft Graph API.\n</string>
+    <string name="conclusion_text">\nCheck your inbox. You have a new message :)</string>
+
+    <!-- Toast successful messages -->
+    <string name="connect_toast_text">Connected to Office 365</string>
+    <string name="discover_toast_text">Found Office 365 mail service</string>
+    <string name="send_mail_toast_text">Mail sent</string>
+    <string name="disconnect_toast_text">Disconnected from Office 365</string>
+
+    <!-- TextView Error messages -->
+    <string name="title_text_error">Oops!</string>
+    <string name="connect_text_error">\nSorry, can\'t connect to Office 365.\nHint: Check logcat for details.</string>
+    <string name="discover_text_error">\nSorry, can\'t find the mail service.\nHint: Check logcat for details.</string>
+    <string name="send_mail_text_error">\nSorry, can\'t send the email.\nHint: Check logcat for details.</string>
+
+    <!-- Toast error messages -->
+    <string name="connect_toast_text_error">Error connecting to Office 365\nCheck logcat for details</string>
+    <string name="discover_toast_text_error">Error finding mail service\nCheck logcat for details</string>
+    <string name="send_mail_toast_text_error">Error sending email\nCheck logcat for details</string>
+    <string name="warning_client_id_redirect_uri_incorrect">The client ID or redirect URI is not valid. Enter a valid client ID and redirect URI in the Constants.java file and run again</string>
+
+    <!-- Email text -->
+    <string name="mail_subject_text">Welcome to Office 365 development on Android with the Office 365 Connect sample</string>
+    <string name="mail_body_text" formatted="false">&lt;html&gt;&lt;head&gt;
+&lt;meta http-equiv=\'Content-Type\' content=\'text/html; charset=us-ascii\'&gt;
+&lt;title&gt;&lt;/title&gt;
+&lt;/head&gt;
+&lt;body style=\'font-family:calibri\'&gt;
+&lt;h2&gt;Congratulations, {0}!&lt;/h2&gt;
+&lt;p&gt;This is a message from the Office 365 Connect sample. You are well on your way to incorporating Office 365 services
+in your apps.
+&lt;/p&gt;
+&lt;p&gt;What&amp;#8217;s next?&lt;/p&gt;
+&lt;p&gt;You can use the classes in the Android Studio project to integrate Office 365 services and data into your own apps.&lt;/p&gt;
+&lt;h2&gt;Give us feedback&lt;/h2&gt;
+&lt;p&gt;We hope you found this sample useful. We&amp;#8217;d love to hear from you, so drop us an email at
+&lt;a href=\'mailto:docthis@microsoft.com?subject=Feedback%20on%20the%20Microsoft%20Graph%20Connect%20sample\'&gt;
+docthis@microsoft.com&lt;/a&gt; with your comments or &lt;a href=\'https://github.com/OfficeDev/Android-Connect/issues\'&gt;
+log an issue&lt;/a&gt; on our repository. &lt;/p&gt;
+&lt;p&gt;For more details on what else you can do with the Office 365 services in your Android app, start with the
+&lt;a href=\'http://dev.office.com/getting-started\'&gt;Getting started&lt;/a&gt; page on dev.office.com.
+&lt;/p&gt;
+&lt;p&gt;Thanks, and happy coding!&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Your Office 365 Development team &lt;/p&gt;
+&lt;div style=\'text-align:center; font-family:calibri\'&gt;
+&lt;table style=\'width:100%; font-family:calibri\'&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=\'https://github.com/OfficeDev/Android-Connect\'&gt;See on GitHub&lt;/a&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a href=\'https://office365.uservoice.com\'&gt;Suggest on UserVoice&lt;/a&gt;
+&lt;/td&gt;
+&lt;td&gt;&lt;a href=\'http://twitter.com/share?text=I%20just%20started%20developing%20apps%20for%20%23Android%20using%20the%20%23Microsoft%20Graph%20Connect%20app%20%40OfficeDev&amp;amp;url=https://github.com/OfficeDev/Android-Connect\'&gt;Share on Twitter&lt;/a&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</string>
 </resources>
