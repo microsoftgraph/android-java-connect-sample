@@ -25,7 +25,7 @@ public class GraphServiceController {
     private IGraphServiceClient mGraphServiceClient;
 
     public GraphServiceController() {
-        mGraphServiceClient = GraphServiceClientManager.getGraphServiceClient();
+        mGraphServiceClient = GraphServiceClientManager.getInstance().getGraphServiceClient();
     }
 
     /**

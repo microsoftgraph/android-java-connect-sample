@@ -15,7 +15,6 @@ import com.microsoft.aad.adal.AuthenticationResult;
 import com.microsoft.aad.adal.AuthenticationResult.AuthenticationStatus;
 import com.microsoft.aad.adal.AuthenticationSettings;
 import com.microsoft.aad.adal.PromptBehavior;
-import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.http.IHttpRequest;
 
 import java.io.UnsupportedEncodingException;
@@ -24,7 +23,7 @@ import java.io.UnsupportedEncodingException;
  * Handles setup of ADAL Dependency Resolver for use in API clients.
  */
 // TODO: Reorder methods to put the most important at the beginning of the class
-public class AuthenticationManager implements IAuthenticationProvider {
+public class AuthenticationManager {
 
     private static final String TAG = "AuthenticationManager";
     private static final String PREFERENCES_FILENAME = "ConnectFile";
@@ -279,11 +278,5 @@ public class AuthenticationManager implements IAuthenticationProvider {
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         editor.remove(USER_ID_VAR_NAME);
         editor.apply();
-    }
-
-    // TODO: AuthenticationManager should not know about requests
-    @Override
-    public void authenticateRequest(IHttpRequest request) {
-        request.addHeader("Authorization", "Bearer " + mAccessToken);
     }
 }
