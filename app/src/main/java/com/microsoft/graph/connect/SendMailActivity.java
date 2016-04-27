@@ -12,6 +12,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.microsoft.graph.concurrency.ICallback;
+import com.microsoft.graph.core.ClientException;
+
 /**
  * This activity handles the send mail operation of the app.
  * The app must be connected to Office 365 before this activity can send an email.
@@ -64,24 +67,23 @@ public class SendMailActivity extends AppCompatActivity {
         String body = getString(R.string.mail_body_text);
         body = body.replace("{0}", mGivenName);
 
-        // TODO: Use the SDK to send mail
-        new GraphServiceController();
-//        new GraphServiceController()
-//                .sendMail(
-//                        mEmailEditText.getText().toString(),
-//                        getString(R.string.mail_subject_text),
-//                        body,
-//                        new Callback<Void>() {
-//                            @Override
-//                            public void success(Void aVoid, Response response) {
-//                                showSendMailSuccessUI();
-//                            }
-//
-//                            @Override
-//                            public void failure(RetrofitError error) {
-//                                showSendMailErrorUI();
-//                            }
-//                        });
+        new GraphServiceController()
+                .sendMail(
+                        mEmailEditText.getText().toString(),
+                        getString(R.string.mail_subject_text),
+                        body,
+                        new ICallback<Void>() {
+                            @Override
+                            public void success(Void aVoid) {
+                                showSendMailSuccessUI();
+                            }
+
+                            @Override
+                            public void failure(ClientException ex) {
+                                showSendMailErrorUI();
+                            }
+                        }
+                );
     }
 
     @Override

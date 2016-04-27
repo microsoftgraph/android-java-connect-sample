@@ -5,9 +5,14 @@
 package com.microsoft.graph.connect;
 
 import com.microsoft.graph.concurrency.ICallback;
-import com.microsoft.graph.core.ClientException;
+import com.microsoft.graph.extensions.BodyType;
+import com.microsoft.graph.extensions.EmailAddress;
 import com.microsoft.graph.extensions.IGraphServiceClient;
-import com.microsoft.graph.extensions.User;
+import com.microsoft.graph.extensions.ItemBody;
+import com.microsoft.graph.extensions.Message;
+import com.microsoft.graph.extensions.Recipient;
+
+import java.util.Arrays;
 
 /**
  * Handles the creation of the message and contacting the
@@ -21,18 +26,6 @@ public class GraphServiceController {
 
     public GraphServiceController() {
         mGraphServiceClient = GraphServiceClientManager.getGraphServiceClient();
-
-        mGraphServiceClient.getMe().buildRequest().get(new ICallback<User> () {
-            @Override
-            public void success(final User user) {
-
-            }
-            @Override
-            public void failure(ClientException clientException) {
-
-            }
-        }
-        );
     }
 
     /**
@@ -42,42 +35,44 @@ public class GraphServiceController {
      * @param emailAddress The recipient email address.
      * @param subject      The subject to use in the mail message.
      * @param body         The body of the message.
-     * @param callback     UI callback to be invoked by Retrofit call when
-     *                     operation completed
      */
-//    public void sendMail(
-//            final String emailAddress,
-//            final String subject,
-//            final String body,
-//            Callback<Void> callback) {
-//        // create the email
-//        MessageWrapper msg = createMailPayload(subject, body, emailAddress);
-//
-//        // send it using our service
-//        mMSGraphAPIService.sendMail("application/json", msg, callback);
-//    }
+    public void sendMail(
+            final String emailAddress,
+            final String subject,
+            final String body,
+            ICallback<Void> callback
+    ) {
+
+        // create the email message
+        Message message = createMailPayload(subject, body, emailAddress);
+
+        mGraphServiceClient.getMe().getSendMail(message, true).buildRequest().post(callback);
+    }
 
 
-//    private MessageWrapper createMailPayload(
-//            String subject,
-//            String body,
-//            String address) {
-//        EmailAddressVO emailAddressVO = new EmailAddressVO();
-//        emailAddressVO.mAddress = address;
-//
-//        ToRecipientsVO toRecipientsVO = new ToRecipientsVO();
-//        toRecipientsVO.emailAddress = emailAddressVO;
-//
-//        BodyVO bodyVO = new BodyVO();
-//        bodyVO.mContentType = "HTML";
-//        bodyVO.mContent = body;
-//
-//        MessageVO sampleMsg = new MessageVO();
-//        sampleMsg.mSubject = subject;
-//        sampleMsg.mBody = bodyVO;
-//        sampleMsg.mToRecipients = new ToRecipientsVO[]{toRecipientsVO};
-//
-//        return new MessageWrapper(sampleMsg);
-//    }
+    private Message createMailPayload(
+            String subject,
+            String body,
+            String address) {
+        Message message = new Message();
+
+        EmailAddress emailAddress = new EmailAddress();
+        emailAddress.address = address;
+
+        Recipient recipient = new Recipient();
+        recipient.emailAddress = emailAddress;
+
+        message.toRecipients = Arrays.asList(recipient);
+
+        ItemBody itemBody = new ItemBody();
+        itemBody.content = body;
+        itemBody.contentType = BodyType.html;
+
+        message.body = itemBody;
+
+        message.subject = subject;
+
+        return message;
+    }
 
 }
