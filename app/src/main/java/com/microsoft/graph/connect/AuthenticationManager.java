@@ -23,7 +23,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * Handles setup of ADAL Dependency Resolver for use in API clients.
  */
-
+// TODO: Reorder methods to put the most important at the beginning of the class
 public class AuthenticationManager implements IAuthenticationProvider {
 
     private static final String TAG = "AuthenticationManager";
@@ -281,6 +281,7 @@ public class AuthenticationManager implements IAuthenticationProvider {
         editor.apply();
     }
 
+    // TODO: AuthenticationManager should not know about requests
     @Override
     public void authenticateRequest(IHttpRequest request) {
         request.addHeader("Authorization", "Bearer " + mAccessToken);
