@@ -10,14 +10,29 @@ import com.microsoft.graph.core.DefaultClientConfig;
 /**
  * Created by ricalo on 4/27/16.
  */
-public class GraphServiceClientManager {
+public class GraphServiceClientManager implements IAuthenticationProvider {
 
-    private static IGraphServiceClient mGraphServiceClient;
+    private IGraphServiceClient mGraphServiceClient;
+    private static GraphServiceClientManager INSTANCE;
 
-    public static synchronized IGraphServiceClient getGraphServiceClient() {
+    private GraphServiceClientManager() {};
+
+    public static synchronized GraphServiceClientManager getInstance() {
+        if(INSTANCE == null) {
+            INSTANCE = new GraphServiceClientManager();
+        }
+        return INSTANCE;
+    }
+
+    public synchronized void resetInstance() {
+        INSTANCE.mGraphServiceClient = null;
+        INSTANCE = null;
+    }
+
+    public synchronized IGraphServiceClient getGraphServiceClient() {
         if (mGraphServiceClient == null) {
             IClientConfig clientConfig = DefaultClientConfig.createWithAuthenticationProvider(
-              AuthenticationManager.getInstance()
+              this
             );
             mGraphServiceClient = new GraphServiceClient.Builder().fromConfig(clientConfig).buildClient();
         }
@@ -25,9 +40,8 @@ public class GraphServiceClientManager {
         return mGraphServiceClient;
     }
 
-    public static synchronized void resetGraphServiceClient() {
-        mGraphServiceClient = null;
+    @Override
+    public void authenticateRequest(IHttpRequest request) {
+        request.addHeader("Authorization", "Bearer " + AuthenticationManager.getInstance().getAccessToken());
     }
-
-
 }
