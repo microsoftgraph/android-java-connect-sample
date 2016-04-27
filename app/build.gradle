@@ -25,5 +25,12 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.3.0'
 
     // Azure Active Directory Library
-    compile 'com.microsoft.aad:adal:1.1.18'
+    compile 'com.microsoft.aad:adal:1.1.+'
+
+    // Include the SDK as a dependency
+    compile('com.microsoft.graph:msgraph-sdk-android:0.9.+')
+
+    // Include the GSON dependency
+    // TODO: Try with version 2.6.+
+    compile('com.google.code.gson:gson:2.3.1')
 }
