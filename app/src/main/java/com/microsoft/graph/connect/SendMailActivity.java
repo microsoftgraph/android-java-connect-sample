@@ -15,7 +15,7 @@ import android.widget.Toast;
 /**
  * This activity handles the send mail operation of the app.
  * The app must be connected to Office 365 before this activity can send an email.
- * It also uses the MSGraphAPIController to send the message.
+ * It also uses the GraphServiceController to send the message.
  */
 public class SendMailActivity extends AppCompatActivity {
 
@@ -49,7 +49,7 @@ public class SendMailActivity extends AppCompatActivity {
     }
 
     /**
-     * Handler for the onclick event of the send mail button. It uses the MSGraphAPIController to
+     * Handler for the onclick event of the send mail button. It uses the GraphServiceController to
      * send an email. When the call is completed, the call will return to either the success()
      * or failure() methods in this class which will then take the next steps on the UI.
      * This method sends the email using the address stored in the mEmailEditText view.
@@ -65,7 +65,8 @@ public class SendMailActivity extends AppCompatActivity {
         body = body.replace("{0}", mGivenName);
 
         // TODO: Use the SDK to send mail
-//        new MSGraphAPIController()
+        new GraphServiceController();
+//        new GraphServiceController()
 //                .sendMail(
 //                        mEmailEditText.getText().toString(),
 //                        getString(R.string.mail_subject_text),
