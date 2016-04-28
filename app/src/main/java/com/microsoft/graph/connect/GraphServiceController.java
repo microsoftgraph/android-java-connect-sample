@@ -4,6 +4,9 @@
  */
 package com.microsoft.graph.connect;
 
+import android.nfc.FormatException;
+import android.support.annotation.VisibleForTesting;
+
 import com.microsoft.graph.concurrency.ICallback;
 import com.microsoft.graph.extensions.BodyType;
 import com.microsoft.graph.extensions.EmailAddress;
@@ -12,7 +15,8 @@ import com.microsoft.graph.extensions.ItemBody;
 import com.microsoft.graph.extensions.Message;
 import com.microsoft.graph.extensions.Recipient;
 
-import java.util.Arrays;
+import java.security.InvalidParameterException;
+import java.util.Collections;
 
 /**
  * Handles the creation of the message and contacting the
@@ -44,16 +48,29 @@ public class GraphServiceController {
     ) {
 
         // create the email message
-        Message message = createMailPayload(subject, body, emailAddress);
+        Message message = createMessage(subject, body, emailAddress);
 
         mGraphServiceClient.getMe().getSendMail(message, true).buildRequest().post(callback);
     }
 
-
-    private Message createMailPayload(
+    @VisibleForTesting
+    Message createMessage(
             String subject,
             String body,
             String address) {
+
+        if(address == null || address.isEmpty()) {
+            throw new InvalidParameterException("The address parameter can't be null or empty.");
+        } else {
+            // perform a simple validation of the email address
+            String addressParts[] = address.split("@");
+            if(addressParts.length != 2 || addressParts[0].length() == 0 || addressParts[1].indexOf('.') == -1) {
+                throw new InvalidParameterException(
+                    String.format("The address parameter must be a valid email address {0}", address)
+                );
+            }
+        }
+
         Message message = new Message();
 
         EmailAddress emailAddress = new EmailAddress();
@@ -62,7 +79,7 @@ public class GraphServiceController {
         Recipient recipient = new Recipient();
         recipient.emailAddress = emailAddress;
 
-        message.toRecipients = Arrays.asList(recipient);
+        message.toRecipients = Collections.singletonList(recipient);
 
         ItemBody itemBody = new ItemBody();
         itemBody.content = body;

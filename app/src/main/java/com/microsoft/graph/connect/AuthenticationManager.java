@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import com.microsoft.aad.adal.ADALError;
@@ -15,7 +16,6 @@ import com.microsoft.aad.adal.AuthenticationResult;
 import com.microsoft.aad.adal.AuthenticationResult.AuthenticationStatus;
 import com.microsoft.aad.adal.AuthenticationSettings;
 import com.microsoft.aad.adal.PromptBehavior;
-import com.microsoft.graph.http.IHttpRequest;
 
 import java.io.UnsupportedEncodingException;
 
@@ -99,9 +99,11 @@ public class AuthenticationManager {
      * @return mAccessToken
      */
     public String getAccessToken() {
+        if(mAccessToken == null) {
+            throw new NullPointerException("There's no access token available.");
+        }
         return mAccessToken;
     }
-
 
     /**
      * Calls {@link AuthenticationManager#authenticatePrompt(AuthenticationCallback)} if no user id is stored in the shared preferences.
@@ -260,11 +262,13 @@ public class AuthenticationManager {
         return mContextActivity.getSharedPreferences(PREFERENCES_FILENAME, Context.MODE_PRIVATE);
     }
 
-    private boolean isConnected() {
+    @VisibleForTesting
+    boolean isConnected() {
         return getSharedPreferences().contains(USER_ID_VAR_NAME);
     }
 
-    private String getUserId() {
+    @VisibleForTesting
+    String getUserId() {
         return getSharedPreferences().getString(USER_ID_VAR_NAME, "");
     }
 
