@@ -4,7 +4,6 @@
  */
 package com.microsoft.graph.connect;
 
-import android.nfc.FormatException;
 import android.support.annotation.VisibleForTesting;
 
 import com.microsoft.graph.concurrency.ICallback;
@@ -24,9 +23,9 @@ import java.util.Collections;
  * connected to Office 365 and discovered the mail service
  * endpoints before using the createDraftMail method.
  */
-public class GraphServiceController {
+class GraphServiceController {
 
-    private IGraphServiceClient mGraphServiceClient;
+    private final IGraphServiceClient mGraphServiceClient;
 
     public GraphServiceController() {
         mGraphServiceClient = GraphServiceClientManager.getInstance().getGraphServiceClient();

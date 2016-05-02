@@ -1,21 +1,22 @@
 package com.microsoft.graph.connect;
 
 import com.microsoft.graph.authentication.IAuthenticationProvider;
+import com.microsoft.graph.core.DefaultClientConfig;
 import com.microsoft.graph.core.IClientConfig;
+import com.microsoft.graph.extensions.GraphServiceClient;
 import com.microsoft.graph.extensions.IGraphServiceClient;
 import com.microsoft.graph.http.IHttpRequest;
-import com.microsoft.graph.extensions.GraphServiceClient;
-import com.microsoft.graph.core.DefaultClientConfig;
 
 /**
- * Created by ricalo on 4/27/16.
+ * Singleton class that manages a GraphServiceClient object.
+ * It implements IAuthentication provider to authenticate requests using an access token.
  */
 public class GraphServiceClientManager implements IAuthenticationProvider {
 
     private IGraphServiceClient mGraphServiceClient;
     private static GraphServiceClientManager INSTANCE;
 
-    private GraphServiceClientManager() {};
+    private GraphServiceClientManager() {}
 
     public static synchronized GraphServiceClientManager getInstance() {
         if(INSTANCE == null) {
