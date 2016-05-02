@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import java.security.InvalidParameterException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
@@ -34,7 +34,7 @@ public class GraphServiceControllerUnitTests {
 
     @Test(expected = InvalidParameterException.class)
     public void createMessage_addressNotNull() throws Exception {
-        Message message = graphServiceController.createMessage(
+        graphServiceController.createMessage(
                 "Fictitious Subject",
                 "Fictitious Body",
                 null
@@ -43,7 +43,7 @@ public class GraphServiceControllerUnitTests {
 
     @Test(expected = InvalidParameterException.class)
     public void createMessage_addressNotEmpty() throws Exception {
-        Message message = graphServiceController.createMessage(
+        graphServiceController.createMessage(
                 "Fictitious Subject",
                 "Fictitious Body",
                 ""
@@ -52,7 +52,7 @@ public class GraphServiceControllerUnitTests {
 
     @Test(expected = InvalidParameterException.class)
     public void createMessage_wellFormedAddress() throws Exception {
-        Message message = graphServiceController.createMessage(
+        graphServiceController.createMessage(
                 "Fictitious Subject",
                 "Fictitious Body",
                 "Invalid@Address"

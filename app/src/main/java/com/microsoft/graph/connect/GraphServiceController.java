@@ -4,7 +4,6 @@
  */
 package com.microsoft.graph.connect;
 
-import android.nfc.FormatException;
 import android.support.annotation.VisibleForTesting;
 
 import com.microsoft.graph.concurrency.ICallback;
@@ -19,14 +18,13 @@ import java.security.InvalidParameterException;
 import java.util.Collections;
 
 /**
- * Handles the creation of the message and contacting the
- * mail service to send the message. The app must have
- * connected to Office 365 and discovered the mail service
- * endpoints before using the createDraftMail method.
+ * Handles the creation of the message and using the GraphServiceClient to
+ * send the message. The app must have connected to Office 365 before using the
+ * {@link #sendMail(String, String, String, ICallback)}method.
  */
-public class GraphServiceController {
+class GraphServiceController {
 
-    private IGraphServiceClient mGraphServiceClient;
+    private final IGraphServiceClient mGraphServiceClient;
 
     public GraphServiceController() {
         mGraphServiceClient = GraphServiceClientManager.getInstance().getGraphServiceClient();

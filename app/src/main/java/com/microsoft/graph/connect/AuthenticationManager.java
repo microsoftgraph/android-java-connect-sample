@@ -21,8 +21,14 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * Handles setup of ADAL Dependency Resolver for use in API clients.
+ * Check the {@link AuthenticationManager#connect(AuthenticationCallback)} method to learn how to
+ * get Azure AD tokens for your app.
+ * You can also check {@link AuthenticationManager#authenticatePrompt(AuthenticationCallback)} to
+ * learn how to get tokens by prompting the user for credentials, or
+ * {@link AuthenticationManager#authenticateSilent(AuthenticationCallback)} to learn how to get
+ * tokens silently.
+ * To learn how to dispose the tokens, see {@link AuthenticationManager#disconnect()}.
  */
-// TODO: Reorder methods to put the most important at the beginning of the class
 public class AuthenticationManager {
 
     private static final String TAG = "AuthenticationManager";
@@ -43,66 +49,6 @@ public class AuthenticationManager {
     private String mAccessToken;
 
     private AuthenticationManager() {
-    }
-
-    /**
-     * Generates an encryption key for devices with API level lower than 18 using the
-     * ANDROID_ID value as a seed.
-     * In production scenarios, you should come up with your own implementation of this method.
-     * Consider that your algorithm must return the same key so it can encrypt/decrypt values
-     * successfully.
-     *
-     * @return The encryption key in a 32 byte long array.
-     */
-    private static byte[] generateSecretKey() {
-        byte[] key = new byte[32];
-        byte[] android_id;
-
-        try {
-            android_id = Settings.Secure.ANDROID_ID.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, "generateSecretKey - " + e.getMessage());
-            throw new RuntimeException(e);
-        }
-
-        for (int i = 0; i < key.length; i++) {
-            key[i] = android_id[i % android_id.length];
-        }
-
-        return key;
-    }
-
-    public static synchronized AuthenticationManager getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new AuthenticationManager();
-        }
-        return INSTANCE;
-    }
-
-    public static synchronized void resetInstance() {
-        INSTANCE = null;
-    }
-
-    /**
-     * Set the context activity before connecting to the currently active activity.
-     *
-     * @param contextActivity Currently active activity which can be utilized for interactive
-     *                        prompt.
-     */
-    public void setContextActivity(final Activity contextActivity) {
-        mContextActivity = contextActivity;
-    }
-
-    /**
-     * Returns the access token obtained in authentication
-     *
-     * @return mAccessToken
-     */
-    public String getAccessToken() {
-        if(mAccessToken == null) {
-            throw new NullPointerException("There's no access token available.");
-        }
-        return mAccessToken;
     }
 
     /**
@@ -282,5 +228,65 @@ public class AuthenticationManager {
         SharedPreferences.Editor editor = getSharedPreferences().edit();
         editor.remove(USER_ID_VAR_NAME);
         editor.apply();
+    }
+
+    /**
+     * Generates an encryption key for devices with API level lower than 18 using the
+     * ANDROID_ID value as a seed.
+     * In production scenarios, you should come up with your own implementation of this method.
+     * Consider that your algorithm must return the same key so it can encrypt/decrypt values
+     * successfully.
+     *
+     * @return The encryption key in a 32 byte long array.
+     */
+    private static byte[] generateSecretKey() {
+        byte[] key = new byte[32];
+        byte[] android_id;
+
+        try {
+            android_id = Settings.Secure.ANDROID_ID.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "generateSecretKey - " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+        for (int i = 0; i < key.length; i++) {
+            key[i] = android_id[i % android_id.length];
+        }
+
+        return key;
+    }
+
+    public static synchronized AuthenticationManager getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new AuthenticationManager();
+        }
+        return INSTANCE;
+    }
+
+    private static synchronized void resetInstance() {
+        INSTANCE = null;
+    }
+
+    /**
+     * Set the context activity before connecting to the currently active activity.
+     *
+     * @param contextActivity Currently active activity which can be utilized for interactive
+     *                        prompt.
+     */
+    public void setContextActivity(final Activity contextActivity) {
+        mContextActivity = contextActivity;
+    }
+
+    /**
+     * Returns the access token obtained in authentication
+     *
+     * @return mAccessToken
+     */
+    public String getAccessToken() {
+        if(mAccessToken == null) {
+            throw new NullPointerException("There's no access token available.");
+        }
+        return mAccessToken;
     }
 }
