@@ -12,11 +12,20 @@ import com.microsoft.graph.http.IHttpRequest;
  * It implements IAuthentication provider to authenticate requests using an access token.
  */
 public class GraphServiceClientManager implements IAuthenticationProvider {
-
     private IGraphServiceClient mGraphServiceClient;
     private static GraphServiceClientManager INSTANCE;
 
     private GraphServiceClientManager() {}
+
+    /**
+     * Appends an access token obtained from the {@link AuthenticationManager} class to the
+     * Authorization header of the request.
+     * @param request
+     */
+    @Override
+    public void authenticateRequest(IHttpRequest request) {
+        request.addHeader("Authorization", "Bearer " + AuthenticationManager.getInstance().getAccessToken());
+    }
 
     public static synchronized GraphServiceClientManager getInstance() {
         if(INSTANCE == null) {
@@ -39,10 +48,5 @@ public class GraphServiceClientManager implements IAuthenticationProvider {
         }
 
         return mGraphServiceClient;
-    }
-
-    @Override
-    public void authenticateRequest(IHttpRequest request) {
-        request.addHeader("Authorization", "Bearer " + AuthenticationManager.getInstance().getAccessToken());
     }
 }
