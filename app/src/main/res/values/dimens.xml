@@ -1,3 +1,7 @@
+<!--
+   - Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license.
+   - See LICENSE in the project root for license information.
+  -->
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
