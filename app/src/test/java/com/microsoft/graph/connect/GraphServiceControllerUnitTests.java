@@ -36,7 +36,7 @@ public class GraphServiceControllerUnitTests {
         assertNotNull(message);
     }
 
-    @Test(expected = InvalidParameterException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createMessage_addressNotNull() throws Exception {
         graphServiceController.createMessage(
                 "Fictitious Subject",
@@ -45,7 +45,7 @@ public class GraphServiceControllerUnitTests {
         );
     }
 
-    @Test(expected = InvalidParameterException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createMessage_addressNotEmpty() throws Exception {
         graphServiceController.createMessage(
                 "Fictitious Subject",
@@ -54,7 +54,7 @@ public class GraphServiceControllerUnitTests {
         );
     }
 
-    @Test(expected = InvalidParameterException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createMessage_wellFormedAddress() throws Exception {
         graphServiceController.createMessage(
                 "Fictitious Subject",

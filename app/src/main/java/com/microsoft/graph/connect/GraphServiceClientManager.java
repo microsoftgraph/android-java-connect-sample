@@ -28,7 +28,14 @@ public class GraphServiceClientManager implements IAuthenticationProvider {
      */
     @Override
     public void authenticateRequest(IHttpRequest request) {
-        request.addHeader("Authorization", "Bearer " + AuthenticationManager.getInstance().getAccessToken());
+        try {
+            request.addHeader("Authorization", "Bearer " + AuthenticationManager.getInstance().getAccessToken());
+        } catch (TokenNotFoundException tne) {
+            // AuthenticationManager should always have an access token available.
+            // If this exception is thrown. There's something wrong with the underlying
+            // authentication mechanism. Please log an issue.
+            tne.printStackTrace();
+        }
     }
 
     public static synchronized GraphServiceClientManager getInstance() {
