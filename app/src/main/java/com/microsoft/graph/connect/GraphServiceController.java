@@ -58,12 +58,12 @@ class GraphServiceController {
             String address) {
 
         if(address == null || address.isEmpty()) {
-            throw new InvalidParameterException("The address parameter can't be null or empty.");
+            throw new IllegalArgumentException("The address parameter can't be null or empty.");
         } else {
             // perform a simple validation of the email address
             String addressParts[] = address.split("@");
             if(addressParts.length != 2 || addressParts[0].length() == 0 || addressParts[1].indexOf('.') == -1) {
-                throw new InvalidParameterException(
+                throw new IllegalArgumentException(
                     String.format("The address parameter must be a valid email address {0}", address)
                 );
             }
