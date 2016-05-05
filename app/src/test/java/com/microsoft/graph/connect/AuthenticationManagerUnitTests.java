@@ -10,8 +10,8 @@ import org.junit.Test;
  * Unit tests for the AuthenticationManager class.
  */
 public class AuthenticationManagerUnitTests {
-    @Test(expected = NullPointerException.class)
-    public void getAccessToken_noTokenAvailable() {
+    @Test(expected = TokenNotFoundException.class)
+    public void getAccessToken_noTokenAvailable() throws Exception {
         AuthenticationManager.getInstance().getAccessToken();
     }
 }
