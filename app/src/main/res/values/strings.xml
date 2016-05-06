@@ -42,7 +42,7 @@ in your apps.
 &lt;h2&gt;Give us feedback&lt;/h2&gt;
 &lt;p&gt;We hope you found this sample useful. We&amp;#8217;d love to hear from you, so drop us an email at
 &lt;a href=\'mailto:docthis@microsoft.com?subject=Feedback%20on%20the%20Microsoft%20Graph%20Connect%20sample\'&gt;
-docthis@microsoft.com&lt;/a&gt; with your comments or &lt;a href=\'https://github.com/OfficeDev/Android-Connect/issues\'&gt;
+docthis@microsoft.com&lt;/a&gt; with your comments or &lt;a href=\'https://github.com/microsoftgraph/android-java-connect-sample/issues\'&gt;
 log an issue&lt;/a&gt; on our repository. &lt;/p&gt;
 &lt;p&gt;For more details on what else you can do with the Office 365 services in your Android app, start with the
 &lt;a href=\'http://dev.office.com/getting-started\'&gt;Getting started&lt;/a&gt; page on dev.office.com.
@@ -53,11 +53,11 @@ log an issue&lt;/a&gt; on our repository. &lt;/p&gt;
 &lt;table style=\'width:100%; font-family:calibri\'&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td&gt;&lt;a href=\'https://github.com/OfficeDev/Android-Connect\'&gt;See on GitHub&lt;/a&gt;
+&lt;td&gt;&lt;a href=\'https://github.com/microsoftgraph/android-java-connect-sample\'&gt;See on GitHub&lt;/a&gt;
 &lt;/td&gt;
 &lt;td&gt;&lt;a href=\'https://office365.uservoice.com\'&gt;Suggest on UserVoice&lt;/a&gt;
 &lt;/td&gt;
-&lt;td&gt;&lt;a href=\'http://twitter.com/share?text=I%20just%20started%20developing%20apps%20for%20%23Android%20using%20the%20%23Microsoft%20Graph%20Connect%20app%20%40OfficeDev&amp;amp;url=https://github.com/OfficeDev/Android-Connect\'&gt;Share on Twitter&lt;/a&gt;
+&lt;td&gt;&lt;a href=\'http://twitter.com/share?text=I%20just%20started%20developing%20apps%20for%20%23Android%20using%20the%20%23Microsoft%20Graph%20Connect%20app%20%40OfficeDev&amp;amp;url=https://github.com/microsoftgraph/android-java-connect-sample\'&gt;Share on Twitter&lt;/a&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;

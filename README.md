@@ -1,6 +1,6 @@
 # Connect Sample for Android Using the Microsoft Graph SDK
 
-[![Build Status](https://travis-ci.org/OfficeDev/O365-Android-Microsoft-Graph-Connect.svg?branch=master)](https://travis-ci.org/OfficeDev/O365-Android-Microsoft-Graph-Connect)
+[![Build Status](https://travis-ci.org/microsoftgraph/android-java-connect-sample.svg?branch=master)](https://travis-ci.org/microsoftgraph/android-java-connect-sample)
 
 [![Office 365 Connect sample](/readme-images/O365-Android-Connect-video_play_icon.png)](https://www.youtube.com/watch?v=3IQIDFrqhY4 "Click to see the sample in action")
 
@@ -49,20 +49,20 @@ To learn more about the sample, see [Call Microsoft Graph in an Android app](htt
 
 ## Questions and comments
 
-We'd love to get your feedback about the Connect sample. You can send your questions and suggestions to us in the [Issues](https://github.com/OfficeDev/Android-Connect/issues) section of this repository.
+We'd love to get your feedback about the Connect sample. You can send your questions and suggestions to us in the [Issues](issues) section of this repository.
 
 Questions about Office 365 development in general should be posted to [Stack Overflow](http://stackoverflow.com/questions/tagged/Office365+API). Make sure that your questions or comments are tagged with [Office365] and [API].
 
 ## Next steps
 
-This sample just shows the essentials that your apps need to work with Office 365. There is so much more that your apps can do using the Office 365 APIs, like helping your users to manage their work day with calendar, find just the information they need in all the files they store in OneDrive, or find the exact person they need from their list of contacts. We have more to share with you in the [Snippets sample for Android](https://github.com/officedev/Snipets-Android/). 
+This sample just shows the essentials that your apps need to work with Office 365. There is so much more that your apps can do using the Office 365 APIs, like helping your users to manage their work day with calendar, find just the information they need in all the files they store in OneDrive, or find the exact person they need from their list of contacts. We have more to share with you in the [Snippets sample for Android](/OfficeDev/O365-Android-Microsoft-Graph-Snippets). 
   
 ## Additional resources
 
 * [Get started with Office 365 APIs powered by Microsoft Graph](http://dev.office.com/getting-started/office365apis)
 * [Office 365 Microsoft Graph overview](http://graph.microsoft.io)
-* [Microsoft Graph SDK for Android](https://github.com/microsoftgraph/msgraph-sdk-android)
-* [Office 365 Android Microsoft Graph Snippets](https://github.com/OfficeDev/O365-Android-Microsoft-Graph-Snippets)
+* [Microsoft Graph SDK for Android](/microsoftgraph/msgraph-sdk-android)
+* [Office 365 Android Microsoft Graph Snippets](/OfficeDev/O365-Android-Microsoft-Graph-Snippets)
 
 ## Copyright
 Copyright (c) 2016 Microsoft. All rights reserved.
