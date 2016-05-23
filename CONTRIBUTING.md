@@ -1,4 +1,4 @@
-ontribute to this documentation
+Contribute to this documentation
 
 Thank you for your interest in our documentation!
 
