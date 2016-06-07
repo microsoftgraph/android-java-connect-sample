@@ -51,9 +51,13 @@ public class GraphServiceClientManager implements IAuthenticationProvider {
     }
 
     public synchronized IGraphServiceClient getGraphServiceClient() {
+        return getGraphServiceClient(this);
+    }
+    
+    public synchronized IGraphServiceClient getGraphServiceClient(IAuthenticationProvider authenticationProvider) {
         if (mGraphServiceClient == null) {
             IClientConfig clientConfig = DefaultClientConfig.createWithAuthenticationProvider(
-              this
+                    authenticationProvider
             );
             mGraphServiceClient = new GraphServiceClient.Builder().fromConfig(clientConfig).buildClient();
         }
