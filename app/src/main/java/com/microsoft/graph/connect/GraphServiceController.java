@@ -55,6 +55,17 @@ class GraphServiceController {
 
         mGraphServiceClient.getMe().getSendMail(message, true).buildRequest().post(callback);
     }
+    public void sendMail(
+            final String emailAddress,
+            final String subject,
+            final String body
+    ) {
+
+        // create the email message
+        Message message = createMessage(subject, body, emailAddress);
+
+        mGraphServiceClient.getMe().getSendMail(message, true).buildRequest().post();
+    }
 
     @VisibleForTesting
     Message createMessage(
