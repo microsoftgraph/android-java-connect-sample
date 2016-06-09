@@ -78,12 +78,11 @@ public class ConnectActivityTests {
             onWebView()
                     .withElement(findElement(Locator.ID, "cred_sign_in_button"))
                     .perform(webClick());
-
-            Thread.sleep(2000, 0);
         } catch (NoMatchingViewException ex) {
             // If user is already logged in, the flow will go directly to SendMailActivity
         }
 
+        Thread.sleep(2000, 0);
         intended(allOf(
                 hasComponent(hasShortClassName(".SendMailActivity")),
                 hasExtra("displayableId", testUsername),
