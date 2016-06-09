@@ -86,7 +86,7 @@ public class ConnectActivityTests {
 
         intended(allOf(
                 hasComponent(hasShortClassName(".SendMailActivity")),
-                hasExtra("displayableId", "ZrinkaM@MOD182601.onmicrosoft.com"),
+                hasExtra("displayableId", testUsername),
                 toPackage("com.microsoft.graph.connect")
         ));
 
