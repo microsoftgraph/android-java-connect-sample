@@ -12,8 +12,9 @@ import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.http.IHttpRequest;
 
 import org.json.JSONException;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -23,26 +24,30 @@ import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import android.support.test.runner.AndroidJUnit4;
 
 import javax.net.ssl.HttpsURLConnection;
 
+
+
+@RunWith(AndroidJUnit4.class)
 public class GraphServiceClientManagerUnitTests implements IAuthenticationProvider {
-    private String accessToken;
-    private String clientId = "3d0d8ee3-e097-4039-82f3-8c11b64c8412";
-    private String username = "zrinkam@mod182601.onmicrosoft.com";
-    private String password = "pass@word1";
+    private static String accessToken;
+    private static String clientId = "3d0d8ee3-e097-4039-82f3-8c11b64c8412";
+    private static String username = "zrinkam@mod182601.onmicrosoft.com";
+    private static String password = "pass@word1";
 
-    private final String CONTENT_TYPE = "application/x-www-form-urlencoded";
-    private final String GRANT_TYPE = "password";
-    private final String TOKEN_ENDPOINT = "https://login.microsoftonline.com/common/oauth2/token";
-    private final String RESOURCE = "https%3A%2F%2Fgraph.microsoft.com";
-    private final String REQUEST_METHOD = "POST";
+    private static final String CONTENT_TYPE = "application/x-www-form-urlencoded";
+    private static final String GRANT_TYPE = "password";
+    private static final String TOKEN_ENDPOINT = "https://login.microsoftonline.com/common/oauth2/token";
+    private static final String RESOURCE = "https%3A%2F%2Fgraph.microsoft.com";
+    private static final String REQUEST_METHOD = "POST";
 
-    private final String SUBJECT = "Email sent from unit test in android";
-    private final String BODY = "<html><body>The body of the test email</body></html>";
+    private static final String SUBJECT = "Email sent from instrumented test in android";
+    private static final String BODY = "<html><body>The body of the test email</body></html>";
 
-    @Before
-    public void getAccessTokenUsingPasswordGrant() throws IOException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException, JSONException {
+    @BeforeClass
+    public static void getAccessTokenUsingPasswordGrant() throws IOException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException, JSONException {
         URL url = new URL(TOKEN_ENDPOINT);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
