@@ -111,7 +111,6 @@ public class GraphServiceClientManagerUnitTests implements IAuthenticationProvid
         } catch (ClientException ex) {
             throw ex;
         }
-        while(true){}
     }
 
     @Override
