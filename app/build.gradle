@@ -44,7 +44,12 @@ gradle.projectsEvaluated {
 
 task getTestConfig << {
     def testConfigFile = new File("testConfig.json")
-    def testConfig = JsonOutput.prettyPrint("{ \"test_client_id\": \"${test_client_id}\", \"test_username\": \"${test_username}\", \"test_password\": \"${test_password}\" }")
+
+    def testClientId = System.getenv("test_client_id")
+    def testUsername = System.getenv("test_username")
+    def testPassword = System.getenv("test_password")
+
+    def testConfig = JsonOutput.prettyPrint("{ \"test_client_id\": \"${testClientId}\", \"test_username\": \"${testUsername}\", \"test_password\": \"${testPassword}\" }")
 
     println testConfig
 
