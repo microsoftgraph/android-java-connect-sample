@@ -35,6 +35,22 @@ android {
     }
 }
 
+import groovy.json.JsonOutput
+gradle.projectsEvaluated {
+    connectedDebugAndroidTest.doLast {
+        delete("testConfig.json")
+    }
+}
+
+task getTestConfig << {
+    def testConfigFile = new File("testConfig.json")
+    def testConfig = JsonOutput.prettyPrint("{ \"test_client_id\": \"${test_client_id}\", \"test_username\": \"${test_username}\", \"test_password\": \"${test_password}\" }")
+
+    println testConfig
+
+    testConfigFile.text = testConfig
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'

@@ -5,6 +5,7 @@
 package com.microsoft.graph.connect;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
@@ -12,10 +13,21 @@ import android.support.test.espresso.web.webdriver.DriverAtoms;
 import android.support.test.espresso.web.webdriver.Locator;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+
+import org.json.JSONObject;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
@@ -44,16 +56,18 @@ public class ConnectActivityTests {
     public IntentsTestRule<ConnectActivity> mConnectActivityRule = new IntentsTestRule<>(ConnectActivity.class);
 
     @BeforeClass
-    public static void getTestParameters() {
-        Bundle extras = InstrumentationRegistry.getArguments();
-        testClientId = extras.getString("test_client_id");
-        testUsername = extras.getString("test_username");
-        testPassword = extras.getString("test_password");
+    public static void getTestParameters() throws FileNotFoundException {
+        File testConfigFile = new File(Environment.getDataDirectory(), "local/testConfig.json");
+        JsonObject testConfig = new JsonParser().parse(new FileReader(testConfigFile)).getAsJsonObject();
+        testClientId = testConfig.get("test_client_id").getAsString();
+        testUsername = testConfig.get("test_username").getAsString();
+        testPassword = testConfig.get("test_password").getAsString();
     }
 
     @Test
     public void displayAzureADSignIn() throws InterruptedException{
         Constants.CLIENT_ID = testClientId;
+        Thread.sleep(2000,0);
         onView(withId(R.id.connectButton)).perform(click());
 
         try {
