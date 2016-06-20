@@ -10,6 +10,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -17,6 +18,42 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    testOptions{
+        unitTests.returnDefaultValues = true
+    }
+
+    configurations {
+        all {
+            resolutionStrategy.force 'com.android.support:support-annotations:23.4.0'
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
+    }
+}
+
+import groovy.json.JsonOutput
+gradle.projectsEvaluated {
+    connectedDebugAndroidTest.doLast {
+        delete("testConfig.json")
+    }
+}
+
+task getTestConfig << {
+    def testConfigFile = new File("testConfig.json")
+
+    def testClientId = System.getenv("test_client_id")
+    def testUsername = System.getenv("test_username")
+    def testPassword = System.getenv("test_password")
+
+    def testConfig = JsonOutput.prettyPrint("{ \"test_client_id\": \"${testClientId}\", \"test_username\": \"${testUsername}\", \"test_password\": \"${testPassword}\" }")
+
+    println testConfig
+
+    testConfigFile.text = testConfig
 }
 
 dependencies {
@@ -32,4 +69,12 @@ dependencies {
 
     // Include GSON as a dependency
     compile 'com.google.code.gson:gson:2.6.2'
+
+    // Test libraries
+    androidTestCompile 'com.android.support:support-annotations:23.4.0'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2'
+    androidTestCompile 'com.android.support.test.espresso:espresso-web:2.2.2'
 }

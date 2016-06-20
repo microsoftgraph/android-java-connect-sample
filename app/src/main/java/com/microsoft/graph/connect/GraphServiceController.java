@@ -6,9 +6,11 @@ package com.microsoft.graph.connect;
 
 import android.support.annotation.VisibleForTesting;
 
+import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.concurrency.ICallback;
 import com.microsoft.graph.extensions.BodyType;
 import com.microsoft.graph.extensions.EmailAddress;
+import com.microsoft.graph.extensions.GraphServiceClient;
 import com.microsoft.graph.extensions.IGraphServiceClient;
 import com.microsoft.graph.extensions.ItemBody;
 import com.microsoft.graph.extensions.Message;
@@ -28,6 +30,9 @@ class GraphServiceController {
 
     public GraphServiceController() {
         mGraphServiceClient = GraphServiceClientManager.getInstance().getGraphServiceClient();
+    }
+    public GraphServiceController(IAuthenticationProvider authenticationProvider) {
+        mGraphServiceClient = GraphServiceClientManager.getInstance().getGraphServiceClient(authenticationProvider);
     }
 
     /**
@@ -49,6 +54,17 @@ class GraphServiceController {
         Message message = createMessage(subject, body, emailAddress);
 
         mGraphServiceClient.getMe().getSendMail(message, true).buildRequest().post(callback);
+    }
+    public void sendMail(
+            final String emailAddress,
+            final String subject,
+            final String body
+    ) {
+
+        // create the email message
+        Message message = createMessage(subject, body, emailAddress);
+
+        mGraphServiceClient.getMe().getSendMail(message, true).buildRequest().post();
     }
 
     @VisibleForTesting
