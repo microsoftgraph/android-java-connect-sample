@@ -10,6 +10,6 @@ if [ ! "$line" = "" ] && [ `echo $line | awk '{print $2}'` = "device" ]
 then
     device=`echo $line | awk '{print $1}'`
     echo "$device $@ ..."
-    adb -s $device $@ push testConfig.json ./data/local
+    adb -s $device push testConfig.json ./data/local
 fi
 done
