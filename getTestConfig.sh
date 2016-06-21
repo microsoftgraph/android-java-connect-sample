@@ -4,3 +4,12 @@ testConfig="{ \"test_client_id\": \"$TEST_CLIENT_ID\", \"test_username\": \"$TES
 echo $testConfig
 echo $testConfig > testConfig.json
 
+adb devices | while read line
+do
+if [ ! "$line" = "" ] && [ `echo $line | awk '{print $2}'` = "device" ]
+then
+    device=`echo $line | awk '{print $1}'`
+    echo "$device $@ ..."
+    adb -s $device $@ push testConfig.json ./data/local
+fi
+done
