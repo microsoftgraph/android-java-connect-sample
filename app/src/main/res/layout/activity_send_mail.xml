@@ -40,7 +40,10 @@
         android:layout_below="@+id/descriptionTextView"
         android:inputType="textEmailAddress"
         android:selectAllOnFocus="true"
-        android:visibility="visible" />
+        android:visibility="visible"
+        android:nextFocusForward="@+id/sendMailButton"
+        android:nextFocusDown="@+id/sendMailButton"
+        android:nextFocusRight="@+id/sendMailButton" />
 
     <Button
         android:id="@+id/sendMailButton"
@@ -50,7 +53,10 @@
         android:onClick="onSendMailButtonClick"
         android:layout_below="@+id/emailEditText"
         android:layout_centerHorizontal="true"
-        android:visibility="visible" />
+        android:visibility="visible"
+        android:nextFocusForward="@+id/emailEditText"
+        android:nextFocusUp="@+id/emailEditText"
+        android:nextFocusLeft="@+id/emailEditText" />
 
     <ProgressBar
         android:id="@+id/sendMailProgressBar"
