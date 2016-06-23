@@ -9,8 +9,6 @@ import com.microsoft.graph.extensions.Message;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.security.InvalidParameterException;
-
 import static org.junit.Assert.assertNotNull;
 
 /**
