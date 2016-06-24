@@ -30,6 +30,9 @@ public class GraphServiceClientManager implements IAuthenticationProvider {
     public void authenticateRequest(IHttpRequest request) {
         try {
             request.addHeader("Authorization", "Bearer " + AuthenticationManager.getInstance().getAccessToken());
+            // This header has been added to identify this sample in the Microsoft Graph service.
+            // If you're using this code for your project please remove the following line.
+            request.addHeader("SampleID", "android-java-connect-sample");
         } catch (TokenNotFoundException tne) {
             // AuthenticationManager should always have an access token available.
             // If this exception is thrown. There's something wrong with the underlying
