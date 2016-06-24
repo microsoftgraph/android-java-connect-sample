@@ -38,7 +38,6 @@ public class ConnectActivity extends AppCompatActivity {
     private TextView mDescriptionTextView;
     private ProgressBar mConnectProgressBar;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,7 +97,7 @@ public class ConnectActivity extends AppCompatActivity {
                         // actually start the Activity
                         startActivity(sendMailActivity);
 
-                        finish();
+                        resetUIForConnect();
                     }
 
                     @Override
