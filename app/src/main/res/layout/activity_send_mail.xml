@@ -37,6 +37,7 @@
         android:id="@+id/emailEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="@dimen/edit_text_min_height"
         android:layout_below="@+id/descriptionTextView"
         android:inputType="textEmailAddress"
         android:selectAllOnFocus="true"
