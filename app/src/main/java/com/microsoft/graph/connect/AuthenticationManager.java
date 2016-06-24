@@ -289,7 +289,7 @@ public class AuthenticationManager {
      */
     public String getAccessToken() throws TokenNotFoundException {
         if(mAccessToken == null) {
-            throw new TokenNotFoundException("There's no access token available.");
+            throw new TokenNotFoundException();
         }
         return mAccessToken;
     }
