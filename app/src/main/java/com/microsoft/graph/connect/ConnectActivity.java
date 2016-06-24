@@ -42,6 +42,7 @@ public class ConnectActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect);
+        setTitle(R.string.app_name);
 
         // set up our views
         mConnectButton = (Button) findViewById(R.id.connectButton);
