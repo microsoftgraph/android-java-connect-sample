@@ -42,20 +42,6 @@ gradle.projectsEvaluated {
     }
 }
 
-task getTestConfig << {
-    def testConfigFile = new File("testConfig.json")
-
-    def testClientId = System.getenv("test_client_id")
-    def testUsername = System.getenv("test_username")
-    def testPassword = System.getenv("test_password")
-
-    def testConfig = JsonOutput.prettyPrint("{ \"test_client_id\": \"${testClientId}\", \"test_username\": \"${testUsername}\", \"test_password\": \"${testPassword}\" }")
-
-    println testConfig
-
-    testConfigFile.text = testConfig
-}
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
