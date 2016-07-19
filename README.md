@@ -47,6 +47,13 @@ Once you've built the Connect sample, you can run it on an emulator or device. P
 
 To learn more about the sample, see [Call Microsoft Graph in an Android app](https://graph.microsoft.io/en-us/docs/platform/android).
 
+<a name="contributing"></a>
+## Contributing ##
+
+If you'd like to contribute to this sample, see [CONTRIBUTING.MD](/CONTRIBUTING.md).
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
 ## Questions and comments
 
 We'd love to get your feedback about the Connect sample. You can send your questions and suggestions to us in the [Issues](issues) section of this repository.
