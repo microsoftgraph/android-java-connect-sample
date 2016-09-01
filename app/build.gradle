@@ -35,13 +35,6 @@ android {
     }
 }
 
-import groovy.json.JsonOutput
-gradle.projectsEvaluated {
-    connectedDebugAndroidTest.doLast {
-        delete("testConfig.json")
-    }
-}
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
