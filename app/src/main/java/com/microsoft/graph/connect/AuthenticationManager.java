@@ -12,7 +12,9 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+import android.util.Base64;
 import android.util.Log;
 
 import com.microsoft.aad.adal.ADALError;
@@ -24,18 +26,25 @@ import com.microsoft.aad.adal.AuthenticationResult.AuthenticationStatus;
 import com.microsoft.aad.adal.AuthenticationSettings;
 import com.microsoft.aad.adal.PromptBehavior;
 
+import net.openid.appauth.AuthState;
+import net.openid.appauth.AuthorizationException;
 import net.openid.appauth.AuthorizationRequest;
+import net.openid.appauth.AuthorizationResponse;
 import net.openid.appauth.AuthorizationService;
 import net.openid.appauth.AuthorizationServiceConfiguration;
-import net.openid.appauth.RedirectUriReceiverActivity;
 import net.openid.appauth.ResponseTypeValues;
+import net.openid.appauth.TokenRequest;
+import net.openid.appauth.TokenResponse;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 
 /**
  * Handles setup of ADAL Dependency Resolver for use in API clients.
- * Check the {@link AuthenticationManager#connect(AuthenticationCallback)} method to learn how to
- * get Azure AD tokens for your app.
  * You can also check {@link AuthenticationManager#authenticatePrompt(AuthenticationCallback)} to
  * learn how to get tokens by prompting the user for credentials, or
  * {@link AuthenticationManager#authenticateSilent(AuthenticationCallback)} to learn how to get
@@ -45,6 +54,8 @@ import java.io.UnsupportedEncodingException;
 public class AuthenticationManager {
     AuthorizationServiceConfiguration config;
     AuthorizationRequest authorizationRequest;
+    AuthState authState;
+    AuthorizationService authorizationService;
 
     private static final String TAG = "AuthenticationManager";
     private static final String PREFERENCES_FILENAME = "ConnectFile";
@@ -78,17 +89,62 @@ public class AuthenticationManager {
     }
 
     /**
-     * Calls {@link AuthenticationManager#authenticatePrompt(AuthenticationCallback)} if no user id is stored in the shared preferences.
-     * Calls {@link AuthenticationManager#authenticateSilent(AuthenticationCallback)} otherwise.
-     *
-     * @param authenticationCallback The callback to notify when the processing is finished.
+     * Starts the authorization flow, which continues to net.openid.appauth.RedirectReceiverActivity
+     * and then to ConnectActivity
      */
-    public void connect(final AuthenticationCallback<AuthenticationResult> authenticationCallback) {
-        AuthorizationService service = new AuthorizationService(mContextActivity);
-        Intent postAuthIntent = new Intent(mContextActivity, RedirectUriReceiverActivity.class);
-        service.performAuthorizationRequest(
+    public void connect() {
+        authorizationService = new AuthorizationService(mContextActivity);
+
+        Intent intent = new Intent(mContextActivity, ConnectActivity.class);
+
+        PendingIntent redirectIntent = PendingIntent.getActivity(mContextActivity, authorizationRequest.hashCode(), intent, 0);
+
+        authorizationService.performAuthorizationRequest(
                 authorizationRequest,
-                PendingIntent.getActivity(mContextActivity, authorizationRequest.hashCode(), postAuthIntent, 0));
+                redirectIntent);
+    }
+
+    public void processAuthorizationCode(Intent redirectIntent, final AuthorizationService.TokenResponseCallback callback) {
+        AuthorizationResponse authorizationResponse = AuthorizationResponse.fromIntent(redirectIntent);
+        AuthorizationException authorizationException = AuthorizationException.fromIntent(redirectIntent);
+        authState = new AuthState(authorizationResponse, authorizationException);
+
+        if (authorizationResponse != null) {
+            HashMap<String, String> additionalParams = new HashMap<>();
+            additionalParams.put("resource", Constants.MICROSOFT_GRAPH_API_ENDPOINT_RESOURCE_ID);
+            TokenRequest tokenRequest = authorizationResponse.createTokenExchangeRequest(additionalParams);
+
+            authorizationService.performTokenRequest(
+                    tokenRequest,
+                    new AuthorizationService.TokenResponseCallback() {
+                        @Override
+                        public void onTokenRequestCompleted(
+                                @Nullable TokenResponse tokenResponse,
+                                @Nullable AuthorizationException ex) {
+                            authState.update(tokenResponse, ex);
+                            if (tokenResponse != null) {
+                                mAccessToken = tokenResponse.accessToken;
+                            }
+                            callback.onTokenRequestCompleted(tokenResponse, ex);
+                        }
+                    });
+        } else {
+            Log.i(TAG, "Authorization failed: " + authorizationException);
+        }
+    }
+
+    public JSONObject getClaims(String idToken) {
+        JSONObject retValue = null;
+        String payload = idToken.split("[.]")[1];
+
+        try {
+            // The token payload is in the 2nd element of the JWT
+            String jsonClaims = new String(Base64.decode(payload, Base64.DEFAULT), "UTF-8");
+            retValue = new JSONObject(jsonClaims);
+        } catch ( JSONException | IOException e) {
+            Log.e(TAG, "Couldn't decode id token: " + e.getMessage());
+        }
+        return retValue;
     }
 
     /**
