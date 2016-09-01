@@ -5,8 +5,11 @@
 package com.microsoft.graph.connect;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.VisibleForTesting;
@@ -21,6 +24,12 @@ import com.microsoft.aad.adal.AuthenticationResult.AuthenticationStatus;
 import com.microsoft.aad.adal.AuthenticationSettings;
 import com.microsoft.aad.adal.PromptBehavior;
 
+import net.openid.appauth.AuthorizationRequest;
+import net.openid.appauth.AuthorizationService;
+import net.openid.appauth.AuthorizationServiceConfiguration;
+import net.openid.appauth.RedirectUriReceiverActivity;
+import net.openid.appauth.ResponseTypeValues;
+
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -34,6 +43,8 @@ import java.io.UnsupportedEncodingException;
  * To learn how to dispose the tokens, see {@link AuthenticationManager#disconnect()}.
  */
 public class AuthenticationManager {
+    AuthorizationServiceConfiguration config;
+    AuthorizationRequest authorizationRequest;
 
     private static final String TAG = "AuthenticationManager";
     private static final String PREFERENCES_FILENAME = "ConnectFile";
@@ -53,6 +64,17 @@ public class AuthenticationManager {
     private String mAccessToken;
 
     private AuthenticationManager() {
+        Uri authorityUrl = Uri.parse(Constants.AUTHORITY_URL);
+        Uri authorizationEndpoint = Uri.withAppendedPath(authorityUrl, Constants.AUTHORIZATION_ENDPOINT);
+        Uri tokenEndpoint = Uri.withAppendedPath(authorityUrl, Constants.TOKEN_ENDPOINT);
+        config = new AuthorizationServiceConfiguration(authorizationEndpoint, tokenEndpoint, null);
+
+        authorizationRequest = new AuthorizationRequest.Builder(
+                config,
+                Constants.CLIENT_ID,
+                ResponseTypeValues.CODE,
+                Uri.parse(Constants.REDIRECT_URI))
+                .build();
     }
 
     /**
@@ -62,16 +84,11 @@ public class AuthenticationManager {
      * @param authenticationCallback The callback to notify when the processing is finished.
      */
     public void connect(final AuthenticationCallback<AuthenticationResult> authenticationCallback) {
-        if (verifyAuthenticationContext()) {
-            if (isConnected()) {
-                authenticateSilent(authenticationCallback);
-            } else {
-                authenticatePrompt(authenticationCallback);
-            }
-        } else {
-            Log.e(TAG,
-                    "connect - Auth context verification failed. Did you set a context activity?");
-        }
+        AuthorizationService service = new AuthorizationService(mContextActivity);
+        Intent postAuthIntent = new Intent(mContextActivity, RedirectUriReceiverActivity.class);
+        service.performAuthorizationRequest(
+                authorizationRequest,
+                PendingIntent.getActivity(mContextActivity, authorizationRequest.hashCode(), postAuthIntent, 0));
     }
 
     /**
