@@ -40,6 +40,17 @@
             android:name="com.microsoft.aad.adal.AuthenticationActivity"
             android:screenOrientation="portrait" />
 
+        <activity android:name="net.openid.appauth.RedirectUriReceiverActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="com.microsoft.graph"/>
+                <data android:host="connect"/>
+                <data android:path="/oauth/redirect"/>
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>
