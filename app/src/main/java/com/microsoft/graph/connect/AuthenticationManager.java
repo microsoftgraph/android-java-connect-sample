@@ -80,7 +80,6 @@ public class AuthenticationManager {
 
         if (authorizationResponse != null) {
             HashMap<String, String> additionalParams = new HashMap<>();
-            additionalParams.put("resource", Constants.MICROSOFT_GRAPH_API_ENDPOINT_RESOURCE_ID);
             TokenRequest tokenRequest = authorizationResponse.createTokenExchangeRequest(additionalParams);
 
             authorizationService.performTokenRequest(
