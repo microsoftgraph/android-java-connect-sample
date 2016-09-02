@@ -26,7 +26,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Handles setup of OAuth library in API clients.
@@ -49,11 +52,14 @@ public class AuthenticationManager {
         Uri tokenEndpoint = Uri.withAppendedPath(authorityUrl, Constants.TOKEN_ENDPOINT);
         config = new AuthorizationServiceConfiguration(authorizationEndpoint, tokenEndpoint, null);
 
+        List<String> scopes = new ArrayList<>(Arrays.asList(Constants.SCOPES.split(" ")));
+
         authorizationRequest = new AuthorizationRequest.Builder(
                 config,
                 Constants.CLIENT_ID,
                 ResponseTypeValues.CODE,
                 Uri.parse(Constants.REDIRECT_URI))
+                .setScopes(scopes)
                 .build();
     }
 
