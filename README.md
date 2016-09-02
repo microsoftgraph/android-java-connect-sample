@@ -19,15 +19,20 @@ To use the Connect sample for Android, you need the following:
 
 * [Android Studio](http://developer.android.com/sdk/index.html) version 1.0 or later.
 * [Java Development Kit (JDK) 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html).
-* An app registered in Microsoft Azure. You can use the [Office 365 app registration tool](http://dev.office.com/app-registration). It simplifies app registration. Use the following parameters:
 
-|     Parameter   |                    Value                     |
-|----------------:|:---------------------------------------------|
-|        App type | Native App                                   |
-|    Redirect URI | com.microsoft.graph://connect/oauth/redirect |
-| App permissions | Mail.Send                                    |
-  
-  Copy and store the **Client ID** and **Client Secret** values.
+<a name="register"></a>
+##Register and configure the app
+
+1. Sign into the [App Registration Portal](https://apps.dev.microsoft.com/) using either your personal or work or school account.
+2. Select **Add an app**.
+3. Enter a name for the app, and select **Create application**.
+	
+	The registration page displays, listing the properties of your app.
+ 
+4. Under **Platforms**, select **Add platform**.
+5. Select **Mobile application**.
+6. Copy the **Application Id**, you'll need it in the next section.
+7. Click **Save**.
   
 ## Open the sample using Android Studio
 
@@ -39,9 +44,7 @@ To use the Connect sample for Android, you need the following:
 	
 	> Note: Android Studio shows a **Frameworks detected** notification if you don't have the **Android Support Repository** installed. Open the SDK manager and add the Android Support Repository to avoid the Frameworks detected notification.
 4. Open the Constants.java file.
-	1. Find the CLIENT_ID constant and set its String value equal to the client id you registered in Azure Active Directory.
-	2. Find the REDIRECT_URI constant and set its String value equal to the redirect URI you registered in Azure Active Directory.
-    ![Microsoft Graph Connect sample](/readme-images/Android-Connect-Constants.png "Client ID and Redirect URI values in Constants file")
+	* Replace *ENTER_YOUR_CLIENT_ID* with the application id from the previous section.
 
 Once you've built the Connect sample, you can run it on an emulator or device. Pick a device with API level 16 or higher from the **Choose device** dialog.
 
