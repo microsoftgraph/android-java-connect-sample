@@ -36,10 +36,6 @@
                 android:value="com.microsoft.graph.connect.ConnectActivity" />
         </activity>
 
-        <activity
-            android:name="com.microsoft.aad.adal.AuthenticationActivity"
-            android:screenOrientation="portrait" />
-
         <activity android:name="net.openid.appauth.RedirectUriReceiverActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
