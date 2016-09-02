@@ -5,7 +5,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.microsoft.graph.connect">
 
-    <!-- Required to connect to Office 365 -->
+    <!-- Required to startAuthorizationFlow to Office 365 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -39,6 +39,17 @@
         <activity
             android:name="com.microsoft.aad.adal.AuthenticationActivity"
             android:screenOrientation="portrait" />
+
+        <activity android:name="net.openid.appauth.RedirectUriReceiverActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="com.microsoft.graph"/>
+                <data android:host="connect"/>
+                <data android:path="/oauth/redirect"/>
+            </intent-filter>
+        </activity>
 
     </application>
 
