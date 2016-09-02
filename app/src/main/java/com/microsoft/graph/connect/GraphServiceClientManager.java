@@ -48,11 +48,6 @@ public class GraphServiceClientManager implements IAuthenticationProvider {
         return INSTANCE;
     }
 
-    public synchronized void resetInstance() {
-        INSTANCE.mGraphServiceClient = null;
-        INSTANCE = null;
-    }
-
     public synchronized IGraphServiceClient getGraphServiceClient() {
         return getGraphServiceClient(this);
     }

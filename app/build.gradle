@@ -40,8 +40,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.3.0'
 
-    // Azure Active Directory Library
-    compile 'com.microsoft.aad:adal:1.1.18'
     // AppAuth Library
     compile 'net.openid:appauth:0.3.0'
 
