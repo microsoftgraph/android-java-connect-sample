@@ -92,14 +92,11 @@ public class ConnectActivity extends AppCompatActivity implements AuthorizationS
             // get the UserInfo from the auth response
             JSONObject claims = AuthenticationManager.getInstance().getClaims(tokenResponse.idToken);
 
-            String givenName = "";
-            String displayableId = "";
+            String name = "";
+            String preferredUsername = "";
             try {
-                // get the user's given name
-                givenName = claims.getString("given_name");
-
-                // get the user's displayable Id
-                displayableId = claims.getString("unique_name");
+                name = claims.getString("name");
+                preferredUsername = claims.getString("preferred_username");
             } catch (JSONException je) {
                 Log.e(TAG, je.getMessage());
             }
@@ -109,8 +106,8 @@ public class ConnectActivity extends AppCompatActivity implements AuthorizationS
                     new Intent(ConnectActivity.this, SendMailActivity.class);
 
             // take the user's info along
-            sendMailActivity.putExtra(SendMailActivity.ARG_GIVEN_NAME, givenName);
-            sendMailActivity.putExtra(SendMailActivity.ARG_DISPLAY_ID, displayableId);
+            sendMailActivity.putExtra(SendMailActivity.ARG_GIVEN_NAME, name);
+            sendMailActivity.putExtra(SendMailActivity.ARG_DISPLAY_ID, preferredUsername);
 
             // actually start the Activity
             startActivity(sendMailActivity);
