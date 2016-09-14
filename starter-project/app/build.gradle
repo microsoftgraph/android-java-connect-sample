@@ -26,4 +26,9 @@ dependencies {
     compile 'com.android.support:design:24.2.1'
 
     compile 'net.openid:appauth:0.3.0'
+
+    compile 'com.microsoft.graph:msgraph-sdk-android:1.0.0'
+    compile 'com.google.code.gson:gson:2.7'
+
+    compile 'com.android.volley:volley:1.0.0'
 }
