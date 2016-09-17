@@ -62,6 +62,7 @@ public class ConnectActivityTests {
     @Test
     public void displayAzureADSignIn() throws InterruptedException{
         Constants.CLIENT_ID = testClientId;
+        Constants.REDIRECT_URI = "https://login.microsoftonline.com/common/oauth2/nativeclient";
         Thread.sleep(2000,0);
         onView(withId(R.id.connectButton)).perform(click());
 

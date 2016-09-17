@@ -10,6 +10,6 @@ public class Constants {
     public static final String TOKEN_ENDPOINT = "/oauth2/v2.0/token";
     // Update these two constants with the values for your application:
     public static String CLIENT_ID = "ENTER_YOUR_CLIENT_ID";
-    public static final String REDIRECT_URI = "ENTER_YOUR_REDIRECT_URI";
+    public static String REDIRECT_URI = "ENTER_YOUR_REDIRECT_URI";
     public static final String SCOPES = "openid profile mail.send";
 }
