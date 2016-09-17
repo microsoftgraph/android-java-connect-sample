@@ -33,6 +33,8 @@ To use the Connect sample for Android, you need the following:
 5. Select **Mobile application**.
 6. Copy the **Application Id**, you'll need it in the next section.
 7. Click **Save**.
+
+> Note: The App Registration Portal automatically sets a Redirect URI for your mobile application. However, this sample uses the default value of `https://login.microsoftonline.com/common/oauth2/nativeclient` that all apps can use regardless of what is displayed in the app registration page.
   
 ## Open the sample using Android Studio
 
@@ -45,6 +47,7 @@ To use the Connect sample for Android, you need the following:
 	> Note: Android Studio shows a **Frameworks detected** notification if you don't have the **Android Support Repository** installed. Open the SDK manager and add the Android Support Repository to avoid the Frameworks detected notification.
 4. Open the Constants.java file.
 	* Replace *ENTER_YOUR_CLIENT_ID* with the application id from the previous section.
+	* Replace *ENTER_YOUR_REDIRECT_URI* with `https://login.microsoftonline.com/common/oauth2/nativeclient`.
 
 Once you've built the Connect sample, you can run it on an emulator or device. Pick a device with API level 16 or higher from the **Choose device** dialog.
 
