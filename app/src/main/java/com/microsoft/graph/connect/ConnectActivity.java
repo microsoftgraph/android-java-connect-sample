@@ -78,12 +78,13 @@ public class ConnectActivity extends AppCompatActivity implements AuthorizationS
                 connect();
             }
         });
+
+        // Initialize AuthenticationManager
+        AuthenticationManager.getInstance().setContextActivity(this);
     }
 
     private void connect() {
-        AuthenticationManager mgr = AuthenticationManager.getInstance();
-        mgr.setContextActivity(this);
-        mgr.startAuthorizationFlow();
+        AuthenticationManager.getInstance().startAuthorizationFlow();
     }
 
     @Override

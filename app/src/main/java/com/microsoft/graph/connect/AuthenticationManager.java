@@ -71,8 +71,6 @@ public class AuthenticationManager {
      * and then to ConnectActivity
      */
     public void startAuthorizationFlow() {
-        mAuthorizationService = new AuthorizationService(mContextActivity);
-
         Intent intent = new Intent(mContextActivity, ConnectActivity.class);
 
         PendingIntent redirectIntent = PendingIntent.getActivity(mContextActivity, mAuthorizationRequest.hashCode(), intent, 0);
@@ -155,6 +153,7 @@ public class AuthenticationManager {
      */
     public void setContextActivity(final Activity contextActivity) {
         mContextActivity = contextActivity;
+        mAuthorizationService = new AuthorizationService(mContextActivity);
     }
 
     /**
