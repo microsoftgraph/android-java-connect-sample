@@ -37,13 +37,13 @@
 &lt;h2&gt;Congratulations, {0}!&lt;/h2&gt;
 &lt;p&gt;This is a message from the Microsoft Graph Connect sample. You are well on your way to incorporating Microsoft services in your apps.
 &lt;/p&gt;
-&lt;h2&gt;What&amp;#8217;s next?&lt;/h2&gt;
+&lt;h3&gt;What&amp;#8217;s next?&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;Check out &lt;a href=\'https://graph.microsoft.io\'&gt;graph.microsoft.io&lt;/a&gt; to start building Microsoft Graph apps today with all the latest tools, templates, and guidance to get started quickly.&lt;/li&gt;
-&lt;li&gt;Use the &lt;a href=\'https://graph.microsoft.io/graph-explorer\'&gt;Graph Explorer&lt;/a&gt; to start your testing&lt;/li&gt;
+&lt;li&gt;Use the &lt;a href=\'https://graph.microsoft.io/graph-explorer\'&gt;Graph Explorer&lt;/a&gt; to start your testing.&lt;/li&gt;
 &lt;li&gt;Browse other &lt;a href=\'https://github.com/microsoftgraph\'&gt;samples on GitHub&lt;/a&gt; to see more of the APIs in action.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2&gt;Give us feedback&lt;/h2&gt;
+&lt;h3&gt;Give us feedback&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;If you have any trouble running this sample, please &lt;a href=\'https://github.com/microsoftgraph/android-java-connect-sample/issues\'&gt;log an issue&lt;/a&gt;.&lt;/li&gt;
 &lt;li&gt;For general questions about the Microsoft Graph APIs, post to &lt;a href=\'https://stackoverflow.com/questions/tagged/microsoftgraph?sort=newest\'&gt;Stack Overflow&lt;/a&gt;. Make sure that your questions or comments are tagged with [MicrosoftGraph].&lt;/li&gt;
