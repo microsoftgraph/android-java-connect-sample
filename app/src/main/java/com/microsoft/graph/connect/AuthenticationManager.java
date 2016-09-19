@@ -79,7 +79,7 @@ public class AuthenticationManager {
                 mAuthorizationRequest,
                 redirectIntent,
                 mAuthorizationService.createCustomTabsIntentBuilder()
-                        .setToolbarColor(getColorCompat(R.color.colorAccent))
+                        .setToolbarColor(getColorCompat(R.color.colorPrimary))
                         .build());
     }
 
