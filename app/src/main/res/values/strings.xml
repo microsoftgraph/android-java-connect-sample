@@ -35,18 +35,19 @@
 &lt;/head&gt;
 &lt;body style=\'font-family:calibri\'&gt;
 &lt;h2&gt;Congratulations, {0}!&lt;/h2&gt;
-&lt;p&gt;This is a message from the Connect sample. You are well on your way to incorporating Microsoft Graph in your apps.
+&lt;p&gt;This is a message from the Microsoft Graph Connect sample. You are well on your way to incorporating Microsoft services in your apps.
 &lt;/p&gt;
-&lt;p&gt;What&amp;#8217;s next?&lt;/p&gt;
-&lt;p&gt;You can use the classes in the Android Studio project to integrate Microsoft Graph services and data into your own apps.&lt;/p&gt;
+&lt;h2&gt;What&amp;#8217;s next?&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Check out &lt;a href=\'https://graph.microsoft.io\'&gt;graph.microsoft.io&lt;/a&gt; to start building Microsoft Graph apps today with all the latest tools, templates, and guidance to get started quickly.&lt;/li&gt;
+&lt;li&gt;Use the &lt;a href=\'https://graph.microsoft.io/graph-explorer\'&gt;Graph Explorer&lt;/a&gt; to start your testing&lt;/li&gt;
+&lt;li&gt;Browse other &lt;a href=\'https://github.com/microsoftgraph\'&gt;samples on GitHub&lt;/a&gt; to see more of the APIs in action.&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2&gt;Give us feedback&lt;/h2&gt;
-&lt;p&gt;We hope you found this sample useful. We&amp;#8217;d love to hear from you, so drop us an email at
-&lt;a href=\'mailto:docthis@microsoft.com?subject=Feedback%20on%20the%20Microsoft%20Graph%20Connect%20sample\'&gt;
-docthis@microsoft.com&lt;/a&gt; with your comments or &lt;a href=\'https://github.com/microsoftgraph/android-java-connect-sample/issues\'&gt;
-log an issue&lt;/a&gt; on our repository. &lt;/p&gt;
-&lt;p&gt;For more details on what else you can do in your Android app, start with the
-&lt;a href=\'http://graph.microsoft.io\'&gt;Microsoft Graph&lt;/a&gt; site.
-&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;If you have any trouble running this sample, please &lt;a href=\'https://github.com/microsoftgraph/android-java-connect-sample/issues\'&gt;log an issue&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;For general questions about the Microsoft Graph APIs, post to &lt;a href=\'https://stackoverflow.com/questions/tagged/microsoftgraph?sort=newest\'&gt;Stack Overflow&lt;/a&gt;. Make sure that your questions or comments are tagged with [MicrosoftGraph].&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;Thanks, and happy coding!&lt;br&gt;
 &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Your Microsoft Graph Development team &lt;/p&gt;
 &lt;div style=\'text-align:center; font-family:calibri\'&gt;
@@ -55,9 +56,9 @@ log an issue&lt;/a&gt; on our repository. &lt;/p&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;a href=\'https://github.com/microsoftgraph/android-java-connect-sample\'&gt;See on GitHub&lt;/a&gt;
 &lt;/td&gt;
-&lt;td&gt;&lt;a href=\'https://office365.uservoice.com\'&gt;Suggest on UserVoice&lt;/a&gt;
+&lt;td&gt;&lt;a href=\'https://officespdev.uservoice.com\'&gt;Suggest on UserVoice&lt;/a&gt;
 &lt;/td&gt;
-&lt;td&gt;&lt;a href=\'http://twitter.com/share?text=I%20just%20started%20developing%20apps%20for%20%23Android%20using%20the%20%23Microsoft%20Graph%20Connect%20app%20%40OfficeDev&amp;amp;url=https://github.com/microsoftgraph/android-java-connect-sample\'&gt;Share on Twitter&lt;/a&gt;
+&lt;td&gt;&lt;a href=\'https://twitter.com/intent/tweet?text=I%20just%20started%20developing%20apps%20for%20Android%20using%20the%20Microsoft%20Graph%20Connect%20sample&amp;amp;url=https://github.com/microsoftgraph/android-java-connect-sample&amp;amp;hashtags=Android,MicrosoftGraph\'&gt;Share on Twitter&lt;/a&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
