@@ -4,10 +4,13 @@
  */
 package com.microsoft.graph.connect;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
@@ -35,10 +38,10 @@ import java.util.List;
  * Handles setup of OAuth library in API clients.
  */
 public class AuthenticationManager {
-    AuthorizationServiceConfiguration config;
-    AuthorizationRequest authorizationRequest;
-    AuthState authState;
-    AuthorizationService authorizationService;
+    AuthorizationServiceConfiguration mConfig;
+    AuthorizationRequest mAuthorizationRequest;
+    AuthState mAuthState;
+    AuthorizationService mAuthorizationService;
 
     private static final String TAG = "AuthenticationManager";
     private static AuthenticationManager INSTANCE;
@@ -50,12 +53,12 @@ public class AuthenticationManager {
         Uri authorityUrl = Uri.parse(Constants.AUTHORITY_URL);
         Uri authorizationEndpoint = Uri.withAppendedPath(authorityUrl, Constants.AUTHORIZATION_ENDPOINT);
         Uri tokenEndpoint = Uri.withAppendedPath(authorityUrl, Constants.TOKEN_ENDPOINT);
-        config = new AuthorizationServiceConfiguration(authorizationEndpoint, tokenEndpoint, null);
+        mConfig = new AuthorizationServiceConfiguration(authorizationEndpoint, tokenEndpoint, null);
 
         List<String> scopes = new ArrayList<>(Arrays.asList(Constants.SCOPES.split(" ")));
 
-        authorizationRequest = new AuthorizationRequest.Builder(
-                config,
+        mAuthorizationRequest = new AuthorizationRequest.Builder(
+                mConfig,
                 Constants.CLIENT_ID,
                 ResponseTypeValues.CODE,
                 Uri.parse(Constants.REDIRECT_URI))
@@ -68,34 +71,37 @@ public class AuthenticationManager {
      * and then to ConnectActivity
      */
     public void startAuthorizationFlow() {
-        authorizationService = new AuthorizationService(mContextActivity);
+        mAuthorizationService = new AuthorizationService(mContextActivity);
 
         Intent intent = new Intent(mContextActivity, ConnectActivity.class);
 
-        PendingIntent redirectIntent = PendingIntent.getActivity(mContextActivity, authorizationRequest.hashCode(), intent, 0);
+        PendingIntent redirectIntent = PendingIntent.getActivity(mContextActivity, mAuthorizationRequest.hashCode(), intent, 0);
 
-        authorizationService.performAuthorizationRequest(
-                authorizationRequest,
-                redirectIntent);
+        mAuthorizationService.performAuthorizationRequest(
+                mAuthorizationRequest,
+                redirectIntent,
+                mAuthorizationService.createCustomTabsIntentBuilder()
+                        .setToolbarColor(getColorCompat(R.color.colorAccent))
+                        .build());
     }
 
     public void processAuthorizationCode(Intent redirectIntent, final AuthorizationService.TokenResponseCallback callback) {
         AuthorizationResponse authorizationResponse = AuthorizationResponse.fromIntent(redirectIntent);
         AuthorizationException authorizationException = AuthorizationException.fromIntent(redirectIntent);
-        authState = new AuthState(authorizationResponse, authorizationException);
+        mAuthState = new AuthState(authorizationResponse, authorizationException);
 
         if (authorizationResponse != null) {
             HashMap<String, String> additionalParams = new HashMap<>();
             TokenRequest tokenRequest = authorizationResponse.createTokenExchangeRequest(additionalParams);
 
-            authorizationService.performTokenRequest(
+            mAuthorizationService.performTokenRequest(
                     tokenRequest,
                     new AuthorizationService.TokenResponseCallback() {
                         @Override
                         public void onTokenRequestCompleted(
                                 @Nullable TokenResponse tokenResponse,
                                 @Nullable AuthorizationException ex) {
-                            authState.update(tokenResponse, ex);
+                            mAuthState.update(tokenResponse, ex);
                             if (tokenResponse != null) {
                                 mAccessToken = tokenResponse.accessToken;
                             }
@@ -161,5 +167,15 @@ public class AuthenticationManager {
             throw new TokenNotFoundException();
         }
         return mAccessToken;
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    @SuppressWarnings("deprecation")
+    private int getColorCompat(@ColorRes int color) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return mContextActivity.getColor(color);
+        } else {
+            return mContextActivity.getResources().getColor(color);
+        }
     }
 }
