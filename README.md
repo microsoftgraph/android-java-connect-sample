@@ -45,8 +45,6 @@ To use the Connect sample for Android, you need the following:
 
 Once you've built the Connect sample, you can run it on an emulator or device. Pick a device with API level 16 or higher from the **Choose device** dialog.
 
-To learn more about the sample, see [Call Microsoft Graph in an Android app](https://graph.microsoft.io/en-us/docs/platform/android).
-
 <a name="contributing"></a>
 ## Contributing ##
 
