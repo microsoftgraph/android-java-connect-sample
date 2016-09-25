@@ -19,15 +19,23 @@ To use the Connect sample for Android, you need the following:
 
 * [Android Studio](http://developer.android.com/sdk/index.html) version 1.0 or later.
 * [Java Development Kit (JDK) 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html).
-* An app registered in Microsoft Azure. You can use the [Office 365 app registration tool](http://dev.office.com/app-registration). It simplifies app registration. Use the following parameters:
-
-|     Parameter   |                    Value                     |
-|----------------:|:---------------------------------------------|
-|        App type | Native App                                   |
-|    Redirect URI | com.microsoft.graph://connect/oauth/redirect |
-| App permissions | Mail.Send                                    |
   
-  Copy and store the **Client ID** and **Client Secret** values.
+## Register the app
+
+Registering your native application is the first step. 
+  
+1. Sign in to the [Azure portal](https://portal.azure.com/).
+2. On the top bar, click on your account and under the **Directory** list, choose the Active Directory tenant where you wish to register your application.
+3. Click on **More Services** in the left hand nav, and choose **Azure Active Directory**.
+4. Click on **App registrations** and choose **Add**.
+5. Enter a friendly name for the application, select **Native** as the Application Type. For the **Redirect URI**, enter **com.microsoft.graph://connect/oauth/redirect**. Click on **Create** to create the application.
+6. While still in the Azure portal, choose your application, click on **Settings** and choose **Properties**.
+7. Find the **Application ID** value and copy it to the clipboard. This is the client ID value we'll add to the project later.
+8. Configure **Permissions** for your application - in the **Settings** menu, choose the **Required permissions** section, click on **Add**, then **Select an API**, and type "Microsoft Graph" in the text box. Then, click on **Select Permissions** and select:
+   * Send mail as user
+   * Sign in and read user profile
+
+9. Click **Select**.
   
 ## Open the sample using Android Studio
 
