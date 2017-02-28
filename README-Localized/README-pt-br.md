@@ -1,12 +1,15 @@
 # <a name="connect-sample-for-android-using-the-microsoft-graph-sdk"></a>Exemplo de conexão para Android usando o SDK do Microsoft Graph
 
-![Status da Compilação](https://ricalo.visualstudio.com/_apis/public/build/definitions/06256fa7-d8e5-4ca0-8639-7c00eb6f1fe9/6/badge "Status da Compilação")
+![Status do Build](https://ricalo.visualstudio.com/_apis/public/build/definitions/06256fa7-d8e5-4ca0-8639-7c00eb6f1fe9/6/badge "Status do Build")
 
-> **Criando aplicativos para clientes corporativos?** O aplicativo pode não funcionar caso o cliente corporativo habilite os recursos Enterprise Mobility + Security, como <a href="https://azure.microsoft.com/en-us/documentation/articles/active-directory-conditional-access-device-policies/" target="_newtab">acesso condicional ao dispositivo</a>. Nesse caso, pode ser que você não esteja ciente e seus clientes podem encontrar erros. 
+>**Observação:** estamos atualizando este exemplo para usar a [biblioteca de autenticação recomendada](https://docs.microsoft.com/pt-br/azure/active-directory/develop/active-directory-v2-libraries#compatible-client-libraries) para aplicativos para Android.
+
+
+> **Criando aplicativos para clientes corporativos?** O aplicativo pode não funcionar caso o cliente corporativo habilite os recursos Enterprise Mobility + Security, como <a href="https://azure.microsoft.com/pt-br/documentation/articles/active-directory-conditional-access-device-policies/" target="_newtab">acesso condicional ao dispositivo</a>. Nesse caso, pode ser que você não esteja ciente e seu cliente pode enfrentar problemas de erro. 
 
 > Para fornecer suporte a **todos os clientes corporativos**, em **todos os cenários corporativos**, use o ponto de extremidade do Microsoft Azure AD e gerencie os aplicativos usando o [Portal de Gerenciamento do Microsoft Azure](https://aka.ms/aadapplist). Para saber mais, confira o tópico [Decidindo entre os pontos de extremidade do Microsoft Azure AD e do Microsoft Azure AD versão 2.0](https://graph.microsoft.io/docs/authorization/auth_overview#deciding-between-azure-ad-and-the-v2-authentication-endpoint).
 
-[![Exemplo de conexão usando o Microsoft Graph](/readme-images/O365-Android-Connect-video_play_icon.png)](https://www.youtube.com/watch?v=3IQIDFrqhY4 "Clique no exemplo para vê-lo em ação")
+[![Exemplo de conexão usando o Microsoft Graph](../readme-images/O365-Android-Connect-video_play_icon.png)](https://www.youtube.com/watch?v=3IQIDFrqhY4 "Clique no exemplo para vê-lo em ação")
 
 Conectar-se ao Microsoft Graph é a primeira etapa para que os aplicativos Android comecem a funcionar com dados e serviços do Office 365. Este exemplo mostra como conectar e chamar uma única API através do SDK do Microsoft Graph.
 
