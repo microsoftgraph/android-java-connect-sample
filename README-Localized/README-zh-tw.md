@@ -2,14 +2,14 @@
 
 ![組建狀態](https://ricalo.visualstudio.com/_apis/public/build/definitions/06256fa7-d8e5-4ca0-8639-7c00eb6f1fe9/6/badge "組建狀態")
 
->**附註：**我們正在更新此範例，以便使用 Android 應用程式的[建議驗證程式庫](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-libraries#compatible-client-libraries)。
+>**附註：**我們正在更新此範例，以便使用 Android 應用程式的[建議驗證程式庫](https://docs.microsoft.com/zh-tw/azure/active-directory/develop/active-directory-v2-libraries#compatible-client-libraries)。
 
 
-> **為企業客戶建置應用程式？**如果您的企業客戶開啟企業行動安全性功能 (例如，<a href="https://azure.microsoft.com/en-us/documentation/articles/active-directory-conditional-access-device-policies/" target="_newtab">條件式裝置存取</a>)，您的應用程式可能無法運作。在此情況中，您可能不會知道，而您的客戶可能會發生錯誤。 
+> **為企業客戶建置應用程式？**如果您的企業客戶開啟企業行動安全性功能 (例如，<a href="https://azure.microsoft.com/zh-tw/documentation/articles/active-directory-conditional-access-device-policies/" target="_newtab">條件式裝置存取</a>)，您的應用程式可能無法運作。在此情況中，您可能不會知道，而您的客戶可能會發生錯誤。 
 
 > 若要支援包括**所有企業案例**的**所有企業客戶**，您必須使用 Azure AD 端點，並使用 [Azure 管理入口網站](https://aka.ms/aadapplist)來管理您的應用程式。如需詳細資訊，請參閱 [在 Azure AD 與 Azure AD v2.0 端點之間進行選擇](https://graph.microsoft.io/docs/authorization/auth_overview#deciding-between-azure-ad-and-the-v2-authentication-endpoint)。
 
-[![Microsoft Graph Connect 範例](/readme-images/O365-Android-Connect-video_play_icon.png)](https://www.youtube.com/watch?v=3IQIDFrqhY4 "按一下以查看執行中的範例")
+[![Microsoft Graph Connect 範例](../readme-images/O365-Android-Connect-video_play_icon.png)](https://www.youtube.com/watch?v=3IQIDFrqhY4 "按一下以查看執行中的範例")
 
 連接到 Microsoft Graph 是每個 Android 應用程式要開始使用 Office 365 服務和資料時，必須採取的第一個步驟。此範例示範如何透過 Microsoft Graph SDK 連接而後呼叫一個 API。
 
