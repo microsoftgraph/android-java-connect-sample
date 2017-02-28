@@ -1,8 +1,11 @@
-﻿# <a name="connect-sample-for-android-using-the-microsoft-graph-sdk"></a>Microsoft Graph SDK を使用した Android 用 Connect サンプル
+# <a name="connect-sample-for-android-using-the-microsoft-graph-sdk"></a>Microsoft Graph SDK を使用した Android 用 Connect サンプル
 
 ![ビルドの状態](https://ricalo.visualstudio.com/_apis/public/build/definitions/06256fa7-d8e5-4ca0-8639-7c00eb6f1fe9/6/badge "ビルドの状態")
 
-> **エンタープライズのお客様向けにアプリを作成していますか?**エンタープライズのお客様が、<a href="https://azure.microsoft.com/en-us/documentation/articles/active-directory-conditional-access-device-policies/" target="_newtab">条件付きのデバイスへのアクセス</a>のようなエンタープライズ モバイル セキュリティの機能をオンにしている場合、アプリが動作しない可能性があります。その場合、気がつかないまま、お客様の側でエラーが発生してしまう可能性があります。 
+>**注:**Android アプリ向けの[推奨される認証ライブラリ](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-libraries#compatible-client-libraries)を使用するこのサンプルは、現在更新中です。
+
+
+> **エンタープライズのお客様向けにアプリを作成していますか?**エンタープライズのお客様が、<a href="https://azure.microsoft.com/en-us/documentation/articles/active-directory-conditional-access-device-policies/" target="_newtab">条件付きのデバイスへのアクセス</a>のようなエンタープライズ モビリティ セキュリティの機能をオンにしている場合、アプリが動作しない可能性があります。その場合、気がつかないまま、お客様の側でエラーが発生してしまう可能性があります。 
 
 > **すべてのエンタープライズのお客様**の**すべてのエンタープライズ シナリオ**をサポートするには、Azure AD のエンドポイントを使用し、[Azure の管理ポータル](https://aka.ms/aadapplist)でアプリを管理する必要があります。詳細については、「[Azure AD か Azure AD v2.0 エンドポイントかを決定する](https://graph.microsoft.io/docs/authorization/auth_overview#deciding-between-azure-ad-and-the-v2-authentication-endpoint)」を参照してください。
 
@@ -79,4 +82,4 @@ Microsoft Graph 開発全般の質問につきましては、「[Stack Overflow]
 * [Android 用スニペット サンプル](../../../android-java-snippets-sample)
 
 ## <a name="copyright"></a>著作権
-Copyright (c) 2016 Microsoft.All rights reserved.
+Copyright (c) 2016 Microsoft. All rights reserved.
