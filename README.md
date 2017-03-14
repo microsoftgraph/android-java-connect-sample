@@ -1,6 +1,5 @@
 # Connect Sample for Android Using the Microsoft Graph SDK
 
-![Build Status](https://ricalo.visualstudio.com/_apis/public/build/definitions/06256fa7-d8e5-4ca0-8639-7c00eb6f1fe9/6/badge "Build Status")
 
 >**Note:** We're in the process of updating this sample to use the [recommended auth library](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-libraries#compatible-client-libraries) for Android apps.
 
