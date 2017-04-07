@@ -29,12 +29,14 @@ public class SendMailActivity extends AppCompatActivity {
     // arguments for this activity
     public static final String ARG_GIVEN_NAME = "givenName";
     public static final String ARG_DISPLAY_ID = "displayableId";
+    public static final String ARG_UPN = "upn";
 
     // views
     private EditText mEmailEditText;
     private Button mSendMailButton;
     private ProgressBar mSendMailProgressBar;
     private String mGivenName;
+    private String mUPN;
     private TextView mConclusionTextView;
 
     @Override
@@ -53,6 +55,7 @@ public class SendMailActivity extends AppCompatActivity {
         mGivenName = getIntent().getStringExtra(ARG_GIVEN_NAME);
         mTitleTextView.append(mGivenName + "!");
         mEmailEditText.setText(getIntent().getStringExtra(ARG_DISPLAY_ID));
+        mUPN = getIntent().getStringExtra(ARG_UPN);
     }
 
     /**
@@ -73,6 +76,7 @@ public class SendMailActivity extends AppCompatActivity {
 
         new GraphServiceController()
                 .sendMail(
+                        mUPN,
                         mEmailEditText.getText().toString(),
                         getString(R.string.mail_subject_text),
                         body,

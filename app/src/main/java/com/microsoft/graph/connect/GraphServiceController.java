@@ -19,7 +19,7 @@ import java.util.Collections;
 /**
  * Handles the creation of the message and using the GraphServiceClient to
  * send the message. The app must have connected to Office 365 before using the
- * {@link #sendMail(String, String, String, ICallback)}method.
+ * {@link #sendMail(String, String, String, String, ICallback)}method.
  */
 class GraphServiceController {
 
@@ -33,11 +33,13 @@ class GraphServiceController {
      * Sends an email message using the Microsoft Graph API on Office 365. The mail is sent
      * from the address of the signed in user.
      *
+     * @param senderUPN  The mail senders principal user name (email addr)
      * @param emailAddress The recipient email address.
      * @param subject      The subject to use in the mail message.
      * @param body         The body of the message.
      */
     public void sendMail(
+            final String senderUPN,
             final String emailAddress,
             final String subject,
             final String body,
@@ -89,4 +91,7 @@ class GraphServiceController {
         return message;
     }
 
+    Object getUserProfilePicture(){
+        return null;
+    }
 }
