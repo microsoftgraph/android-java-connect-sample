@@ -36,7 +36,7 @@ public class SendMailActivity extends AppCompatActivity {
     private Button mSendMailButton;
     private ProgressBar mSendMailProgressBar;
     private String mGivenName;
-    private String mUPN;
+    private String mPreferredName;
     private TextView mConclusionTextView;
 
     @Override
@@ -55,7 +55,7 @@ public class SendMailActivity extends AppCompatActivity {
         mGivenName = getIntent().getStringExtra(ARG_GIVEN_NAME);
         mTitleTextView.append(mGivenName + "!");
         mEmailEditText.setText(getIntent().getStringExtra(ARG_DISPLAY_ID));
-        mUPN = getIntent().getStringExtra(ARG_UPN);
+        mPreferredName = getIntent().getStringExtra(ARG_DISPLAY_ID);
     }
 
     /**
@@ -76,7 +76,7 @@ public class SendMailActivity extends AppCompatActivity {
 
         new GraphServiceController()
                 .sendMail(
-                        mUPN,
+                        mPreferredName,
                         mEmailEditText.getText().toString(),
                         getString(R.string.mail_subject_text),
                         body,

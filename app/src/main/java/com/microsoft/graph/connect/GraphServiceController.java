@@ -4,16 +4,28 @@
  */
 package com.microsoft.graph.connect;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.database.CursorJoiner;
 import android.support.annotation.VisibleForTesting;
+import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.microsoft.graph.concurrency.ICallback;
+import com.microsoft.graph.core.ClientException;
+import com.microsoft.graph.extensions.AttachmentCollectionPage;
 import com.microsoft.graph.extensions.BodyType;
 import com.microsoft.graph.extensions.EmailAddress;
+import com.microsoft.graph.extensions.FileAttachment;
 import com.microsoft.graph.extensions.IGraphServiceClient;
 import com.microsoft.graph.extensions.ItemBody;
 import com.microsoft.graph.extensions.Message;
+import com.microsoft.graph.extensions.ProfilePhoto;
 import com.microsoft.graph.extensions.Recipient;
+import com.microsoft.graph.serializer.ISerializer;
 
+import java.io.InputStream;
 import java.util.Collections;
 
 /**
@@ -33,23 +45,86 @@ class GraphServiceController {
      * Sends an email message using the Microsoft Graph API on Office 365. The mail is sent
      * from the address of the signed in user.
      *
-     * @param senderUPN  The mail senders principal user name (email addr)
+     * @param senderPreferredName  The mail senders principal user name (email addr)
      * @param emailAddress The recipient email address.
      * @param subject      The subject to use in the mail message.
      * @param body         The body of the message.
+     * @param callback     The callback method to invoke on completion of the POST request
      */
     public void sendMail(
-            final String senderUPN,
+            final String senderPreferredName,
             final String emailAddress,
             final String subject,
             final String body,
             ICallback<Void> callback
     ) {
 
-        // create the email message
-        Message message = createMessage(subject, body, emailAddress);
+        //Get the user's profile picture and then send the email with it as attachment
+        getUserProfilePicture(senderPreferredName, emailAddress, subject, body, callback);
+    }
 
-        mGraphServiceClient.getMe().getSendMail(message, true).buildRequest().post(callback);
+    /**
+     * Sends an email message using the Microsoft Graph API on Office 365. The mail is sent
+     * from the address of the signed in user.
+     *
+     * @param senderPreferredName The mail senders principal user name
+     * @param emailAddress      The recipient email address
+     * @param subject           The subject to use in the mail message.
+     * @param body              The body of the message.
+     * @param senderPicture     The sender's profile picture
+     * @param callback
+     */
+    private void sendMail(
+            final String senderPreferredName,
+            final String emailAddress,
+            final String subject,
+            final String body,
+            final InputStream senderPicture,
+            ICallback<Void> callback
+    )
+    {
+        try {
+            // create the email message
+            Message message = createMessage(subject, body, emailAddress);
+
+            if (senderPicture != null){
+                FileAttachment fileAttachment = new FileAttachment();
+                fileAttachment.oDataType = "#microsoft.graph.fileAttachment";
+                fileAttachment.contentBytes = null;
+                fileAttachment.contentType = "image/png";
+                fileAttachment.name = "me.png";
+
+//                ISerializer serializer = new ISerializer() {
+//                    @Override
+//                    public <T> T deserializeObject(String inputString, Class<T> clazz) {
+//                        return null;
+//                    }
+//
+//                    @Override
+//                    public <T> String serializeObject(T serializableObject) {
+//                        return new Gson().toJson(serializableObject);
+//                    }
+//                };
+//                message.attachments.setRawObject(serializer, senderPicture);
+
+            }
+
+            mGraphServiceClient.getMe().getSendMail(message, true).buildRequest().post(callback);
+
+        } catch (Exception ex) {
+            Log.e("GraphServiceController","exception on send mail " + ex.getLocalizedMessage());
+            AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
+            alertDialogBuidler.setTitle("Send mail failed");
+            alertDialogBuidler.setMessage("The send mail method failed");
+            alertDialogBuidler.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            alertDialogBuidler.show();
+
+        }
+
     }
 
     @VisibleForTesting
@@ -91,7 +166,43 @@ class GraphServiceController {
         return message;
     }
 
-    Object getUserProfilePicture(){
-        return null;
+    void getUserProfilePicture(final String userPreferredName,
+                               final String emailAddress,
+                               final String subject,
+                               final String body,
+                               final ICallback<Void> callback
+    ){
+          JsonObject returnObject;
+
+
+
+        mGraphServiceClient.getMe().getPhoto().getContent().buildRequest().get(new ICallback<InputStream>() {
+
+            @Override
+            public void success(InputStream inputStream) {
+                sendMail(
+                        userPreferredName,
+                        emailAddress,
+                        subject,
+                        body,
+                        inputStream,
+                        callback);
+
+            }
+
+            @Override
+            public void failure(ClientException ex) {
+                Log.e("GraphServiceController", "no picture found " + ex.getLocalizedMessage());
+                sendMail(
+                        userPreferredName,
+                        emailAddress,
+                        subject,
+                        body,
+                        null,
+                        callback);
+
+            }
+        });
+
     }
 }

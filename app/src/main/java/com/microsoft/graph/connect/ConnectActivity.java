@@ -86,14 +86,12 @@ public class ConnectActivity extends AppCompatActivity  {
                     public void onSuccess(String idToken) {
                         String name = "";
                         String preferredUsername = "";
-                        String userPrincipalName = "";
 
                         try {
                             // get the user info from the id token
                             IdToken claims = IdToken.parse(new GsonFactory(), idToken);
                             name = claims.getPayload().get("name").toString();
                             preferredUsername = claims.getPayload().get("preferred_username").toString();
-                            userPrincipalName = claims.getPayload().get("upn").toString();
 
                         } catch (IOException ioe) {
                             Log.e(TAG, ioe.getMessage());
@@ -109,7 +107,6 @@ public class ConnectActivity extends AppCompatActivity  {
                         // take the user's info along
                         sendMailActivity.putExtra(SendMailActivity.ARG_GIVEN_NAME, name);
                         sendMailActivity.putExtra(SendMailActivity.ARG_DISPLAY_ID, preferredUsername);
-                        sendMailActivity.putExtra(SendMailActivity.ARG_UPN, userPrincipalName);
 
 
                         // actually start the activity
@@ -134,43 +131,6 @@ public class ConnectActivity extends AppCompatActivity  {
         AuthenticationManager mgr = AuthenticationManager.getInstance(this);
         mgr.connect(this, callback);
     }
-
-/*
-    @Override
-    public void onTokenRequestCompleted(@Nullable TokenResponse tokenResponse, @Nullable AuthorizationException authorizationException) {
-        if(tokenResponse != null) {
-            // get the UserInfo from the auth response
-            JSONObject claims = AuthenticationManager.getInstance().getClaims(tokenResponse.idToken);
-
-            String name = "";
-            String preferredUsername = "";
-            String userPrincipalName = "";
-            try {
-                name = claims.getString("name");
-                preferredUsername = claims.getString("preferred_username");
-                userPrincipalName = claims.getString("upn");
-            } catch (JSONException je) {
-                Log.e(TAG, je.getMessage());
-            }
-
-            // start the SendMailActivity
-            Intent sendMailActivity =
-                    new Intent(ConnectActivity.this, SendMailActivity.class);
-
-            // take the user's info along
-            sendMailActivity.putExtra(SendMailActivity.ARG_GIVEN_NAME, name);
-            sendMailActivity.putExtra(SendMailActivity.ARG_DISPLAY_ID, preferredUsername);
-            sendMailActivity.putExtra(SendMailActivity.ARG_UPN, userPrincipalName);
-
-            // actually start the Activity
-            startActivity(sendMailActivity);
-
-            resetUIForConnect();
-        } else if (authorizationException != null) {
-            showConnectErrorUI();
-        }
-    }
-*/
 
     private static boolean hasAzureConfiguration() {
         try {
