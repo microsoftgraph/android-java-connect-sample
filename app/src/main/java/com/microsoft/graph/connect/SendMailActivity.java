@@ -71,7 +71,7 @@ public class SendMailActivity extends AppCompatActivity {
         resetUIForSendMail();
 
         //Prepare body message and insert name of sender
-        String body = getString(R.string.mail_body_text);
+        String body = getString(R.string.mail_body_text2);
         body = body.replace("{0}", mGivenName);
 
         new GraphServiceController()
@@ -105,7 +105,7 @@ public class SendMailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.disconnectMenuItem:
-                AuthenticationManager.getInstance().disconnect();
+                AuthenticationManager.getInstance(this).disconnect();
                 Intent connectIntent = new Intent(this, ConnectActivity.class);
                 startActivity(connectIntent);
                 finish();

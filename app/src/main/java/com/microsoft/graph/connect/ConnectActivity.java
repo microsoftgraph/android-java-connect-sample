@@ -15,13 +15,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.openid.appauth.AuthorizationException;
-import net.openid.appauth.AuthorizationService;
-import net.openid.appauth.TokenResponse;
+import com.google.api.client.auth.openidconnect.IdToken;
+import com.google.api.client.json.gson.GsonFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.UUID;
 
@@ -32,7 +32,7 @@ import java.util.UUID;
  * If there are cached tokens, the app tries to reuse them.
  * The activity redirects the user to the SendMailActivity upon successful connection.
  */
-public class ConnectActivity extends AppCompatActivity implements AuthorizationService.TokenResponseCallback {
+public class ConnectActivity extends AppCompatActivity  {
 
     private static final String TAG = "ConnectActivity";
 
@@ -46,10 +46,6 @@ public class ConnectActivity extends AppCompatActivity implements AuthorizationS
         super.onCreate(savedInstanceState);
 
         Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            AuthenticationManager.getInstance().processAuthorizationCode(getIntent(), this);
-        }
-
         setContentView(R.layout.activity_connect);
         setTitle(R.string.app_name);
 
@@ -79,14 +75,67 @@ public class ConnectActivity extends AppCompatActivity implements AuthorizationS
             }
         });
 
-        // Initialize AuthenticationManager
-        AuthenticationManager.getInstance().setContextActivity(this);
     }
 
     private void connect() {
-        AuthenticationManager.getInstance().startAuthorizationFlow();
+        // define the post-auth callback
+        AuthenticationCallback<String> callback =
+                new AuthenticationCallback<String>() {
+
+                    @Override
+                    public void onSuccess(String idToken) {
+                        String name = "";
+                        String preferredUsername = "";
+                        String userPrincipalName = "";
+
+                        try {
+                            // get the user info from the id token
+                            IdToken claims = IdToken.parse(new GsonFactory(), idToken);
+                            name = claims.getPayload().get("name").toString();
+                            preferredUsername = claims.getPayload().get("preferred_username").toString();
+                            userPrincipalName = claims.getPayload().get("upn").toString();
+
+                        } catch (IOException ioe) {
+                            Log.e(TAG, ioe.getMessage());
+                        } catch (NullPointerException npe) {
+                            Log.e(TAG, npe.getMessage());
+
+                        }
+
+                        // Prepare the SendMailActivity intent
+                        Intent sendMailActivity =
+                                new Intent(ConnectActivity.this, SendMailActivity.class);
+
+                        // take the user's info along
+                        sendMailActivity.putExtra(SendMailActivity.ARG_GIVEN_NAME, name);
+                        sendMailActivity.putExtra(SendMailActivity.ARG_DISPLAY_ID, preferredUsername);
+                        sendMailActivity.putExtra(SendMailActivity.ARG_UPN, userPrincipalName);
+
+
+                        // actually start the activity
+                        startActivity(sendMailActivity);
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                resetUIForConnect();
+                            }
+                        });
+
+
+                    }
+
+                    @Override
+                    public void onError(Exception exc) {
+                        showConnectErrorUI();
+                    }
+                };
+
+        AuthenticationManager mgr = AuthenticationManager.getInstance(this);
+        mgr.connect(this, callback);
     }
 
+/*
     @Override
     public void onTokenRequestCompleted(@Nullable TokenResponse tokenResponse, @Nullable AuthorizationException authorizationException) {
         if(tokenResponse != null) {
@@ -121,6 +170,7 @@ public class ConnectActivity extends AppCompatActivity implements AuthorizationS
             showConnectErrorUI();
         }
     }
+*/
 
     private static boolean hasAzureConfiguration() {
         try {

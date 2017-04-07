@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "com.microsoft.graph.connect"
@@ -38,10 +38,10 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
 
-    // AppAuth Library
-    compile 'net.openid:appauth:0.3.0'
+    // OIDCAndroidLib
+    compile project(':oidclib')
 
     // Include the SDK as a dependency
     compile 'com.microsoft.graph:msgraph-sdk-android:1.0.0'
