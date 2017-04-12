@@ -79,7 +79,7 @@ public class SendMailActivity extends AppCompatActivity {
 
 
         new GraphServiceController()
-                .sendMail(
+                .createDraftMail(
                         mPreferredName,
                         mEmailEditText.getText().toString(),
                         getString(R.string.mail_subject_text),

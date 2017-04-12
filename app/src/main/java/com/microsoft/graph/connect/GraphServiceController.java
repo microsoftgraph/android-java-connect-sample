@@ -5,54 +5,36 @@
 package com.microsoft.graph.connect;
 
 import android.app.AlertDialog;
-import android.app.Application;
 import android.content.DialogInterface;
-import android.database.CursorJoiner;
 import android.os.Environment;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
-import org.apache.commons.io.IOUtils;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.microsoft.graph.concurrency.ICallback;
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.extensions.Attachment;
-import com.microsoft.graph.extensions.AttachmentCollectionPage;
 import com.microsoft.graph.extensions.BodyType;
 import com.microsoft.graph.extensions.EmailAddress;
 import com.microsoft.graph.extensions.FileAttachment;
-import com.microsoft.graph.extensions.IAttachmentCollectionRequest;
-import com.microsoft.graph.extensions.IAttachmentCollectionRequestBuilder;
-import com.microsoft.graph.extensions.IAttachmentRequestBuilder;
 import com.microsoft.graph.extensions.IGraphServiceClient;
 import com.microsoft.graph.extensions.ItemBody;
 import com.microsoft.graph.extensions.Message;
-import com.microsoft.graph.extensions.ProfilePhoto;
 import com.microsoft.graph.extensions.Recipient;
-import com.microsoft.graph.generated.BaseAttachmentCollectionResponse;
-import com.microsoft.graph.options.Option;
-import com.microsoft.graph.serializer.ISerializer;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * Handles the creation of the message and using the GraphServiceClient to
  * send the message. The app must have connected to Office 365 before using the
- * {@link #sendMail(String, String, String, String, ICallback)}method.
+ * {@link #createDraftMail(String, String, String, String, ICallback)}method.
  */
 class GraphServiceController {
 
@@ -76,7 +58,7 @@ class GraphServiceController {
      * @param body         The body of the message.
      * @param callback     The callback method to invoke on completion of the POST request
      */
-    public void sendMail(
+    public void createDraftMail(
             final String senderPreferredName,
             final String emailAddress,
             final String subject,
@@ -113,9 +95,9 @@ class GraphServiceController {
                                     byte[] picture,
                                     ICallback<Attachment> callback){
         try {
-            byte[] attachementBytes = new byte[16000];
+            byte[] attachementBytes = new byte[picture.length];
 
-            if (picture != null){
+            if (picture.length > 0){
                 attachementBytes = picture;
             } else {
                 attachementBytes = getDefaultPicture();
@@ -189,62 +171,6 @@ class GraphServiceController {
     }
 
 
-    /**
-     * Sends an email message using the Microsoft Graph API on Office 365. The mail is sent
-     * from the address of the signed in user.
-     *
-     * @param senderPreferredName The mail senders principal user name
-     * @param emailAddress      The recipient email address
-     * @param subject           The subject to use in the mail message.
-     * @param body              The body of the message.
-     * @param senderPicture     The sender's profile picture
-     * @param callback
-     */
-    private void sendMail(
-            final String senderPreferredName,
-            final String emailAddress,
-            final String subject,
-            final String body,
-            final byte[] senderPicture,
-            ICallback<Message> callback
-    )
-    {
-        try {
-            byte[] attachementBytes = new byte[16000];
-
-            if (senderPicture != null){
-                attachementBytes = senderPicture;
-            } else {
-                attachementBytes = getDefaultPicture();
-                //Get the place holder photo when the user does not have a photo
-            }
-
-            FileAttachment fileAttachment = new FileAttachment();
-            fileAttachment.oDataType = "#microsoft.graph.fileAttachment";
-            fileAttachment.contentBytes = attachementBytes;
-            fileAttachment.contentType = "image/png";
-            fileAttachment.name = "me.png";
-
-            // create the email message
-            Message message = createMessage(subject, body, emailAddress);
-
-            mGraphServiceClient.getMe().getMessages().buildRequest().post(message, callback); //.getSendMail(message, true).buildRequest().post(callback);
-
-        } catch (Exception ex) {
-            Log.e("GraphServiceController","exception on send mail " + ex.getLocalizedMessage());
-            AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
-            alertDialogBuidler.setTitle("Send mail failed");
-            alertDialogBuidler.setMessage("The send mail method failed");
-            alertDialogBuidler.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-            alertDialogBuidler.show();
-
-        }
-
-    }
 
     @VisibleForTesting
     Message createMessage(
