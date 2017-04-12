@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import com.microsoft.graph.concurrency.ICallback;
 import com.microsoft.graph.core.ClientException;
+import com.microsoft.graph.extensions.Attachment;
+import com.microsoft.graph.extensions.Message;
 
 /**
  * This activity handles the send mail operation of the app.
@@ -74,16 +76,19 @@ public class SendMailActivity extends AppCompatActivity {
         String body = getString(R.string.mail_body_text2);
         body = body.replace("{0}", mGivenName);
 
+
+
         new GraphServiceController()
                 .sendMail(
                         mPreferredName,
                         mEmailEditText.getText().toString(),
                         getString(R.string.mail_subject_text),
                         body,
-                        new ICallback<Void>() {
+                        new ICallback<Message>() {
                             @Override
-                            public void success(Void aVoid) {
-                                showSendMailSuccessUI();
+                            public void success(final Message aMessage) {
+                                sendMailWithPicture(aMessage.id);
+
                             }
 
                             @Override
@@ -92,6 +97,37 @@ public class SendMailActivity extends AppCompatActivity {
                             }
                         }
                 );
+    }
+
+    private void sendMailWithPicture(final String messageId){
+        final GraphServiceController graphServiceController = new GraphServiceController();
+
+        graphServiceController.getUserProfilePicture(mPreferredName, new ICallback<byte[]>() {
+            @Override
+            public void success(final byte[] bytes) {
+                graphServiceController.sendMailWithPicture(messageId, bytes,
+                        new ICallback<Attachment>() {
+                            @Override
+                            public void success(final Attachment anAttachment) {
+                                showSendMailSuccessUI();
+
+                            }
+
+                            @Override
+                            public void failure(ClientException ex) {
+                                showSendMailErrorUI();
+                            }
+                        });
+
+            }
+
+            @Override
+            public void failure(ClientException ex) {
+                showSendMailErrorUI();
+            }
+        });
+
+
     }
 
     @Override
