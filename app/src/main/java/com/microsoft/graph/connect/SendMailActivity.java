@@ -19,7 +19,9 @@ import android.widget.Toast;
 import com.microsoft.graph.concurrency.ICallback;
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.extensions.Attachment;
+import com.microsoft.graph.extensions.DriveItem;
 import com.microsoft.graph.extensions.Message;
+import com.microsoft.graph.extensions.Permission;
 
 /**
  * This activity handles the send mail operation of the app.
@@ -74,7 +76,11 @@ public class SendMailActivity extends AppCompatActivity {
 
         //Prepare body message and insert name of sender
         String body = getString(R.string.mail_body_text2);
+
+        //insert sharing link instead of given name
         body = body.replace("{0}", mGivenName);
+
+
 
 
 
@@ -105,32 +111,55 @@ public class SendMailActivity extends AppCompatActivity {
         graphServiceController.getUserProfilePicture(mPreferredName, new ICallback<byte[]>() {
             @Override
             public void success(final byte[] bytes) {
-                graphServiceController.addPictureToDraftMessage(messageId, bytes,
-                        new ICallback<Attachment>() {
+
+                graphServiceController.uploadPictureToOneDrive(bytes, new ICallback<DriveItem>() {
+                    @Override
+                    public void success(DriveItem driveItem) {
+                        //driveItem.shared.
+                        graphServiceController.getSharingLink(driveItem.id, new ICallback<Permission>() {
                             @Override
-                            public void success(final Attachment anAttachment) {
+                            public void success(Permission permission) {
+                                graphServiceController.addPictureToDraftMessage(messageId, bytes, permission.link.webUrl,
+                                        new ICallback<Attachment>() {
+                                            @Override
+                                            public void success(final Attachment anAttachment) {
 
-                                //Now send the mail
-                                graphServiceController.sendDraftMessage(messageId, new ICallback<Void>() {
-                                    @Override
-                                    public void success(Void aVoid) {
-                                        showSendMailSuccessUI();
-                                    }
+                                                //Now send the mail
+                                                graphServiceController.sendDraftMessage(messageId, new ICallback<Void>() {
+                                                    @Override
+                                                    public void success(Void aVoid) {
+                                                        showSendMailSuccessUI();
+                                                    }
 
-                                    @Override
-                                    public void failure(ClientException ex) {
+                                                    @Override
+                                                    public void failure(ClientException ex) {
 
-                                    }
-                                });
+                                                    }
+                                                });
 
+
+                                            }
+
+                                            @Override
+                                            public void failure(ClientException ex) {
+                                                showSendMailErrorUI();
+                                            }
+                                        });
 
                             }
 
                             @Override
                             public void failure(ClientException ex) {
-                                showSendMailErrorUI();
+
                             }
                         });
+                    }
+
+                    @Override
+                    public void failure(ClientException ex) {
+
+                    }
+                });
 
             }
 

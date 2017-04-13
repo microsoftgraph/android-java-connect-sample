@@ -14,11 +14,13 @@ import com.microsoft.graph.concurrency.ICallback;
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.extensions.Attachment;
 import com.microsoft.graph.extensions.BodyType;
+import com.microsoft.graph.extensions.DriveItem;
 import com.microsoft.graph.extensions.EmailAddress;
 import com.microsoft.graph.extensions.FileAttachment;
 import com.microsoft.graph.extensions.IGraphServiceClient;
 import com.microsoft.graph.extensions.ItemBody;
 import com.microsoft.graph.extensions.Message;
+import com.microsoft.graph.extensions.Permission;
 import com.microsoft.graph.extensions.Recipient;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -49,7 +51,7 @@ class GraphServiceController {
     }
 
     /**
-     * Sends an email message using the Microsoft Graph API on Office 365. The mail is sent
+     * Creates a draft email message using the Microsoft Graph API on Office 365. The mail is sent
      * from the address of the signed in user.
      *
      * @param senderPreferredName  The mail senders principal user name (email addr)
@@ -76,6 +78,7 @@ class GraphServiceController {
                     .getMessages()
                     .buildRequest()
                     .post(message, callback);
+
         } catch (Exception ex) {
             Log.e("GraphServiceController","exception on send mail " + ex.getLocalizedMessage());
             AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
@@ -91,8 +94,16 @@ class GraphServiceController {
         }
     }
 
+    /**
+     * Posts a file attachment a draft message by message Id
+     * @param messageId String. The id of the draft message to add an attachment to
+     * @param picture Byte[]. The picture in bytes
+     * @param sharingLink  String. The sharing link to the uploaded picture
+     * @param callback
+     */
     public void addPictureToDraftMessage(String messageId,
                                          byte[] picture,
+                                         String sharingLink,
                                          ICallback<Attachment> callback){
         try {
             byte[] attachementBytes = new byte[picture.length];
@@ -133,14 +144,34 @@ class GraphServiceController {
 
     }
 
+    /**
+     * Sends a draft message to the specified recipients
+     * @param messageId String. The id of the message to send
+     * @param callback
+     */
     public void sendDraftMessage(String messageId,
                                  ICallback<Void> callback){
-        mGraphServiceClient.getMe().getMessages(messageId).getSend().buildRequest().post(callback);
+        mGraphServiceClient
+                .getMe()
+                .getMessages(messageId)
+                .getSend()
+                .buildRequest()
+                .post(callback);
     }
 
+    /**
+     * Gets the profile picture of the signed in user from the Microsoft Graph
+     * @param userPreferredName
+     * @param callback
+     */
     public void getUserProfilePicture(final String userPreferredName,
                                final ICallback<byte[]> callback){
-        mGraphServiceClient.getMe().getPhoto().getContent().buildRequest().get(new ICallback<InputStream>() {
+        mGraphServiceClient
+                .getMe()
+                .getPhoto()
+                .getContent()
+                .buildRequest()
+                .get(new ICallback<InputStream>() {
 
             @Override
             public void success(final InputStream inputStream) {
@@ -148,6 +179,8 @@ class GraphServiceController {
                     byte[] pictureBytes = new byte[1024];
                     BufferedInputStream bufferedInputStream = (BufferedInputStream)inputStream;
 
+                    //If the user's photo is not available, get the default test.jpg from the device external
+                    //storage root folder
                     if (bufferedInputStream.available() < 1) {
                         pictureBytes = getDefaultPicture();
                     } else {
@@ -216,6 +249,38 @@ class GraphServiceController {
     }
 
 
+    /**
+     * Uploads a user picture as byte array to the user's OneDrive root folder
+     * @param picture byte[] picture byte array
+     * @param callback
+     */
+    public void uploadPictureToOneDrive(byte[] picture, ICallback<DriveItem> callback) {
+
+        mGraphServiceClient
+                .getMe()
+                .getDrive()
+                .getRoot()
+                .getItemWithPath("me.png")
+                .getContent()
+                .buildRequest()
+                .put(picture, callback);
+
+    }
+
+    public void getSharingLink(String id, ICallback<Permission> callback) {
+        mGraphServiceClient
+                .getMe()
+                .getDrive()
+                .getItems(id)
+                .getCreateLink("view","")
+                .buildRequest()
+                .post(callback);
+    }
+
+    /**
+     * Gets a picture from the device external storage root folder
+     * @return byte[] the default picture in a byte array
+     */
     private byte[]  getDefaultPicture(){
 
         if (getExternalStorageState() == StorageState.NOT_AVAILABLE) {
@@ -248,6 +313,11 @@ class GraphServiceController {
 
         return bytes;
     }
+
+    /**
+     * Gets the mounted state of device external storage
+     * @return
+     */
     private StorageState getExternalStorageState() {
         StorageState result = StorageState.NOT_AVAILABLE;
         String state = Environment.getExternalStorageState();
@@ -262,6 +332,13 @@ class GraphServiceController {
         return result;
     }
 
+    /**
+     * Converts a BufferedInputStream to a byte array
+     * @param inputStream
+     * @param bufferLength
+     * @return
+     * @throws IOException
+     */
     private byte[] convertBufferToBytes(BufferedInputStream inputStream, int bufferLength) throws IOException {
         if (inputStream == null)
             return null;
