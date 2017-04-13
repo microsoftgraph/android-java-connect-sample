@@ -91,9 +91,9 @@ class GraphServiceController {
         }
     }
 
-    public void sendMailWithPicture(String messageId,
-                                    byte[] picture,
-                                    ICallback<Attachment> callback){
+    public void addPictureToDraftMessage(String messageId,
+                                         byte[] picture,
+                                         ICallback<Attachment> callback){
         try {
             byte[] attachementBytes = new byte[picture.length];
 
@@ -101,7 +101,6 @@ class GraphServiceController {
                 attachementBytes = picture;
             } else {
                 attachementBytes = getDefaultPicture();
-                //Get the place holder photo when the user does not have a photo
             }
 
             FileAttachment fileAttachment = new FileAttachment();
@@ -132,6 +131,11 @@ class GraphServiceController {
 
         }
 
+    }
+
+    public void sendDraftMessage(String messageId,
+                                 ICallback<Void> callback){
+        mGraphServiceClient.getMe().getMessages(messageId).getSend().buildRequest().post(callback);
     }
 
     public void getUserProfilePicture(final String userPreferredName,
@@ -217,18 +221,21 @@ class GraphServiceController {
         if (getExternalStorageState() == StorageState.NOT_AVAILABLE) {
             return null;
         }
+        int bytesRead;
+        byte[] bytes = new byte[1024];
+
         String pathName = Environment.getExternalStorageDirectory() + "/";
         String fileName = Connect.getContext().getString(R.string.defaultImageFileName);
         File file = new File(pathName, fileName);
-        BufferedInputStream buf = null;
+        FileInputStream buf = null;
         if (file.exists() && file.canRead()){
             int size = (int) file.length();
 
-
-            byte[] bytes = new byte[size];
+            bytes = new byte[size];
             try {
-                buf = new BufferedInputStream(new FileInputStream(file));
-                buf.read(bytes, 0, bytes.length);
+                buf = new FileInputStream(file);
+                bytesRead = buf.read(bytes,0,size);
+
 
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
@@ -239,7 +246,7 @@ class GraphServiceController {
             }
         }
 
-        return convertBufferToBytes(buf, (int)file.length());
+        return bytes;
     }
     private StorageState getExternalStorageState() {
         StorageState result = StorageState.NOT_AVAILABLE;
@@ -255,15 +262,19 @@ class GraphServiceController {
         return result;
     }
 
-    private byte[] convertBufferToBytes(BufferedInputStream inputStream, int bufferLength){
+    private byte[] convertBufferToBytes(BufferedInputStream inputStream, int bufferLength) throws IOException {
         if (inputStream == null)
             return null;
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[bufferLength];
+
+        int x = inputStream.read(buffer,0,bufferLength);
+        Log.i("GraphServiceController", "bytes read from picture input stream " + String.valueOf(x));
+
         int n = 0;
         try {
-            while((n = inputStream.read(buffer)) >= 0){
+            while((n = inputStream.read(buffer,0,bufferLength)) >= 0){
                 outputStream.write(buffer, 0, n);
             }
             inputStream.close();
@@ -271,6 +282,7 @@ class GraphServiceController {
             e.printStackTrace();
         }
 
+        outputStream.close();
         return outputStream.toByteArray();
     }
 }

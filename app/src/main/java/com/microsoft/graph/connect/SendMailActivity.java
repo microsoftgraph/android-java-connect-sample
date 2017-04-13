@@ -105,11 +105,24 @@ public class SendMailActivity extends AppCompatActivity {
         graphServiceController.getUserProfilePicture(mPreferredName, new ICallback<byte[]>() {
             @Override
             public void success(final byte[] bytes) {
-                graphServiceController.sendMailWithPicture(messageId, bytes,
+                graphServiceController.addPictureToDraftMessage(messageId, bytes,
                         new ICallback<Attachment>() {
                             @Override
                             public void success(final Attachment anAttachment) {
-                                showSendMailSuccessUI();
+
+                                //Now send the mail
+                                graphServiceController.sendDraftMessage(messageId, new ICallback<Void>() {
+                                    @Override
+                                    public void success(Void aVoid) {
+                                        showSendMailSuccessUI();
+                                    }
+
+                                    @Override
+                                    public void failure(ClientException ex) {
+
+                                    }
+                                });
+
 
                             }
 
