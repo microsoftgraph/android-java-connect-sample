@@ -27,7 +27,7 @@ To use the Connect sample for Android, you need the following:
 * [Java Development Kit (JDK) 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html).
 
 <a name="register"></a>
-##Register and configure the app
+## Register and configure the app
 
 1. Sign into the [App Registration Portal](https://apps.dev.microsoft.com/) using either your personal or work or school account.
 2. Select **Add an app**.
@@ -51,6 +51,12 @@ To use the Connect sample for Android, you need the following:
 	> Note: Android Studio shows a **Frameworks detected** notification if you don't have the **Android Support Repository** installed. Open the SDK manager and add the Android Support Repository to avoid the Frameworks detected notification.
 4. Open the Constants.java file.
 	* Replace *ENTER_YOUR_CLIENT_ID* with the application id from the previous section.
+
+5. Build the app and install the .APK on your device or emulator.
+5. Enable the **Storage** permission for the installed sample app on your device or emulator
+6. Download the test.jpg image located in:  `android-java-connect-sample/app/src/main/res/drawable/test.jpg` to your device's external storage root folder.
+
+
 
 Once you've built the Connect sample, you can run it on an emulator or device. Pick a device with API level 16 or higher from the **Choose device** dialog.
 
