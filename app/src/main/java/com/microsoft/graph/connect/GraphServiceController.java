@@ -22,8 +22,6 @@ import com.microsoft.graph.extensions.ItemBody;
 import com.microsoft.graph.extensions.Message;
 import com.microsoft.graph.extensions.Permission;
 import com.microsoft.graph.extensions.Recipient;
-import com.microsoft.graph.options.HeaderOption;
-import com.microsoft.graph.options.Option;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
@@ -34,8 +32,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Handles the creation of the message and using the GraphServiceClient to
