@@ -73,6 +73,7 @@ class GraphServiceController {
             // create the email message
             Message message = createMessage(subject, body, emailAddress);
 
+
             mGraphServiceClient
                     .getMe()
                     .getMessages()
@@ -127,6 +128,7 @@ class GraphServiceController {
                     .getAttachments()
                     .buildRequest()
                     .post(fileAttachment, callback);
+          //  mGraphServiceClient.getMe().getMessages(messageId).get
 
         } catch (Exception ex) {
             Log.e("GraphServiceController","exception on send mail " + ex.getLocalizedMessage());
