@@ -22,6 +22,8 @@ import com.microsoft.graph.extensions.ItemBody;
 import com.microsoft.graph.extensions.Message;
 import com.microsoft.graph.extensions.Permission;
 import com.microsoft.graph.extensions.Recipient;
+import com.microsoft.graph.options.HeaderOption;
+import com.microsoft.graph.options.Option;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
@@ -32,6 +34,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Handles the creation of the message and using the GraphServiceClient to
@@ -41,9 +45,10 @@ import java.util.Collections;
 class GraphServiceController {
 
 
-    public enum StorageState{
+    public enum StorageState {
         NOT_AVAILABLE, WRITEABLE, READ_ONLY
     }
+
     private final IGraphServiceClient mGraphServiceClient;
 
     public GraphServiceController() {
@@ -54,11 +59,11 @@ class GraphServiceController {
      * Creates a draft email message using the Microsoft Graph API on Office 365. The mail is sent
      * from the address of the signed in user.
      *
-     * @param senderPreferredName  The mail senders principal user name (email addr)
-     * @param emailAddress The recipient email address.
-     * @param subject      The subject to use in the mail message.
-     * @param body         The body of the message.
-     * @param callback     The callback method to invoke on completion of the POST request
+     * @param senderPreferredName The mail senders principal user name (email addr)
+     * @param emailAddress        The recipient email address.
+     * @param subject             The subject to use in the mail message.
+     * @param body                The body of the message.
+     * @param callback            The callback method to invoke on completion of the POST request
      */
     public void createDraftMail(
             final String senderPreferredName,
@@ -67,12 +72,9 @@ class GraphServiceController {
             final String body,
             ICallback<Message> callback
     ) {
-
         try {
-
             // create the email message
             Message message = createMessage(subject, body, emailAddress);
-
 
             mGraphServiceClient
                     .getMe()
@@ -81,7 +83,7 @@ class GraphServiceController {
                     .post(message, callback);
 
         } catch (Exception ex) {
-            Log.e("GraphServiceController","exception on send mail " + ex.getLocalizedMessage());
+            Log.e("GraphServiceController", "exception on send mail " + ex.getLocalizedMessage());
             AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
             alertDialogBuidler.setTitle("Send mail failed");
             alertDialogBuidler.setMessage("The send mail method failed");
@@ -91,25 +93,25 @@ class GraphServiceController {
                 }
             });
             alertDialogBuidler.show();
-
         }
     }
 
     /**
-     * Posts a file attachment a draft message by message Id
-     * @param messageId String. The id of the draft message to add an attachment to
-     * @param picture Byte[]. The picture in bytes
-     * @param sharingLink  String. The sharing link to the uploaded picture
+     * Posts a file attachment in a draft message by message Id
+     *
+     * @param messageId   String. The id of the draft message to add an attachment to
+     * @param picture     Byte[]. The picture in bytes
+     * @param sharingLink String. The sharing link to the uploaded picture
      * @param callback
      */
     public void addPictureToDraftMessage(String messageId,
                                          byte[] picture,
                                          String sharingLink,
-                                         ICallback<Attachment> callback){
+                                         ICallback<Attachment> callback) {
         try {
             byte[] attachementBytes = new byte[picture.length];
 
-            if (picture.length > 0){
+            if (picture.length > 0) {
                 attachementBytes = picture;
             } else {
                 attachementBytes = getDefaultPicture();
@@ -120,18 +122,15 @@ class GraphServiceController {
             fileAttachment.contentBytes = attachementBytes;
             fileAttachment.contentType = "image/png";
             fileAttachment.name = "me.png";
-
-
             mGraphServiceClient
                     .getMe()
                     .getMessages(messageId)
                     .getAttachments()
                     .buildRequest()
                     .post(fileAttachment, callback);
-          //  mGraphServiceClient.getMe().getMessages(messageId).get
 
         } catch (Exception ex) {
-            Log.e("GraphServiceController","exception on send mail " + ex.getLocalizedMessage());
+            Log.e("GraphServiceController", "exception on send mail " + ex.getLocalizedMessage());
             AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
             alertDialogBuidler.setTitle("Send mail failed");
             alertDialogBuidler.setMessage("The send mail method failed");
@@ -141,75 +140,104 @@ class GraphServiceController {
                 }
             });
             alertDialogBuidler.show();
-
         }
-
     }
 
     /**
      * Sends a draft message to the specified recipients
+     *
      * @param messageId String. The id of the message to send
      * @param callback
      */
     public void sendDraftMessage(String messageId,
-                                 ICallback<Void> callback){
+                                 ICallback<Void> callback) {
+        try {
+
         mGraphServiceClient
                 .getMe()
                 .getMessages(messageId)
                 .getSend()
                 .buildRequest()
                 .post(callback);
+
+        } catch (Exception ex) {
+            Log.e("GraphServiceController", "exception on send draft message " + ex.getLocalizedMessage());
+            AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
+            alertDialogBuidler.setTitle("Send draft mail failed");
+            alertDialogBuidler.setMessage("The send draft mail method failed");
+            alertDialogBuidler.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            alertDialogBuidler.show();
+
+        }
     }
 
     /**
      * Gets the profile picture of the signed in user from the Microsoft Graph
+     *
      * @param userPreferredName
      * @param callback
      */
     public void getUserProfilePicture(final String userPreferredName,
-                               final ICallback<byte[]> callback){
-        mGraphServiceClient
-                .getMe()
-                .getPhoto()
-                .getContent()
-                .buildRequest()
-                .get(new ICallback<InputStream>() {
+                                      final ICallback<byte[]> callback) {
+        try {
 
-            @Override
-            public void success(final InputStream inputStream) {
-                try {
-                    byte[] pictureBytes = new byte[1024];
-                    BufferedInputStream bufferedInputStream = (BufferedInputStream)inputStream;
 
-                    //If the user's photo is not available, get the default test.jpg from the device external
-                    //storage root folder
-                    if (bufferedInputStream.available() < 1) {
-                        pictureBytes = getDefaultPicture();
-                    } else {
-                        pictureBytes = convertBufferToBytes(bufferedInputStream, inputStream.available());
-                    }
-                    callback.success(pictureBytes);
-                } catch (IOException e) {
-                    e.printStackTrace();
+            mGraphServiceClient
+                    .getMe()
+                    .getPhoto()
+                    .getContent()
+                    .buildRequest()
+                    .get(new ICallback<InputStream>() {
+
+                        @Override
+                        public void success(final InputStream inputStream) {
+                            try {
+                                byte[] pictureBytes = new byte[1024];
+                                BufferedInputStream bufferedInputStream = (BufferedInputStream) inputStream;
+
+                                //If the user's photo is not available, get the default test.jpg from the device external
+                                //storage root folder
+                                if (bufferedInputStream.available() < 1) {
+                                    pictureBytes = getDefaultPicture();
+                                } else {
+                                    pictureBytes = convertBufferToBytes(bufferedInputStream, inputStream.available());
+                                }
+                                callback.success(pictureBytes);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                        @Override
+                        public void failure(ClientException ex) {
+                            Log.e("GraphServiceController", "no picture found " + ex.getLocalizedMessage());
+                            byte[] pictureBytes = getDefaultPicture();
+                            if (pictureBytes.length > 0) {
+                                callback.success(pictureBytes);
+                            } else {
+                                callback.failure(ex);
+                            }
+                        }
+                    });
+        } catch (Exception ex ) {
+            Log.e("GraphServiceController", "exception on get user profile picture " + ex.getLocalizedMessage());
+            AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
+            alertDialogBuidler.setTitle("Get user profile picture failed");
+            alertDialogBuidler.setMessage("The get user profile picture method failed");
+            alertDialogBuidler.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
                 }
+            });
+            alertDialogBuidler.show();
 
-            }
-
-            @Override
-            public void failure(ClientException ex) {
-                Log.e("GraphServiceController", "no picture found " + ex.getLocalizedMessage());
-                byte[] pictureBytes = getDefaultPicture();
-                if (pictureBytes.length > 0){
-                    callback.success(pictureBytes);
-                } else {
-                    callback.failure(ex);
-                }
-            }
-        });
-
+        }
     }
-
-
 
     @VisibleForTesting
     Message createMessage(
@@ -217,14 +245,14 @@ class GraphServiceController {
             String body,
             String address) {
 
-        if(address == null || address.isEmpty()) {
+        if (address == null || address.isEmpty()) {
             throw new IllegalArgumentException("The address parameter can't be null or empty.");
         } else {
             // perform a simple validation of the email address
             String addressParts[] = address.split("@");
-            if(addressParts.length != 2 || addressParts[0].length() == 0 || addressParts[1].indexOf('.') == -1) {
+            if (addressParts.length != 2 || addressParts[0].length() == 0 || addressParts[1].indexOf('.') == -1) {
                 throw new IllegalArgumentException(
-                    String.format("The address parameter must be a valid email address {0}", address)
+                        String.format("The address parameter must be a valid email address {0}", address)
                 );
             }
         }
@@ -253,37 +281,68 @@ class GraphServiceController {
 
     /**
      * Uploads a user picture as byte array to the user's OneDrive root folder
-     * @param picture byte[] picture byte array
+     *
+     * @param picture  byte[] picture byte array
      * @param callback
      */
     public void uploadPictureToOneDrive(byte[] picture, ICallback<DriveItem> callback) {
 
-        mGraphServiceClient
-                .getMe()
-                .getDrive()
-                .getRoot()
-                .getItemWithPath("me.png")
-                .getContent()
-                .buildRequest()
-                .put(picture, callback);
+        try {
+            mGraphServiceClient
+                    .getMe()
+                    .getDrive()
+                    .getRoot()
+                    .getItemWithPath("me.png")
+                    .getContent()
+                    .buildRequest()
+                    .put(picture, callback);
+        } catch (Exception ex ) {
+            Log.e("GraphServiceController", "exception on upload picture to OneDrive " + ex.getLocalizedMessage());
+            AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
+            alertDialogBuidler.setTitle("Upload picture failed");
+            alertDialogBuidler.setMessage("The upload picture  method failed");
+            alertDialogBuidler.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            alertDialogBuidler.show();
+
+        }
 
     }
 
     public void getSharingLink(String id, ICallback<Permission> callback) {
+
+        try {
+
         mGraphServiceClient
                 .getMe()
                 .getDrive()
                 .getItems(id)
-                .getCreateLink("view","")
+                .getCreateLink("view", "")
                 .buildRequest()
                 .post(callback);
+        } catch (Exception ex) {
+            Log.e("GraphServiceController", "exception on get OneDrive sharing link " + ex.getLocalizedMessage());
+            AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
+            alertDialogBuidler.setTitle("Get sharing link failed");
+            alertDialogBuidler.setMessage("The get sharing link method failed");
+            alertDialogBuidler.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            alertDialogBuidler.show();
+        }
     }
 
     /**
      * Gets a picture from the device external storage root folder
+     *
      * @return byte[] the default picture in a byte array
      */
-    private byte[]  getDefaultPicture(){
+    private byte[] getDefaultPicture() {
 
         if (getExternalStorageState() == StorageState.NOT_AVAILABLE) {
             return null;
@@ -295,13 +354,13 @@ class GraphServiceController {
         String fileName = Connect.getContext().getString(R.string.defaultImageFileName);
         File file = new File(pathName, fileName);
         FileInputStream buf = null;
-        if (file.exists() && file.canRead()){
+        if (file.exists() && file.canRead()) {
             int size = (int) file.length();
 
             bytes = new byte[size];
             try {
                 buf = new FileInputStream(file);
-                bytesRead = buf.read(bytes,0,size);
+                bytesRead = buf.read(bytes, 0, size);
 
 
             } catch (FileNotFoundException e) {
@@ -318,6 +377,7 @@ class GraphServiceController {
 
     /**
      * Gets the mounted state of device external storage
+     *
      * @return
      */
     private StorageState getExternalStorageState() {
@@ -326,8 +386,7 @@ class GraphServiceController {
 
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             return StorageState.WRITEABLE;
-        }
-        else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+        } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
             return StorageState.READ_ONLY;
         }
 
@@ -336,6 +395,7 @@ class GraphServiceController {
 
     /**
      * Converts a BufferedInputStream to a byte array
+     *
      * @param inputStream
      * @param bufferLength
      * @return
@@ -348,12 +408,12 @@ class GraphServiceController {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[bufferLength];
 
-        int x = inputStream.read(buffer,0,bufferLength);
+        int x = inputStream.read(buffer, 0, bufferLength);
         Log.i("GraphServiceController", "bytes read from picture input stream " + String.valueOf(x));
 
         int n = 0;
         try {
-            while((n = inputStream.read(buffer,0,bufferLength)) >= 0){
+            while ((n = inputStream.read(buffer, 0, bufferLength)) >= 0) {
                 outputStream.write(buffer, 0, n);
             }
             inputStream.close();
