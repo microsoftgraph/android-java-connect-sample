@@ -1,6 +1,5 @@
-# <a name="connect-sample-for-android-using-the-microsoft-graph-sdk"></a>Exemple de connexion d’Android à l’aide du kit de développement Microsoft Graph
+﻿# <a name="connect-sample-for-android-using-the-microsoft-graph-sdk"></a>Exemple de connexion d’Android à l’aide du kit de développement Microsoft Graph
 
-![État de création](https://ricalo.visualstudio.com/_apis/public/build/definitions/06256fa7-d8e5-4ca0-8639-7c00eb6f1fe9/6/badge "État de création")
 
 >**Remarque :** nous sommes en train de mettre à jour cet exemple pour utiliser la [bibliothèque d’authentification recommandée](https://docs.microsoft.com/fr-fr/azure/active-directory/develop/active-directory-v2-libraries#compatible-client-libraries) pour les applications Android.
 
@@ -9,7 +8,7 @@
 
 > Pour prendre en charge **toutes les entreprises clientes** dans **tous les scénarios**, utilisez le point de terminaison Azure AD et gérez vos applications avec le [portail de gestion Azure](https://aka.ms/aadapplist). Pour plus d’informations, consultez les [fonctionnalités des points de terminaison Azure AD et Azure AD v2.0](https://graph.microsoft.io/docs/authorization/auth_overview#deciding-between-azure-ad-and-the-v2-authentication-endpoint).
 
-[![Exemple de connexion Microsoft Graph](../readme-images/O365-Android-Connect-video_play_icon.png)](https://www.youtube.com/watch?v=3IQIDFrqhY4 "Cliquez ici pour voir l’exemple en action")
+[![Exemple de connexion Microsoft Graph](/readme-images/O365-Android-Connect-video_play_icon.png)](https://www.youtube.com/watch?v=3IQIDFrqhY4 "Cliquez ici pour voir l’exemple en action")
 
 Chaque application Android commence par se connecter à Microsoft Graph pour travailler avec les services et les données Office 365. Cet exemple explique comment connecter, puis appeler une API via le kit de développement Microsoft Graph.
 
