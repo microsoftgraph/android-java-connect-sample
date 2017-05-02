@@ -6,6 +6,7 @@ package com.microsoft.graph.connect;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,6 +18,8 @@ import android.widget.Toast;
 
 import com.google.api.client.auth.openidconnect.IdToken;
 import com.google.api.client.json.gson.GsonFactory;
+import com.microsoft.identity.client.*;
+import com.microsoft.identity.client.UiBehavior;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +38,14 @@ import java.util.UUID;
 public class ConnectActivity extends AppCompatActivity  {
 
     private static final String TAG = "ConnectActivity";
+    private PublicClientApplication mApplication;
+    private AuthenticationResult mAuthResult;
+    private Handler mHandler;
+    private boolean mEnablePiiLogging = false;
+    private User mUser;
+
+    //Use the scopes from the constants class
+    private String[] mScopes;
 
     private Button mConnectButton;
     private TextView mTitleTextView;
@@ -44,6 +55,7 @@ public class ConnectActivity extends AppCompatActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         Bundle extras = getIntent().getExtras();
         setContentView(R.layout.activity_connect);
@@ -74,64 +86,35 @@ public class ConnectActivity extends AppCompatActivity  {
                 connect();
             }
         });
+        if (mApplication == null) {
+            mApplication = new PublicClientApplication(this.getApplicationContext());
+        }
 
     }
 
     private void connect() {
-        // define the post-auth callback
-        AuthenticationCallback<String> callback =
-                new AuthenticationCallback<String>() {
 
-                    @Override
-                    public void onSuccess(String idToken) {
-                        String name = "";
-                        String preferredUsername = "";
-
-                        try {
-                            // get the user info from the id token
-                            IdToken claims = IdToken.parse(new GsonFactory(), idToken);
-                            name = claims.getPayload().get("name").toString();
-                            preferredUsername = claims.getPayload().get("preferred_username").toString();
-
-                        } catch (IOException ioe) {
-                            Log.e(TAG, ioe.getMessage());
-                        } catch (NullPointerException npe) {
-                            Log.e(TAG, npe.getMessage());
-
-                        }
-
-                        // Prepare the SendMailActivity intent
-                        Intent sendMailActivity =
-                                new Intent(ConnectActivity.this, SendMailActivity.class);
-
-                        // take the user's info along
-                        sendMailActivity.putExtra(SendMailActivity.ARG_GIVEN_NAME, name);
-                        sendMailActivity.putExtra(SendMailActivity.ARG_DISPLAY_ID, preferredUsername);
-
-
-                        // actually start the activity
-                        startActivity(sendMailActivity);
-
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                resetUIForConnect();
-                            }
-                        });
-
-
-                    }
-
-                    @Override
-                    public void onError(Exception exc) {
-                        showConnectErrorUI();
-                    }
-                };
+        // The sample app is having the PII enable setting on the MainActivity. Ideally, app should decide to enable Pii or not,
+        // if it's enabled, it should be  the setting when the application is onCreate.
+        if (mEnablePiiLogging) {
+            Logger.getInstance().setEnablePII(true);
+        } else {
+            Logger.getInstance().setEnablePII(false);
+        }
 
         AuthenticationManager mgr = AuthenticationManager.getInstance(this);
-        mgr.connect(this, callback);
-    }
 
+        mgr.connect(
+                this,
+                getAuthenticationCallback());
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (mApplication != null) {
+            mApplication.handleInteractiveRequestRedirect(requestCode, resultCode, data);
+        }
+    }
     private static boolean hasAzureConfiguration() {
         try {
             UUID.fromString(Constants.CLIENT_ID);
@@ -168,4 +151,101 @@ public class ConnectActivity extends AppCompatActivity  {
                 R.string.connect_toast_text_error,
                 Toast.LENGTH_LONG).show();
     }
+
+    private com.microsoft.identity.client.AuthenticationCallback getAuthenticationCallback() {
+        return new com.microsoft.identity.client.AuthenticationCallback() {
+
+            @Override
+            public void onSuccess(AuthenticationResult authenticationResult) {
+                mUser = authenticationResult.getUser();
+                mAuthResult = authenticationResult;
+
+
+                String name = "";
+                String preferredUsername = "";
+
+                try {
+                    // get the user info from the id token
+                    IdToken claims = IdToken.parse(new GsonFactory(), mAuthResult.getIdToken());
+                    name = claims.getPayload().get("name").toString();
+                    preferredUsername = claims.getPayload().get("preferred_username").toString();
+
+                    AuthenticationManager mgr = AuthenticationManager.getInstance(getApplicationContext());
+
+                    mgr.setAuthentcationResult(mAuthResult);
+
+                } catch (IOException ioe) {
+                    Log.e(TAG, ioe.getMessage());
+                } catch (NullPointerException npe) {
+                    Log.e(TAG, npe.getMessage());
+
+                }
+
+                // Prepare the SendMailActivity intent
+                Intent sendMailActivity =
+                        new Intent(ConnectActivity.this, SendMailActivity.class);
+
+                // take the user's info along
+                sendMailActivity.putExtra(SendMailActivity.ARG_GIVEN_NAME, name);
+                sendMailActivity.putExtra(SendMailActivity.ARG_DISPLAY_ID, preferredUsername);
+
+
+                // actually start the activity
+                startActivity(sendMailActivity);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        resetUIForConnect();
+                    }
+                });
+
+
+            }
+
+            @Override
+            public void onError(MsalException exception) {
+                // Check the exception type.
+                if (exception instanceof MsalClientException) {
+                    // This means errors happened in the sdk itself, could be network, Json parse, etc. Check MsalError.java
+                    // for detailed list of the errors.
+                    showMessage(exception.getMessage());
+                } else if (exception instanceof MsalServiceException) {
+                    // This means something is wrong when the sdk is communication to the service, mostly likely it's the client
+                    // configuration.
+                    showMessage(exception.getMessage());
+                } else if (exception instanceof MsalUiRequiredException) {
+                    // This explicitly indicates that developer needs to prompt the user, it could be refresh token is expired, revoked
+                    // or user changes the password; or it could be that no token was found in the token cache.
+                    AuthenticationManager mgr = AuthenticationManager.getInstance(getApplicationContext());
+
+
+                   mgr.callAcquireToken(ConnectActivity.this,getAuthenticationCallback());
+                }
+            }
+
+            @Override
+            public void onCancel() {
+                showMessage("User cancelled the flow.");
+            }
+        };
+    }
+    private void showMessage(final String msg) {
+        getHandler().post(new Runnable() {
+
+            @Override
+            public void run() {
+                Toast.makeText(ConnectActivity.this, msg, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private Handler getHandler() {
+        if (mHandler == null) {
+            return new Handler(ConnectActivity.this.getMainLooper());
+        }
+
+        return mHandler;
+    }
+
 }

@@ -34,7 +34,6 @@ public class SendMailActivity extends AppCompatActivity {
     // arguments for this activity
     public static final String ARG_GIVEN_NAME = "givenName";
     public static final String ARG_DISPLAY_ID = "displayableId";
-    public static final String ARG_UPN = "upn";
 
     // views
     private EditText mEmailEditText;
@@ -88,7 +87,7 @@ public class SendMailActivity extends AppCompatActivity {
         final GraphServiceController graphServiceController = new GraphServiceController();
 
         //1. Get the signed in user's profile picture
-        graphServiceController.getUserProfilePicture(mPreferredName, new ICallback<byte[]>() {
+        graphServiceController.getUserProfilePicture(new ICallback<byte[]>() {
             @Override
             public void success(final byte[] bytes) {
 
