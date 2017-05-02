@@ -7,7 +7,6 @@ package com.microsoft.graph.connect;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 
-import com.lnikkila.oidc.security.UserNotAuthenticatedWrapperException;
 import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.core.DefaultClientConfig;
 import com.microsoft.graph.core.IClientConfig;
@@ -43,9 +42,7 @@ public class GraphServiceClientManager implements IAuthenticationProvider {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (UserNotAuthenticatedWrapperException e) {
-            e.printStackTrace();
-        } catch (OperationCanceledException e) {
+        }  catch (OperationCanceledException e) {
             e.printStackTrace();
         }
     }

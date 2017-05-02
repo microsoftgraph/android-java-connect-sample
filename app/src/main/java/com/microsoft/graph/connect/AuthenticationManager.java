@@ -4,20 +4,14 @@
  */
 package com.microsoft.graph.connect;
 
-import android.accounts.Account;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Bundle;
 
-import com.lnikkila.oidc.OIDCAccountManager;
-import com.lnikkila.oidc.OIDCRequestManager;
-import com.lnikkila.oidc.security.UserNotAuthenticatedWrapperException;
-import com.microsoft.identity.client.*;
+import com.microsoft.identity.client.AuthenticationResult;
+import com.microsoft.identity.client.PublicClientApplication;
+import com.microsoft.identity.client.User;
 
 import java.io.IOException;
 
@@ -53,7 +47,7 @@ public class AuthenticationManager {
      *
      * @return mAccessToken
      */
-    public String getAccessToken() throws AuthenticatorException, IOException, OperationCanceledException, UserNotAuthenticatedWrapperException {
+    public String getAccessToken() throws AuthenticatorException, IOException, OperationCanceledException {
         return  mAuthResult.getAccessToken();
     }
 

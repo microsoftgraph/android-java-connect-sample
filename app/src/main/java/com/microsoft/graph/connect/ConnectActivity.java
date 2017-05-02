@@ -7,7 +7,6 @@ package com.microsoft.graph.connect;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -16,13 +15,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.api.client.auth.openidconnect.IdToken;
-import com.google.api.client.json.gson.GsonFactory;
-import com.microsoft.identity.client.*;
-import com.microsoft.identity.client.UiBehavior;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.microsoft.identity.client.AuthenticationResult;
+import com.microsoft.identity.client.Logger;
+import com.microsoft.identity.client.MsalClientException;
+import com.microsoft.identity.client.MsalException;
+import com.microsoft.identity.client.MsalServiceException;
+import com.microsoft.identity.client.MsalUiRequiredException;
+import com.microsoft.identity.client.PublicClientApplication;
+import com.microsoft.identity.client.User;
 
 import java.io.IOException;
 import java.net.URI;
@@ -171,17 +172,14 @@ public class ConnectActivity extends AppCompatActivity  {
 
                 try {
                     // get the user info from the id token
-                    IdToken claims = IdToken.parse(new GsonFactory(), mAuthResult.getIdToken());
-                    name = claims.getPayload().get("name").toString();
-                    preferredUsername = claims.getPayload().get("preferred_username").toString();
+                    name = mAuthResult.getUser().getName();
+                    preferredUsername = mAuthResult.getUser().getUserIdentifier();
 
                     AuthenticationManager mgr = AuthenticationManager.getInstance(getApplicationContext());
 
                     mgr.setAuthentcationResult(mAuthResult);
 
-                } catch (IOException ioe) {
-                    Log.e(TAG, ioe.getMessage());
-                } catch (NullPointerException npe) {
+                }  catch (NullPointerException npe) {
                     Log.e(TAG, npe.getMessage());
 
                 }
