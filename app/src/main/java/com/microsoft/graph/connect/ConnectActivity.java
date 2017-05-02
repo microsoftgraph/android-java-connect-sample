@@ -173,7 +173,7 @@ public class ConnectActivity extends AppCompatActivity  {
                 try {
                     // get the user info from the id token
                     name = mAuthResult.getUser().getName();
-                    preferredUsername = mAuthResult.getUser().getUserIdentifier();
+                    preferredUsername = mAuthResult.getUser().getDisplayableId();
 
                     AuthenticationManager mgr = AuthenticationManager.getInstance(getApplicationContext());
 
