@@ -46,7 +46,6 @@ dependencies {
 
 
     // OIDCAndroidLib
-    compile project(':oidclib')
     compile project(':msal')
     // Include the SDK as a dependency
     compile 'com.microsoft.graph:msgraph-sdk-android:1.2.0'
