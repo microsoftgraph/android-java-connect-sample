@@ -104,9 +104,14 @@ public class ConnectActivity extends AppCompatActivity  {
 
         AuthenticationManager mgr = AuthenticationManager.getInstance(this);
 
-        mgr.connect(
-                this,
-                getAuthenticationCallback());
+        if (mUser == null ) {
+            mgr.connect(
+                    this,
+                    getAuthenticationCallback());
+
+        } else {
+            mgr.callAcquireTokenSilent(mUser,true, getAuthenticationCallback());
+        }
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
