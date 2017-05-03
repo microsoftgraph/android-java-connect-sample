@@ -7,6 +7,7 @@ package com.microsoft.graph.connect;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
@@ -194,6 +195,8 @@ class GraphServiceController {
                             try {
                                 byte[] pictureBytes = new byte[1024];
                                 BufferedInputStream bufferedInputStream = (BufferedInputStream) inputStream;
+                                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                                StrictMode.setThreadPolicy(policy);
 
                                 //If the user's photo is not available, get the default test.jpg from the device external
                                 //storage root folder
