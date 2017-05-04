@@ -9,7 +9,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0"
+        versionName "1.2"
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -28,7 +29,11 @@ android {
             resolutionStrategy.force 'com.android.support:support-annotations:23.4.0'
         }
     }
-
+    dexOptions {
+        preDexLibraries = false
+        jumboMode = true
+        javaMaxHeapSize "4g"
+    }
     packagingOptions {
         exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
         exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
@@ -44,7 +49,7 @@ dependencies {
     compile project(':oidclib')
 
     // Include the SDK as a dependency
-    compile 'com.microsoft.graph:msgraph-sdk-android:1.0.0'
+    compile 'com.microsoft.graph:msgraph-sdk-android:1.2.0'
     // Include GSON as a dependency
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'commons-io:commons-io:2.0.1'

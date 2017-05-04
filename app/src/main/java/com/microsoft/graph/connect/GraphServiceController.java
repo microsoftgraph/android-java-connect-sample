@@ -72,7 +72,6 @@ class GraphServiceController {
         try {
             // create the email message
             Message message = createMessage(subject, body, emailAddress);
-
             mGraphServiceClient
                     .getMe()
                     .getMessages()
@@ -150,12 +149,12 @@ class GraphServiceController {
                                  ICallback<Void> callback) {
         try {
 
-        mGraphServiceClient
-                .getMe()
-                .getMessages(messageId)
-                .getSend()
-                .buildRequest()
-                .post(callback);
+            mGraphServiceClient
+                    .getMe()
+                    .getMessages(messageId)
+                    .getSend()
+                    .buildRequest()
+                    .post(callback);
 
         } catch (Exception ex) {
             Log.e("GraphServiceController", "exception on send draft message " + ex.getLocalizedMessage());
@@ -168,7 +167,6 @@ class GraphServiceController {
                 }
             });
             alertDialogBuidler.show();
-
         }
     }
 
@@ -181,8 +179,6 @@ class GraphServiceController {
     public void getUserProfilePicture(final String userPreferredName,
                                       final ICallback<byte[]> callback) {
         try {
-
-
             mGraphServiceClient
                     .getMe()
                     .getPhoto()
@@ -209,7 +205,6 @@ class GraphServiceController {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-
                         }
 
                         @Override
@@ -223,7 +218,7 @@ class GraphServiceController {
                             }
                         }
                     });
-        } catch (Exception ex ) {
+        } catch (Exception ex) {
             Log.e("GraphServiceController", "exception on get user profile picture " + ex.getLocalizedMessage());
             AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
             alertDialogBuidler.setTitle("Get user profile picture failed");
@@ -255,25 +250,17 @@ class GraphServiceController {
                 );
             }
         }
-
         Message message = new Message();
-
         EmailAddress emailAddress = new EmailAddress();
         emailAddress.address = address;
-
         Recipient recipient = new Recipient();
         recipient.emailAddress = emailAddress;
-
         message.toRecipients = Collections.singletonList(recipient);
-
         ItemBody itemBody = new ItemBody();
         itemBody.content = body;
         itemBody.contentType = BodyType.html;
-
         message.body = itemBody;
-
         message.subject = subject;
-
         return message;
     }
 
@@ -295,7 +282,7 @@ class GraphServiceController {
                     .getContent()
                     .buildRequest()
                     .put(picture, callback);
-        } catch (Exception ex ) {
+        } catch (Exception ex) {
             Log.e("GraphServiceController", "exception on upload picture to OneDrive " + ex.getLocalizedMessage());
             AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
             alertDialogBuidler.setTitle("Upload picture failed");
@@ -306,22 +293,20 @@ class GraphServiceController {
                 }
             });
             alertDialogBuidler.show();
-
         }
-
     }
 
     public void getSharingLink(String id, ICallback<Permission> callback) {
 
         try {
 
-        mGraphServiceClient
-                .getMe()
-                .getDrive()
-                .getItems(id)
-                .getCreateLink("view", "")
-                .buildRequest()
-                .post(callback);
+            mGraphServiceClient
+                    .getMe()
+                    .getDrive()
+                    .getItems(id)
+                    .getCreateLink("view", "")
+                    .buildRequest()
+                    .post(callback);
         } catch (Exception ex) {
             Log.e("GraphServiceController", "exception on get OneDrive sharing link " + ex.getLocalizedMessage());
             AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
@@ -360,8 +345,6 @@ class GraphServiceController {
             try {
                 buf = new FileInputStream(file);
                 bytesRead = buf.read(bytes, 0, size);
-
-
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -370,7 +353,6 @@ class GraphServiceController {
                 e.printStackTrace();
             }
         }
-
         return bytes;
     }
 
@@ -388,7 +370,6 @@ class GraphServiceController {
         } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
             return StorageState.READ_ONLY;
         }
-
         return result;
     }
 
@@ -403,10 +384,8 @@ class GraphServiceController {
     private byte[] convertBufferToBytes(BufferedInputStream inputStream, int bufferLength) throws IOException {
         if (inputStream == null)
             return null;
-
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[bufferLength];
-
         int x = inputStream.read(buffer, 0, bufferLength);
         Log.i("GraphServiceController", "bytes read from picture input stream " + String.valueOf(x));
 
