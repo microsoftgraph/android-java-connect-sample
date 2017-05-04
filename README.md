@@ -1,7 +1,7 @@
 # Connect Sample for Android Using the Microsoft Graph SDK
 
 
->**Note:** We're in the process of updating this sample to use the [recommended auth library](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-libraries#compatible-client-libraries) for Android apps.
+>**Note:** We've updated this sample to use the [recommended auth library](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-libraries#compatible-client-libraries) for Android apps.
 
 
 > **Building apps for enterprise customers?** Your app may not work if your enterprise customer turns on enterprise mobility security features like <a href="https://azure.microsoft.com/en-us/documentation/articles/active-directory-conditional-access-device-policies/" target="_newtab">conditional device access</a>. In this case, you may not know and your customers may experience errors. 
@@ -30,7 +30,9 @@ To use the Connect sample for Android, you need the following:
 ## Register and configure the app
 
 1. Sign into the [App Registration Portal](https://apps.dev.microsoft.com/) using either your personal or work or school account.
-2. Select **Add an app**.
+2. Add a new **Converged application** by Selecting **Add an app**.
+   > **Note:** The app registration portal also allows you to create **Azure AD Only** applications. The authentication library used in this sample is not compatible with Azure AD Only applications.
+
 3. Enter a name for the app, and select **Create application**.
 	
 	The registration page displays, listing the properties of your app.
