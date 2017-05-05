@@ -30,7 +30,9 @@ To use the Connect sample for Android, you need the following:
 ## Register and configure the app
 
 1. Sign into the [App Registration Portal](https://apps.dev.microsoft.com/) using either your personal or work or school account.
-2. Select **Add an app**.
+2. Add a new **Converged application** by Selecting **Add an app**.
+   > **Note:** The app registration portal also allows you to create **Azure AD Only** applications. The authentication library used in this sample is not compatible with Azure AD Only applications.
+
 3. Enter a name for the app, and select **Create application**.
 	
 	The registration page displays, listing the properties of your app.

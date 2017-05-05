@@ -30,7 +30,7 @@
     <!-- Email text -->
     <string name="mail_subject_text">Welcome to Microsoft Graph development on Android with the Connect sample</string>
 
-    <string formatted="false" name="mail_body_text2">&lt;html&gt;&lt;head&gt;
+    <string name="mail_body_text2" formatted="false">&lt;html&gt;&lt;head&gt;
 &lt;meta http-equiv=\'Content-Type\' content=\'text/html; charset=us-ascii\'&gt;
 &lt;title&gt;&lt;/title&gt;
 &lt;/head&gt;
