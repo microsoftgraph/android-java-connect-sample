@@ -4,8 +4,13 @@
  */
 package com.microsoft.graph.connect;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.support.annotation.VisibleForTesting;
@@ -110,7 +115,12 @@ class GraphServiceController {
             if (picture.length > 0) {
                 attachementBytes = picture;
             } else {
-                attachementBytes = getDefaultPicture();
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
+                    attachementBytes = getDefaultPicture();
+                }
+                else {
+                    attachementBytes = getTestPicture();
+                }
             }
 
             FileAttachment fileAttachment = new FileAttachment();
@@ -197,7 +207,12 @@ class GraphServiceController {
                                 //If the user's photo is not available, get the default test.jpg from the device external
                                 //storage root folder
                                 if (bufferedInputStream.available() < 1) {
-                                    pictureBytes = getDefaultPicture();
+                                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
+                                        pictureBytes = getDefaultPicture();
+                                    }
+                                    else {
+                                        pictureBytes = getTestPicture();
+                                    }
                                 } else {
                                     pictureBytes = convertBufferToBytes(bufferedInputStream, inputStream.available());
                                 }
@@ -210,7 +225,14 @@ class GraphServiceController {
                         @Override
                         public void failure(ClientException ex) {
                             Log.e("GraphServiceController", "no picture found " + ex.getLocalizedMessage());
-                            byte[] pictureBytes = getDefaultPicture();
+                            byte[] pictureBytes = new byte[1024];
+                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
+                                pictureBytes = getDefaultPicture();
+                            }
+                            else {
+                                pictureBytes = getTestPicture();
+                            }
+
                             if (pictureBytes.length > 0) {
                                 callback.success(pictureBytes);
                             } else {
@@ -328,9 +350,7 @@ class GraphServiceController {
      */
     private byte[] getDefaultPicture() {
 
-        if (getExternalStorageState() == StorageState.NOT_AVAILABLE) {
-            return null;
-        }
+
         int bytesRead;
         byte[] bytes = new byte[1024];
 
@@ -356,6 +376,17 @@ class GraphServiceController {
         return bytes;
     }
 
+    @TargetApi(21)
+    private byte[] getTestPicture() {
+        byte[] bytes = new byte[1024];
+        int resId = Connect.getInstance().getResources().getIdentifier("test","drawable",Connect.getInstance().getPackageName());
+        Drawable image = Connect.getInstance().getDrawable(resId);
+        Bitmap bitmap = ((BitmapDrawable)image).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream);
+        bytes = stream.toByteArray();
+        return bytes;
+    }
     /**
      * Gets the mounted state of device external storage
      *
