@@ -1,7 +1,7 @@
 # Connect Sample for Android Using the Microsoft Graph SDK
 
 
->**Note:** We're in the process of updating this sample to use the [recommended auth library](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-libraries#compatible-client-libraries) for Android apps.
+>**Note:** We've updated this sample to use the [recommended auth library](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-libraries#compatible-client-libraries) for Android apps.
 
 
 > **Building apps for enterprise customers?** Your app may not work if your enterprise customer turns on enterprise mobility security features like <a href="https://azure.microsoft.com/en-us/documentation/articles/active-directory-conditional-access-device-policies/" target="_newtab">conditional device access</a>. In this case, you may not know and your customers may experience errors. 
@@ -44,17 +44,18 @@ To use the Connect sample for Android, you need the following:
 
 1. Install [Android Studio](http://developer.android.com/sdk/index.html) and add the Android SDK packages according to the [instructions](http://developer.android.com/sdk/installing/adding-packages.html) on developer.android.com.
 2. Download or clone this sample.
-3. Start Android Studio.
+3. Download the [OIDC Android Authentication Library](https://github.com/kalemontes/OIDCAndroidLib) . You will reference the oidclib project in the sample.
+4. Start Android Studio.
 	1. Close any projects that you might have open, and then choose **Open an existing Android Studio project**.
 	2. Browse to your local repository and choose the Android-Connect project. Click **OK**.
 	
 	> Note: Android Studio shows a **Frameworks detected** notification if you don't have the **Android Support Repository** installed. Open the SDK manager and add the Android Support Repository to avoid the Frameworks detected notification.
-4. Open the Constants.java file.
+5. Open the Constants.java file.
 	* Replace *ENTER_YOUR_CLIENT_ID* with the application id from the previous section.
 
-5. Build the app and install the .APK on your device or emulator.
-5. Enable the **Storage** permission for the installed sample app on your device or emulator
-6. Download the test.jpg image located in:  `android-java-connect-sample/app/src/main/res/drawable/test.jpg` to your device's external storage root folder.
+6. Build the app and install the .APK on your device or emulator.
+7. Enable the **Storage** permission for the installed sample app on your device or emulator
+8. Download the test.jpg image located in:  `android-java-connect-sample/app/src/main/res/drawable/test.jpg` to your device's external storage root folder.
 
 
 
