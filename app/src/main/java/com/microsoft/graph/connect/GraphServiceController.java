@@ -4,8 +4,13 @@
  */
 package com.microsoft.graph.connect;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.support.annotation.VisibleForTesting;
@@ -72,7 +77,6 @@ class GraphServiceController {
         try {
             // create the email message
             Message message = createMessage(subject, body, emailAddress);
-
             mGraphServiceClient
                     .getMe()
                     .getMessages()
@@ -111,7 +115,12 @@ class GraphServiceController {
             if (picture.length > 0) {
                 attachementBytes = picture;
             } else {
-                attachementBytes = getDefaultPicture();
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
+                    attachementBytes = getDefaultPicture();
+                }
+                else {
+                    attachementBytes = getTestPicture();
+                }
             }
 
             FileAttachment fileAttachment = new FileAttachment();
@@ -150,12 +159,12 @@ class GraphServiceController {
                                  ICallback<Void> callback) {
         try {
 
-        mGraphServiceClient
-                .getMe()
-                .getMessages(messageId)
-                .getSend()
-                .buildRequest()
-                .post(callback);
+            mGraphServiceClient
+                    .getMe()
+                    .getMessages(messageId)
+                    .getSend()
+                    .buildRequest()
+                    .post(callback);
 
         } catch (Exception ex) {
             Log.e("GraphServiceController", "exception on send draft message " + ex.getLocalizedMessage());
@@ -168,7 +177,6 @@ class GraphServiceController {
                 }
             });
             alertDialogBuidler.show();
-
         }
     }
 
@@ -179,8 +187,6 @@ class GraphServiceController {
      */
     public void getUserProfilePicture(final ICallback<byte[]> callback) {
         try {
-
-
             mGraphServiceClient
                     .getMe()
                     .getPhoto()
@@ -193,6 +199,8 @@ class GraphServiceController {
                             try {
                                 byte[] pictureBytes = new byte[1024];
                                 BufferedInputStream bufferedInputStream = (BufferedInputStream) inputStream;
+                                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                                StrictMode.setThreadPolicy(policy);
 
                                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                                 StrictMode.setThreadPolicy(policy);
@@ -200,7 +208,12 @@ class GraphServiceController {
                                 //If the user's photo is not available, get the default test.jpg from the device external
                                 //storage root folder
                                 if (bufferedInputStream.available() < 1) {
-                                    pictureBytes = getDefaultPicture();
+                                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
+                                        pictureBytes = getDefaultPicture();
+                                    }
+                                    else {
+                                        pictureBytes = getTestPicture();
+                                    }
                                 } else {
                                     pictureBytes = convertBufferToBytes(bufferedInputStream, inputStream.available());
                                 }
@@ -208,13 +221,19 @@ class GraphServiceController {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-
                         }
 
                         @Override
                         public void failure(ClientException ex) {
                             Log.e("GraphServiceController", "no picture found " + ex.getLocalizedMessage());
-                            byte[] pictureBytes = getDefaultPicture();
+                            byte[] pictureBytes = new byte[1024];
+                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
+                                pictureBytes = getDefaultPicture();
+                            }
+                            else {
+                                pictureBytes = getTestPicture();
+                            }
+
                             if (pictureBytes.length > 0) {
                                 callback.success(pictureBytes);
                             } else {
@@ -222,7 +241,7 @@ class GraphServiceController {
                             }
                         }
                     });
-        } catch (Exception ex ) {
+        } catch (Exception ex) {
             Log.e("GraphServiceController", "exception on get user profile picture " + ex.getLocalizedMessage());
             AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
             alertDialogBuidler.setTitle("Get user profile picture failed");
@@ -254,25 +273,17 @@ class GraphServiceController {
                 );
             }
         }
-
         Message message = new Message();
-
         EmailAddress emailAddress = new EmailAddress();
         emailAddress.address = address;
-
         Recipient recipient = new Recipient();
         recipient.emailAddress = emailAddress;
-
         message.toRecipients = Collections.singletonList(recipient);
-
         ItemBody itemBody = new ItemBody();
         itemBody.content = body;
         itemBody.contentType = BodyType.html;
-
         message.body = itemBody;
-
         message.subject = subject;
-
         return message;
     }
 
@@ -294,7 +305,7 @@ class GraphServiceController {
                     .getContent()
                     .buildRequest()
                     .put(picture, callback);
-        } catch (Exception ex ) {
+        } catch (Exception ex) {
             Log.e("GraphServiceController", "exception on upload picture to OneDrive " + ex.getLocalizedMessage());
             AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
             alertDialogBuidler.setTitle("Upload picture failed");
@@ -305,22 +316,20 @@ class GraphServiceController {
                 }
             });
             alertDialogBuidler.show();
-
         }
-
     }
 
     public void getSharingLink(String id, ICallback<Permission> callback) {
 
         try {
 
-        mGraphServiceClient
-                .getMe()
-                .getDrive()
-                .getItems(id)
-                .getCreateLink("view", "")
-                .buildRequest()
-                .post(callback);
+            mGraphServiceClient
+                    .getMe()
+                    .getDrive()
+                    .getItems(id)
+                    .getCreateLink("view", "")
+                    .buildRequest()
+                    .post(callback);
         } catch (Exception ex) {
             Log.e("GraphServiceController", "exception on get OneDrive sharing link " + ex.getLocalizedMessage());
             AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
@@ -342,9 +351,7 @@ class GraphServiceController {
      */
     private byte[] getDefaultPicture() {
 
-        if (getExternalStorageState() == StorageState.NOT_AVAILABLE) {
-            return null;
-        }
+
         int bytesRead;
         byte[] bytes = new byte[1024];
 
@@ -359,8 +366,6 @@ class GraphServiceController {
             try {
                 buf = new FileInputStream(file);
                 bytesRead = buf.read(bytes, 0, size);
-
-
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -369,10 +374,20 @@ class GraphServiceController {
                 e.printStackTrace();
             }
         }
-
         return bytes;
     }
 
+    @TargetApi(21)
+    private byte[] getTestPicture() {
+        byte[] bytes = new byte[1024];
+        int resId = Connect.getInstance().getResources().getIdentifier("test","drawable",Connect.getInstance().getPackageName());
+        Drawable image = Connect.getInstance().getDrawable(resId);
+        Bitmap bitmap = ((BitmapDrawable)image).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream);
+        bytes = stream.toByteArray();
+        return bytes;
+    }
     /**
      * Gets the mounted state of device external storage
      *
@@ -387,7 +402,6 @@ class GraphServiceController {
         } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
             return StorageState.READ_ONLY;
         }
-
         return result;
     }
 
@@ -402,10 +416,8 @@ class GraphServiceController {
     private byte[] convertBufferToBytes(BufferedInputStream inputStream, int bufferLength) throws IOException {
         if (inputStream == null)
             return null;
-
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[bufferLength];
-
         int x = inputStream.read(buffer, 0, bufferLength);
         Log.i("GraphServiceController", "bytes read from picture input stream " + String.valueOf(x));
 

@@ -34,6 +34,7 @@ public class SendMailActivity extends AppCompatActivity {
     // arguments for this activity
     public static final String ARG_GIVEN_NAME = "givenName";
     public static final String ARG_DISPLAY_ID = "displayableId";
+    public static final String ARG_UPN = "upn";
 
     // views
     private EditText mEmailEditText;
@@ -68,7 +69,7 @@ public class SendMailActivity extends AppCompatActivity {
      * or failure() methods in this class which will then take the next steps on the UI.
      * This method sends the email using the address stored in the mEmailEditText view.
      * The subject and body of the message is stored in the strings.xml file.
-     *
+     * <p>
      * The following calls are made asynchronously in a chain of callback invocations.
      * 1. Get the user's profile picture from Microsoft Graph
      * 2. Upload the profile picture to the user's OneDrive root folder
@@ -82,9 +83,9 @@ public class SendMailActivity extends AppCompatActivity {
     public void onSendMailButtonClick(View v) {
         try {
 
-        resetUIForSendMail();
+            resetUIForSendMail();
 
-        final GraphServiceController graphServiceController = new GraphServiceController();
+            final GraphServiceController graphServiceController = new GraphServiceController();
 
         //1. Get the signed in user's profile picture
         graphServiceController.getUserProfilePicture(new ICallback<byte[]>() {

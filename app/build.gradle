@@ -26,16 +26,14 @@ android {
             resolutionStrategy.force 'com.android.support:support-annotations:25.3.1'
         }
     }
-    packagingOptions {
-        exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
-        exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
-    }
-    productFlavors {
-    }
     dexOptions {
         preDexLibraries = false
         jumboMode = true
         javaMaxHeapSize "4g"
+    }
+    packagingOptions {
+        exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
     }
 }
 
@@ -48,7 +46,7 @@ dependencies {
     // OIDCAndroidLib
     compile project(':msal')
     // Include the SDK as a dependency
-    compile 'com.microsoft.graph:msgraph-sdk-android:1.0.0'
+    compile 'com.microsoft.graph:msgraph-sdk-android:1.2.0'
     // Include GSON as a dependency
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'commons-io:commons-io:2.0.1'
