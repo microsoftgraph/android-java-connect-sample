@@ -199,8 +199,6 @@ class GraphServiceController {
                             try {
                                 byte[] pictureBytes = new byte[1024];
                                 BufferedInputStream bufferedInputStream = (BufferedInputStream) inputStream;
-                                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                                StrictMode.setThreadPolicy(policy);
 
                                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                                 StrictMode.setThreadPolicy(policy);

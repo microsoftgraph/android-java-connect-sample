@@ -40,11 +40,13 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:appcompat-v7:25.3.0'
 
 
-    // OIDCAndroidLib
-    compile project(':msal')
+    compile ('com.microsoft.identity.client:msal:0.1.+') {
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+    }
+    compile 'com.android.volley:volley:1.0.0'
     // Include the SDK as a dependency
     compile 'com.microsoft.graph:msgraph-sdk-android:1.2.0'
     // Include GSON as a dependency

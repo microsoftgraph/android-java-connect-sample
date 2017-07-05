@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.AuthenticationResult;
 import com.microsoft.identity.client.Logger;
 import com.microsoft.identity.client.MsalClientException;
@@ -36,7 +37,7 @@ import java.util.UUID;
  * If there are cached tokens, the app tries to reuse them.
  * The activity redirects the user to the SendMailActivity upon successful connection.
  */
-public class ConnectActivity extends AppCompatActivity  {
+public class ConnectActivity extends AppCompatActivity implements MSALAuthenticationCallback {
 
     private static final String TAG = "ConnectActivity";
     private PublicClientApplication mApplication;
@@ -52,6 +53,8 @@ public class ConnectActivity extends AppCompatActivity  {
     private TextView mTitleTextView;
     private TextView mDescriptionTextView;
     private ProgressBar mConnectProgressBar;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +91,9 @@ public class ConnectActivity extends AppCompatActivity  {
             }
         });
         if (mApplication == null) {
-            mApplication = new PublicClientApplication(this.getApplicationContext());
+            mApplication = new PublicClientApplication(
+                    this.getApplicationContext(),
+                    Constants.CLIENT_ID);
         }
 
     }
@@ -108,10 +113,10 @@ public class ConnectActivity extends AppCompatActivity  {
         if (mUser == null ) {
             mgr.connect(
                     this,
-                    getAuthenticationCallback());
+                    this);
 
         } else {
-            mgr.callAcquireTokenSilent(mUser,true, getAuthenticationCallback());
+            mgr.callAcquireTokenSilent(mUser,true, this);
         }
     }
     @Override
@@ -158,81 +163,6 @@ public class ConnectActivity extends AppCompatActivity  {
                 Toast.LENGTH_LONG).show();
     }
 
-    private com.microsoft.identity.client.AuthenticationCallback getAuthenticationCallback() {
-        return new com.microsoft.identity.client.AuthenticationCallback() {
-
-            @Override
-            public void onSuccess(AuthenticationResult authenticationResult) {
-                mUser = authenticationResult.getUser();
-                mAuthResult = authenticationResult;
-
-
-                String name = "";
-                String preferredUsername = "";
-
-                try {
-                    // get the user info from the id token
-                    name = mAuthResult.getUser().getName();
-                    preferredUsername = mAuthResult.getUser().getDisplayableId();
-
-                    AuthenticationManager mgr = AuthenticationManager.getInstance(getApplicationContext());
-
-                    mgr.setAuthentcationResult(mAuthResult);
-
-                }  catch (NullPointerException npe) {
-                    Log.e(TAG, npe.getMessage());
-
-                }
-
-                // Prepare the SendMailActivity intent
-                Intent sendMailActivity =
-                        new Intent(ConnectActivity.this, SendMailActivity.class);
-
-                // take the user's info along
-                sendMailActivity.putExtra(SendMailActivity.ARG_GIVEN_NAME, name);
-                sendMailActivity.putExtra(SendMailActivity.ARG_DISPLAY_ID, preferredUsername);
-
-
-                // actually start the activity
-                startActivity(sendMailActivity);
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        resetUIForConnect();
-                    }
-                });
-
-
-            }
-
-            @Override
-            public void onError(MsalException exception) {
-                // Check the exception type.
-                if (exception instanceof MsalClientException) {
-                    // This means errors happened in the sdk itself, could be network, Json parse, etc. Check MsalError.java
-                    // for detailed list of the errors.
-                    showMessage(exception.getMessage());
-                } else if (exception instanceof MsalServiceException) {
-                    // This means something is wrong when the sdk is communication to the service, mostly likely it's the client
-                    // configuration.
-                    showMessage(exception.getMessage());
-                } else if (exception instanceof MsalUiRequiredException) {
-                    // This explicitly indicates that developer needs to prompt the user, it could be refresh token is expired, revoked
-                    // or user changes the password; or it could be that no token was found in the token cache.
-                    AuthenticationManager mgr = AuthenticationManager.getInstance(getApplicationContext());
-
-
-                   mgr.callAcquireToken(ConnectActivity.this,getAuthenticationCallback());
-                }
-            }
-
-            @Override
-            public void onCancel() {
-                showMessage("User cancelled the flow.");
-            }
-        };
-    }
     private void showMessage(final String msg) {
         getHandler().post(new Runnable() {
 
@@ -251,4 +181,77 @@ public class ConnectActivity extends AppCompatActivity  {
         return mHandler;
     }
 
+
+    @Override
+    public void onSuccess(AuthenticationResult authenticationResult) {
+        mUser = authenticationResult.getUser();
+        mAuthResult = authenticationResult;
+
+
+        String name = "";
+        String preferredUsername = "";
+
+        try {
+            // get the user info from the id token
+            name = mAuthResult.getUser().getName();
+            preferredUsername = mAuthResult.getUser().getDisplayableId();
+
+            AuthenticationManager mgr = AuthenticationManager.getInstance(this);
+
+            mgr.setAuthentcationResult(mAuthResult);
+
+        }  catch (NullPointerException npe) {
+            Log.e(TAG, npe.getMessage());
+
+        }
+
+        // Prepare the SendMailActivity intent
+        Intent sendMailActivity =
+                new Intent(ConnectActivity.this, SendMailActivity.class);
+
+        // take the user's info along
+        sendMailActivity.putExtra(SendMailActivity.ARG_GIVEN_NAME, name);
+        sendMailActivity.putExtra(SendMailActivity.ARG_DISPLAY_ID, preferredUsername);
+
+
+        // actually start the activity
+        startActivity(sendMailActivity);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                resetUIForConnect();
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onError(MsalException exception) {
+        // Check the exception type.
+        if (exception instanceof MsalClientException) {
+            // This means errors happened in the sdk itself, could be network, Json parse, etc. Check MsalError.java
+            // for detailed list of the errors.
+            showMessage(exception.getMessage());
+        } else if (exception instanceof MsalServiceException) {
+            // This means something is wrong when the sdk is communication to the service, mostly likely it's the client
+            // configuration.
+            showMessage(exception.getMessage());
+        } else if (exception instanceof MsalUiRequiredException) {
+            // This explicitly indicates that developer needs to prompt the user, it could be refresh token is expired, revoked
+            // or user changes the password; or it could be that no token was found in the token cache.
+            AuthenticationManager mgr = AuthenticationManager.getInstance(this);
+
+
+            mgr.callAcquireToken(ConnectActivity.this,this);
+        }
+
+    }
+
+    @Override
+    public void onCancel() {
+        showMessage("User cancelled the flow.");
+
+    }
 }
