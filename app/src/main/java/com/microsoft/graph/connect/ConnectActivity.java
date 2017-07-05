@@ -15,8 +15,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.AuthenticationResult;
 import com.microsoft.identity.client.Logger;
 import com.microsoft.identity.client.MsalClientException;
@@ -26,8 +24,8 @@ import com.microsoft.identity.client.MsalUiRequiredException;
 import com.microsoft.identity.client.PublicClientApplication;
 import com.microsoft.identity.client.User;
 
-import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -46,14 +44,10 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
     private boolean mEnablePiiLogging = false;
     private User mUser;
 
-    //Use the scopes from the constants class
-    private String[] mScopes;
-
     private Button mConnectButton;
     private TextView mTitleTextView;
     private TextView mDescriptionTextView;
     private ProgressBar mConnectProgressBar;
-
 
 
     @Override
@@ -71,6 +65,7 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
         mTitleTextView = (TextView) findViewById(R.id.titleTextView);
         mDescriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
 
+        Connect.getInstance().setConnectActivity(this);
         // add click listener
         mConnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,15 +105,38 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
 
         AuthenticationManager mgr = AuthenticationManager.getInstance(this);
 
-        if (mUser == null ) {
-            mgr.connect(
-                    this,
-                    this);
+          /* Attempt to get a user and acquireTokenSilent
+   * If this fails we do an interactive request
+   */
+        List<User> users = null;
 
-        } else {
-            mgr.callAcquireTokenSilent(mUser,true, this);
+        try {
+            users = mApplication.getUsers();
+
+            if (users != null && users.size() == 1) {
+          /* We have 1 user */
+                mUser = users.get(0);
+                mgr.callAcquireTokenSilent(mUser, true, this);
+            } else {
+          /* We have no user */
+
+          /* Let's do an interactive request */
+                mgr.connect(
+                        this,
+                        this);
+            }
+        } catch (MsalClientException e) {
+            Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString());
+
+        } catch (IndexOutOfBoundsException e) {
+            Log.d(TAG, "User at this position does not exist: " + e.toString());
         }
+
+
+
+
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -126,6 +144,7 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
             mApplication.handleInteractiveRequestRedirect(requestCode, resultCode, data);
         }
     }
+
     private static boolean hasAzureConfiguration() {
         try {
             UUID.fromString(Constants.CLIENT_ID);
@@ -200,7 +219,7 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
 
             mgr.setAuthentcationResult(mAuthResult);
 
-        }  catch (NullPointerException npe) {
+        } catch (NullPointerException npe) {
             Log.e(TAG, npe.getMessage());
 
         }
@@ -244,7 +263,7 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
             AuthenticationManager mgr = AuthenticationManager.getInstance(this);
 
 
-            mgr.callAcquireToken(ConnectActivity.this,this);
+            mgr.callAcquireToken(ConnectActivity.this, this);
         }
 
     }

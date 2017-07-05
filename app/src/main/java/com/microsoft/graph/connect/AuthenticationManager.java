@@ -30,7 +30,7 @@ import java.io.IOException;
 public class AuthenticationManager {
     private static final String TAG = "AuthenticationManager";
     private static AuthenticationManager INSTANCE;
-    private PublicClientApplication mApplication;
+    private static PublicClientApplication mApplication;
     private AuthenticationResult mAuthResult;
     private static Activity mParentActivity;
     private MSALAuthenticationCallback mActivityCallback;
@@ -41,6 +41,10 @@ public class AuthenticationManager {
         if (INSTANCE == null) {
             INSTANCE = new AuthenticationManager();
             mParentActivity = activity;
+            if (mApplication == null) {
+                mApplication = new PublicClientApplication(activity.getApplicationContext(),Constants.CLIENT_ID);
+            }
+
         }
         return INSTANCE;
     }
@@ -63,9 +67,6 @@ public class AuthenticationManager {
     }
 
     public void connect(Activity activity, final MSALAuthenticationCallback authenticationCallback){
-        if (mApplication == null) {
-            mApplication = new PublicClientApplication(activity.getApplicationContext(),Constants.CLIENT_ID);
-        }
 
         mActivityCallback = authenticationCallback;
         mApplication.acquireToken(

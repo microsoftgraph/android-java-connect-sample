@@ -1,5 +1,6 @@
 package com.microsoft.graph.connect;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
@@ -18,6 +19,8 @@ public class Connect extends MultiDexApplication {
     public static Context getContext(){
         return instance;
     }
+
+    private Activity mConnectActivity;
 
     private StringBuffer mLogs;
     @Override
@@ -49,5 +52,13 @@ public class Connect extends MultiDexApplication {
 
     void clearLogs() {
         mLogs = new StringBuffer();
+    }
+
+    public Activity getConnectActivity() {
+        return mConnectActivity;
+    }
+
+    public void setConnectActivity(Activity connectActivity) {
+        mConnectActivity = connectActivity;
     }
 }
