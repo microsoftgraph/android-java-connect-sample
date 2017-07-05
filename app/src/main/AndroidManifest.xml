@@ -49,7 +49,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="msal85d258e5-bfc3-41fa-aff7-c77e6a5a7b66"
+                <data android:scheme="msalENTER_YOUR_CLIENT_ID"
                     android:host="auth" />
             </intent-filter>
         </activity>
@@ -58,7 +58,7 @@
             android:value="authority string"/>
         <meta-data
             android:name="com.microsoft.identity.client.ClientId"
-            android:value="85d258e5-bfc3-41fa-aff7-c77e6a5a7b66"/>
+            android:value="ENTER_YOUR_CLIENT_ID"/>
     </application>
 
 </manifest>

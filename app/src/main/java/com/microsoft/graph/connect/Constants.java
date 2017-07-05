@@ -9,7 +9,7 @@ public class Constants {
     public static final String AUTHORIZATION_ENDPOINT = "/oauth2/v2.0/authorize";
     public static final String TOKEN_ENDPOINT = "/oauth2/v2.0/token";
     // Update these two constants with the values for your application:
-    public static String CLIENT_ID = "85d258e5-bfc3-41fa-aff7-c77e6a5a7b66";
+    public static String CLIENT_ID = "ENTER_YOUR_CLIENT_ID";
     public static final String REDIRECT_URI =  "https://login.microsoftonline.com/common/oauth2/nativeclient";
     public static final String[] SCOPES = {"openid", "profile","Mail.ReadWrite","mail.send","Files.ReadWrite","User.ReadBasic.All"};
     public static final String LOGIN_HINT = "alexd@contoso.com";
