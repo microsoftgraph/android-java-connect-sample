@@ -46,7 +46,6 @@ To use the Connect sample for Android, you need the following:
 
 1. Install [Android Studio](http://developer.android.com/sdk/index.html) and add the Android SDK packages according to the [instructions](http://developer.android.com/sdk/installing/adding-packages.html) on developer.android.com.
 2. Download or clone this sample.
-3. Download the [OIDC Android Authentication Library](https://github.com/kalemontes/OIDCAndroidLib) . You will reference the oidclib project in the sample.
 4. Start Android Studio.
 	1. Close any projects that you might have open, and then choose **Open an existing Android Studio project**.
 	2. Browse to your local repository and choose the Android-Connect project. Click **OK**.
@@ -54,7 +53,8 @@ To use the Connect sample for Android, you need the following:
 	> Note: Android Studio shows a **Frameworks detected** notification if you don't have the **Android Support Repository** installed. Open the SDK manager and add the Android Support Repository to avoid the Frameworks detected notification.
 5. Open the Constants.java file.
 	* Replace *ENTER_YOUR_CLIENT_ID* with the application id from the previous section.
-
+6. Open AndroidManifest.xml
+	* Replace *ENTER_YOUR_CLIENT_ID* with the application id from the previous section.
 6. Build the app and install the .APK on your device or emulator.
 7. Enable the **Storage** permission for the installed sample app on your device or emulator
 8. Download the test.jpg image located in:  `android-java-connect-sample/app/src/main/res/drawable/test.jpg` to your device's external storage root folder.
