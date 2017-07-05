@@ -6,7 +6,6 @@ package com.microsoft.graph.connect;
 
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
-import android.app.Activity;
 
 import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.core.DefaultClientConfig;
@@ -36,9 +35,7 @@ public class GraphServiceClientManager implements IAuthenticationProvider {
     public void authenticateRequest(IHttpRequest request)  {
         try {
             request.addHeader("Authorization", "Bearer "
-                    + AuthenticationManager.getInstance(
-                            Connect.getInstance()
-                                    .getConnectActivity())
+                    + AuthenticationManager.getInstance()
                     .getAccessToken());
             // This header has been added to identify this sample in the Microsoft Graph service.
             // If you're using this code for your project please remove the following line.

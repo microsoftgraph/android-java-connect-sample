@@ -8,17 +8,11 @@ import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 
 import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.AuthenticationResult;
-import com.microsoft.identity.client.MsalClientException;
 import com.microsoft.identity.client.MsalException;
-import com.microsoft.identity.client.MsalServiceException;
-import com.microsoft.identity.client.MsalUiRequiredException;
 import com.microsoft.identity.client.PublicClientApplication;
 import com.microsoft.identity.client.User;
 
@@ -32,17 +26,18 @@ public class AuthenticationManager {
     private static AuthenticationManager INSTANCE;
     private static PublicClientApplication mApplication;
     private AuthenticationResult mAuthResult;
-    private static Activity mParentActivity;
     private MSALAuthenticationCallback mActivityCallback;
     private AuthenticationManager() {
     }
 
-    public static synchronized AuthenticationManager getInstance(Activity activity) {
+    public static synchronized AuthenticationManager getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new AuthenticationManager();
-            mParentActivity = activity;
             if (mApplication == null) {
-                mApplication = new PublicClientApplication(activity.getApplicationContext(),Constants.CLIENT_ID);
+                mApplication = new PublicClientApplication(
+                        Connect.getInstance()
+                                .getConnectActivity()
+                                .getApplicationContext(),Constants.CLIENT_ID);
             }
 
         }

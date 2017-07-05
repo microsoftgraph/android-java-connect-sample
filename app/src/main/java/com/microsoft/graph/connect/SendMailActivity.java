@@ -200,7 +200,7 @@ public class SendMailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.disconnectMenuItem:
-                AuthenticationManager.getInstance(this).disconnect();
+                AuthenticationManager.getInstance().disconnect();
                 Intent connectIntent = new Intent(this, ConnectActivity.class);
                 startActivity(connectIntent);
                 finish();

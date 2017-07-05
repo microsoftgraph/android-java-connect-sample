@@ -103,7 +103,7 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
             Logger.getInstance().setEnablePII(false);
         }
 
-        AuthenticationManager mgr = AuthenticationManager.getInstance(this);
+        AuthenticationManager mgr = AuthenticationManager.getInstance();
 
           /* Attempt to get a user and acquireTokenSilent
    * If this fails we do an interactive request
@@ -215,7 +215,7 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
             name = mAuthResult.getUser().getName();
             preferredUsername = mAuthResult.getUser().getDisplayableId();
 
-            AuthenticationManager mgr = AuthenticationManager.getInstance(this);
+            AuthenticationManager mgr = AuthenticationManager.getInstance();
 
             mgr.setAuthentcationResult(mAuthResult);
 
@@ -260,7 +260,7 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
         } else if (exception instanceof MsalUiRequiredException) {
             // This explicitly indicates that developer needs to prompt the user, it could be refresh token is expired, revoked
             // or user changes the password; or it could be that no token was found in the token cache.
-            AuthenticationManager mgr = AuthenticationManager.getInstance(this);
+            AuthenticationManager mgr = AuthenticationManager.getInstance();
 
 
             mgr.callAcquireToken(ConnectActivity.this, this);
