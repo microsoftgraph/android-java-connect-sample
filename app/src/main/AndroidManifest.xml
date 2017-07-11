@@ -49,7 +49,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="msalb3982d84-9052-4630-bce5-70232bd20486"
+                <data android:scheme="msalbENTER_YOUR_CLIENT_ID"
                     android:host="auth" />
             </intent-filter>
         </activity>
