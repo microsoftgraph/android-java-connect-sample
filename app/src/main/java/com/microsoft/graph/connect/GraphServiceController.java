@@ -84,16 +84,7 @@ class GraphServiceController {
                     .post(message, callback);
 
         } catch (Exception ex) {
-            Log.e("GraphServiceController", "exception on send mail " + ex.getLocalizedMessage());
-            AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
-            alertDialogBuidler.setTitle("Send mail failed");
-            alertDialogBuidler.setMessage("The send mail method failed");
-            alertDialogBuidler.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-            alertDialogBuidler.show();
+            showException(ex, "exception on send mail","Send mail failed", "The send mail method failed");
         }
     }
 
@@ -136,16 +127,7 @@ class GraphServiceController {
                     .post(fileAttachment, callback);
 
         } catch (Exception ex) {
-            Log.e("GraphServiceController", "exception on send mail " + ex.getLocalizedMessage());
-            AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
-            alertDialogBuidler.setTitle("Send mail failed");
-            alertDialogBuidler.setMessage("The send mail method failed");
-            alertDialogBuidler.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-            alertDialogBuidler.show();
+            showException(ex, "exception on add picture to draft message","Draft attachment failed", "The post file attachment method failed");
         }
     }
 
@@ -167,19 +149,27 @@ class GraphServiceController {
                     .post(callback);
 
         } catch (Exception ex) {
-            Log.e("GraphServiceController", "exception on send draft message " + ex.getLocalizedMessage());
-            AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
-            alertDialogBuidler.setTitle("Send draft mail failed");
-            alertDialogBuidler.setMessage("The send draft mail method failed");
-            alertDialogBuidler.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-            alertDialogBuidler.show();
+            showException(ex, "exception on send draft message ","Send draft mail failed", "The send draft mail method failed");
         }
     }
 
+    /**
+     * Gets a draft message by message id
+     * @param messageId
+     * @param callback
+     */
+    public void getDraftMessage(String messageId, ICallback<Message> callback) {
+        try {
+            mGraphServiceClient.getMe()
+                    .getMessages(messageId)
+                    .buildRequest()
+                    .getMessage(callback);
+
+        } catch (Exception ex) {
+            showException(ex, "exception on get draft message ","Get draft mail failed", "The get draft mail method failed");
+
+        }
+    }
     /**
      * Gets the profile picture of the signed in user from the Microsoft Graph
      *
@@ -240,17 +230,7 @@ class GraphServiceController {
                         }
                     });
         } catch (Exception ex) {
-            Log.e("GraphServiceController", "exception on get user profile picture " + ex.getLocalizedMessage());
-            AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
-            alertDialogBuidler.setTitle("Get user profile picture failed");
-            alertDialogBuidler.setMessage("The get user profile picture method failed");
-            alertDialogBuidler.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-            alertDialogBuidler.show();
-
+            showException(ex, "exception on get user profile picture ","Get user profile picture failed", "The get user profile picture method failed");
         }
     }
 
@@ -304,16 +284,7 @@ class GraphServiceController {
                     .buildRequest()
                     .put(picture, callback);
         } catch (Exception ex) {
-            Log.e("GraphServiceController", "exception on upload picture to OneDrive " + ex.getLocalizedMessage());
-            AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
-            alertDialogBuidler.setTitle("Upload picture failed");
-            alertDialogBuidler.setMessage("The upload picture  method failed");
-            alertDialogBuidler.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-            alertDialogBuidler.show();
+            showException(ex, "exception on upload picture to OneDrive ","Upload picture failed", "The upload picture  method failed");
         }
     }
 
@@ -329,16 +300,7 @@ class GraphServiceController {
                     .buildRequest()
                     .post(callback);
         } catch (Exception ex) {
-            Log.e("GraphServiceController", "exception on get OneDrive sharing link " + ex.getLocalizedMessage());
-            AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
-            alertDialogBuidler.setTitle("Get sharing link failed");
-            alertDialogBuidler.setMessage("The get sharing link method failed");
-            alertDialogBuidler.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-            alertDialogBuidler.show();
+            showException(ex, "exception on get OneDrive sharing link ","Get sharing link failed", "The get sharing link method failed");
         }
     }
 
@@ -431,5 +393,22 @@ class GraphServiceController {
 
         outputStream.close();
         return outputStream.toByteArray();
+    }
+
+    /*
+    * Opens a user dialog that shows the failure result of an exception and writes a log entry
+    * */
+    private void showException(Exception ex, String exceptionAction, String exceptionTitle, String exceptionMessage){
+        Log.e("GraphServiceController", exceptionAction + ex.getLocalizedMessage());
+        AlertDialog.Builder alertDialogBuidler = new AlertDialog.Builder(Connect.getContext());
+        alertDialogBuidler.setTitle(exceptionTitle);
+        alertDialogBuidler.setMessage(exceptionMessage);
+        alertDialogBuidler.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        alertDialogBuidler.show();
+
     }
 }

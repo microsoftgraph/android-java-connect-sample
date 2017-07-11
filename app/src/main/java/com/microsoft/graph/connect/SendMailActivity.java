@@ -75,8 +75,9 @@ public class SendMailActivity extends AppCompatActivity {
      * 2. Upload the profile picture to the user's OneDrive root folder
      * 3. Get a sharing link to the picture from OneDrive
      * 4. Create and post a draft email
-     * 5. Attach the profile picture to the draft mail as a byte array
-     * 6. Send the draft email
+     * 5. Get the draft message
+     * 6. Attach the profile picture to the draft mail as a byte array
+     * 7. Send the draft email
      *
      * @param v The view.
      */
@@ -123,31 +124,40 @@ public class SendMailActivity extends AppCompatActivity {
                                             new ICallback<Message>() {
                                                 @Override
                                                 public void success(final Message aMessage) {
-
-                                                    //5. Add the profile picture to the draft mail
-                                                    graphServiceController.addPictureToDraftMessage(aMessage.id, bytes, permission.link.webUrl,
-                                                            new ICallback<Attachment>() {
-                                                                @Override
-                                                                public void success(final Attachment anAttachment) {
-
-                                                                    //6. Send the draft message to the recipient
-                                                                    graphServiceController.sendDraftMessage(aMessage.id, new ICallback<Void>() {
+                                                    //5. Get draft message
+                                                    graphServiceController.getDraftMessage(aMessage.id, new ICallback<Message>(){
+                                                        public void success (final Message aMessage){
+                                                            //6. Add the profile picture to the draft mail
+                                                            graphServiceController.addPictureToDraftMessage(aMessage.id, bytes, permission.link.webUrl,
+                                                                    new ICallback<Attachment>() {
                                                                         @Override
-                                                                        public void success(Void aVoid) {
-                                                                            showSendMailSuccessUI();
-                                                                        }
+                                                                        public void success(final Attachment anAttachment) {
 
+                                                                            //6. Send the draft message to the recipient
+                                                                            graphServiceController.sendDraftMessage(aMessage.id, new ICallback<Void>() {
+                                                                                @Override
+                                                                                public void success(Void aVoid) {
+                                                                                    showSendMailSuccessUI();
+                                                                                }
+
+                                                                                @Override
+                                                                                public void failure(ClientException ex) {
+
+                                                                                }
+                                                                            });
+                                                                        }
                                                                         @Override
                                                                         public void failure(ClientException ex) {
-
+                                                                            showSendMailErrorUI();
                                                                         }
                                                                     });
-                                                                }
-                                                                @Override
-                                                                public void failure(ClientException ex) {
-                                                                    showSendMailErrorUI();
-                                                                }
-                                                            });
+
+                                                        }
+                                                        public void failure(ClientException ex) {
+                                                            showSendMailErrorUI();
+
+                                                        }
+                                                    });
                                                 }
 
                                                 @Override

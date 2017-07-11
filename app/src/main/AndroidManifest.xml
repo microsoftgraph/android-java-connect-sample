@@ -49,16 +49,11 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="msalENTER_YOUR_CLIENT_ID"
+                <data android:scheme="msalb3982d84-9052-4630-bce5-70232bd20486"
                     android:host="auth" />
             </intent-filter>
         </activity>
-        <meta-data
-            android:name="https://login.microsoftonline.com/common"
-            android:value="authority string"/>
-        <meta-data
-            android:name="com.microsoft.identity.client.ClientId"
-            android:value="ENTER_YOUR_CLIENT_ID"/>
+
     </application>
 
 </manifest>
