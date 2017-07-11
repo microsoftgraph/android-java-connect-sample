@@ -42,7 +42,7 @@ To use the Connect sample for Android, you need the following:
 6. Copy the **Application Id**, you'll need it in the next section.
 7. Click **Save**.
   
-To learn authenticating with MSAL for Android to make calls to Microsoft Graph, see [Call the Microsoft Graph API from an Android app](https://docs.microsoft.com/en-us/azure/active-directory/develop/guidedsetups/active-directory-android).
+To learn about authenticating with MSAL for Android to make calls to Microsoft Graph, see [Call the Microsoft Graph API from an Android app](https://docs.microsoft.com/en-us/azure/active-directory/develop/guidedsetups/active-directory-android).
 
   
 ## Open the sample using Android Studio
