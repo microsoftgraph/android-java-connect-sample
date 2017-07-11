@@ -1,7 +1,7 @@
 # Connect Sample for Android Using the Microsoft Graph SDK
 
 
->**Note:** We've updated this sample to use the [recommended auth library](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-libraries#compatible-client-libraries) for Android apps.
+>**Note:** We've updated this sample to use the [Microsoft Authentication Library (MSAL)](https://github.com/AzureAD/microsoft-authentication-library-for-android) for Android apps.
 
 
 > **Building apps for enterprise customers?** Your app may not work if your enterprise customer turns on enterprise mobility security features like <a href="https://azure.microsoft.com/en-us/documentation/articles/active-directory-conditional-access-device-policies/" target="_newtab">conditional device access</a>. In this case, you may not know and your customers may experience errors. 
