@@ -9,7 +9,10 @@ public class Constants {
     public static final String AUTHORIZATION_ENDPOINT = "/oauth2/v2.0/authorize";
     public static final String TOKEN_ENDPOINT = "/oauth2/v2.0/token";
     // Update these two constants with the values for your application:
-    public static String CLIENT_ID = "efd07474-45a0-414a-9190-0388368aa2ee";
-    public static final String REDIRECT_URI = "https://login.microsoftonline.com/common/oauth2/nativeclient";
-    public static final String SCOPES = "openid profile Mail.ReadWrite mail.send Files.ReadWrite User.ReadBasic.All";
+    public static String CLIENT_ID = "b3982d84-9052-4630-bce5-70232bd20486";
+    public static final String REDIRECT_URI =  "https://login.microsoftonline.com/common/oauth2/nativeclient";
+    public static final String[] SCOPES = {"openid", "profile","Mail.ReadWrite","mail.send","Files.ReadWrite","User.ReadBasic.All"};
+    public static final String LOGIN_HINT = "alexd@contoso.com";
+    public static final String EXTRA_QUERY_PARAM = null;
+    public static final String[] ADDITIONAL_SCOPE = {"",""};
 }

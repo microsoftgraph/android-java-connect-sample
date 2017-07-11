@@ -4,12 +4,17 @@
  */
 package com.microsoft.graph.connect;
 
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
+
 import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.core.DefaultClientConfig;
 import com.microsoft.graph.core.IClientConfig;
 import com.microsoft.graph.extensions.GraphServiceClient;
 import com.microsoft.graph.extensions.IGraphServiceClient;
 import com.microsoft.graph.http.IHttpRequest;
+
+import java.io.IOException;
 
 /**
  * Singleton class that manages a GraphServiceClient object.
@@ -27,17 +32,22 @@ public class GraphServiceClientManager implements IAuthenticationProvider {
      * @param request
      */
     @Override
-    public void authenticateRequest(IHttpRequest request) {
+    public void authenticateRequest(IHttpRequest request)  {
         try {
-            request.addHeader("Authorization", "Bearer " + AuthenticationManager.getInstance().getAccessToken());
+            request.addHeader("Authorization", "Bearer "
+                    + AuthenticationManager.getInstance()
+                    .getAccessToken());
             // This header has been added to identify this sample in the Microsoft Graph service.
             // If you're using this code for your project please remove the following line.
             request.addHeader("SampleID", "android-java-connect-sample");
-        } catch (TokenNotFoundException tne) {
-            // AuthenticationManager should always have an access token available.
-            // If this exception is thrown. There's something wrong with the underlying
-            // authentication mechanism. Please log an issue.
-            tne.printStackTrace();
+        } catch (AuthenticatorException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }  catch (OperationCanceledException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
     }
 

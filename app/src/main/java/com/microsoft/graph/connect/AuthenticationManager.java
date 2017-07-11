@@ -4,125 +4,69 @@
  */
 package com.microsoft.graph.connect;
 
-import android.annotation.TargetApi;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
-import android.support.annotation.ColorRes;
-import android.support.annotation.Nullable;
-import android.util.Base64;
+import android.content.Context;
 import android.util.Log;
 
-import net.openid.appauth.AuthState;
-import net.openid.appauth.AuthorizationException;
-import net.openid.appauth.AuthorizationRequest;
-import net.openid.appauth.AuthorizationResponse;
-import net.openid.appauth.AuthorizationService;
-import net.openid.appauth.AuthorizationServiceConfiguration;
-import net.openid.appauth.ResponseTypeValues;
-import net.openid.appauth.TokenRequest;
-import net.openid.appauth.TokenResponse;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.microsoft.identity.client.AuthenticationCallback;
+import com.microsoft.identity.client.AuthenticationResult;
+import com.microsoft.identity.client.MsalException;
+import com.microsoft.identity.client.PublicClientApplication;
+import com.microsoft.identity.client.User;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Handles setup of OAuth library in API clients.
  */
 public class AuthenticationManager {
-    AuthorizationServiceConfiguration mConfig;
-    AuthorizationRequest mAuthorizationRequest;
-    AuthState mAuthState;
-    AuthorizationService mAuthorizationService;
-
     private static final String TAG = "AuthenticationManager";
     private static AuthenticationManager INSTANCE;
-
-    private Activity mContextActivity;
-    private String mAccessToken;
-
+    private static PublicClientApplication mApplication;
+    private AuthenticationResult mAuthResult;
+    private MSALAuthenticationCallback mActivityCallback;
     private AuthenticationManager() {
-        Uri authorityUrl = Uri.parse(Constants.AUTHORITY_URL);
-        Uri authorizationEndpoint = Uri.withAppendedPath(authorityUrl, Constants.AUTHORIZATION_ENDPOINT);
-        Uri tokenEndpoint = Uri.withAppendedPath(authorityUrl, Constants.TOKEN_ENDPOINT);
-        mConfig = new AuthorizationServiceConfiguration(authorizationEndpoint, tokenEndpoint, null);
-
-        List<String> scopes = new ArrayList<>(Arrays.asList(Constants.SCOPES.split(" ")));
-
-        mAuthorizationRequest = new AuthorizationRequest.Builder(
-                mConfig,
-                Constants.CLIENT_ID,
-                ResponseTypeValues.CODE,
-                Uri.parse(Constants.REDIRECT_URI))
-                .setScopes(scopes)
-                .build();
     }
 
-    /**
-     * Starts the authorization flow, which continues to net.openid.appauth.RedirectReceiverActivity
-     * and then to ConnectActivity
+    public static synchronized AuthenticationManager getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new AuthenticationManager();
+            if (mApplication == null) {
+                mApplication = new PublicClientApplication(
+                        Connect.getInstance()
+                                .getConnectActivity()
+                                .getApplicationContext(),Constants.CLIENT_ID);
+            }
+
+        }
+        return INSTANCE;
+    }
+
+    public static synchronized void resetInstance() {
+        INSTANCE = null;
+    }
+
+
+    public void setAuthentcationResult(AuthenticationResult authentcationResult) {
+        mAuthResult = authentcationResult;
+    }
+     /**
+     * Returns the access token obtained in authentication
+     *
+     * @return mAccessToken
      */
-    public void startAuthorizationFlow() {
-        Intent intent = new Intent(mContextActivity, ConnectActivity.class);
-
-        PendingIntent redirectIntent = PendingIntent.getActivity(mContextActivity, mAuthorizationRequest.hashCode(), intent, 0);
-
-        mAuthorizationService.performAuthorizationRequest(
-                mAuthorizationRequest,
-                redirectIntent,
-                mAuthorizationService.createCustomTabsIntentBuilder()
-                        .setToolbarColor(getColorCompat(R.color.colorPrimary))
-                        .build());
+    public String getAccessToken() throws AuthenticatorException, IOException, OperationCanceledException {
+        return  mAuthResult.getAccessToken();
     }
 
-    public void processAuthorizationCode(Intent redirectIntent, final AuthorizationService.TokenResponseCallback callback) {
-        AuthorizationResponse authorizationResponse = AuthorizationResponse.fromIntent(redirectIntent);
-        AuthorizationException authorizationException = AuthorizationException.fromIntent(redirectIntent);
-        mAuthState = new AuthState(authorizationResponse, authorizationException);
+    public void connect(Activity activity, final MSALAuthenticationCallback authenticationCallback){
 
-        if (authorizationResponse != null) {
-            HashMap<String, String> additionalParams = new HashMap<>();
-            TokenRequest tokenRequest = authorizationResponse.createTokenExchangeRequest(additionalParams);
+        mActivityCallback = authenticationCallback;
+        mApplication.acquireToken(
+                activity, Constants.SCOPES, getAuthInteractiveCallback());
 
-            mAuthorizationService.performTokenRequest(
-                    tokenRequest,
-                    new AuthorizationService.TokenResponseCallback() {
-                        @Override
-                        public void onTokenRequestCompleted(
-                                @Nullable TokenResponse tokenResponse,
-                                @Nullable AuthorizationException ex) {
-                            mAuthState.update(tokenResponse, ex);
-                            if (tokenResponse != null) {
-                                mAccessToken = tokenResponse.accessToken;
-                            }
-                            callback.onTokenRequestCompleted(tokenResponse, ex);
-                        }
-                    });
-        } else {
-            Log.i(TAG, "Authorization failed: " + authorizationException);
-        }
-    }
-
-    public JSONObject getClaims(String idToken) {
-        JSONObject retValue = null;
-        String payload = idToken.split("[.]")[1];
-
-        try {
-            // The token payload is in the 2nd element of the JWT
-            String jsonClaims = new String(Base64.decode(payload, Base64.DEFAULT), "UTF-8");
-            retValue = new JSONObject(jsonClaims);
-        } catch ( JSONException | IOException e) {
-            Log.e(TAG, "Couldn't decode id token: " + e.getMessage());
-        }
-        return retValue;
     }
 
     /**
@@ -130,51 +74,114 @@ public class AuthenticationManager {
      * to null, and removing the user id from shred preferences.
      */
     public void disconnect() {
+
+        mApplication.remove(mAuthResult.getUser());
         // Reset the AuthenticationManager object
         AuthenticationManager.resetInstance();
     }
 
-    public static synchronized AuthenticationManager getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new AuthenticationManager();
-        }
-        return INSTANCE;
+    public void callAcquireToken(Activity activity, final MSALAuthenticationCallback authenticationCallback) {
+        // The sample app is having the PII enable setting on the MainActivity. Ideally, app should decide to enable Pii or not,
+        // if it's enabled, it should be  the setting when the application is onCreate.
+//        if (mEnablePiiLogging) {
+//            Logger.getInstance().setEnablePII(true);
+//        } else {
+//            Logger.getInstance().setEnablePII(false);
+//        }
+        mActivityCallback = authenticationCallback;
+
+        mApplication.acquireToken(activity, Constants.SCOPES, getAuthInteractiveCallback());
+    }
+    public void callAcquireTokenSilent(User user, boolean forceRefresh, MSALAuthenticationCallback msalAuthenticationCallback) {
+        mActivityCallback = msalAuthenticationCallback;
+        mApplication.acquireTokenSilentAsync(Constants.SCOPES, user, null, forceRefresh, getAuthSilentCallback());
+    }
+//
+// App callbacks for MSAL
+// ======================
+// getActivity() - returns activity so we can acquireToken within a callback
+// getAuthSilentCallback() - callback defined to handle acquireTokenSilent() case
+// getAuthInteractiveCallback() - callback defined to handle acquireToken() case
+//
+
+    public Context getActivity() {
+        return Connect.getContext();
     }
 
-    private static synchronized void resetInstance() {
-        INSTANCE = null;
-    }
-
-    /**
-     * Set the context activity before connecting to the currently active activity.
-     *
-     * @param contextActivity Currently active activity which can be utilized for interactive
-     *                        prompt.
+    /* Callback method for acquireTokenSilent calls
+     * Looks if tokens are in the cache (refreshes if necessary and if we don't forceRefresh)
+     * else errors that we need to do an interactive request.
      */
-    public void setContextActivity(final Activity contextActivity) {
-        mContextActivity = contextActivity;
-        mAuthorizationService = new AuthorizationService(mContextActivity);
+    private AuthenticationCallback getAuthSilentCallback() {
+        return new AuthenticationCallback() {
+            @Override
+            public void onSuccess(AuthenticationResult authenticationResult) {
+            /* Successfully got a token, call Graph now */
+                Log.d(TAG, "Successfully authenticated");
+
+            /* Store the authResult */
+                mAuthResult = authenticationResult;
+
+                //invoke UI callback
+                if (mActivityCallback != null)
+                    mActivityCallback.onSuccess(mAuthResult);
+            }
+
+            @Override
+            public void onError(MsalException exception) {
+            /* Failed to acquireToken */
+                Log.d(TAG, "Authentication failed: " + exception.toString());
+                if (mActivityCallback != null)
+                    mActivityCallback.onError(exception);
+
+            }
+
+            @Override
+            public void onCancel() {
+            /* User canceled the authentication */
+                Log.d(TAG, "User cancelled login.");
+            }
+        };
     }
 
-    /**
-     * Returns the access token obtained in authentication
-     *
-     * @return mAccessToken
-     */
-    public String getAccessToken() throws TokenNotFoundException {
-        if(mAccessToken == null) {
-            throw new TokenNotFoundException();
-        }
-        return mAccessToken;
+
+    /* Callback used for interactive request.  If succeeds we use the access
+         * token to call the Microsoft Graph. Does not check cache
+         */
+    private AuthenticationCallback getAuthInteractiveCallback() {
+        return new AuthenticationCallback() {
+            @Override
+            public void onSuccess(AuthenticationResult authenticationResult) {
+            /* Successfully got a token, call graph now */
+                Log.d(TAG, "Successfully authenticated");
+                Log.d(TAG, "ID Token: " + authenticationResult.getIdToken());
+
+            /* Store the auth result */
+                mAuthResult = authenticationResult;
+
+                //invoke UI callback
+                //invoke UI callback
+                if (mActivityCallback != null)
+                    mActivityCallback.onSuccess(mAuthResult);
+            }
+
+            @Override
+            public void onError(MsalException exception) {
+            /* Failed to acquireToken */
+                Log.d(TAG, "Authentication failed: " + exception.toString());
+                if (mActivityCallback != null)
+                    mActivityCallback.onError(exception);
+
+            }
+
+            @Override
+            public void onCancel() {
+            /* User canceled the authentication */
+                Log.d(TAG, "User cancelled login.");
+            }
+        };
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    @SuppressWarnings("deprecation")
-    private int getColorCompat(@ColorRes int color) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return mContextActivity.getColor(color);
-        } else {
-            return mContextActivity.getResources().getColor(color);
-        }
-    }
+
+
 }

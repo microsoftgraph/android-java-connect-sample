@@ -6,7 +6,7 @@ package com.microsoft.graph.connect;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -15,14 +15,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.openid.appauth.AuthorizationException;
-import net.openid.appauth.AuthorizationService;
-import net.openid.appauth.TokenResponse;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.microsoft.identity.client.AuthenticationResult;
+import com.microsoft.identity.client.Logger;
+import com.microsoft.identity.client.MsalClientException;
+import com.microsoft.identity.client.MsalException;
+import com.microsoft.identity.client.MsalServiceException;
+import com.microsoft.identity.client.MsalUiRequiredException;
+import com.microsoft.identity.client.PublicClientApplication;
+import com.microsoft.identity.client.User;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -32,24 +35,27 @@ import java.util.UUID;
  * If there are cached tokens, the app tries to reuse them.
  * The activity redirects the user to the SendMailActivity upon successful connection.
  */
-public class ConnectActivity extends AppCompatActivity implements AuthorizationService.TokenResponseCallback {
+public class ConnectActivity extends AppCompatActivity implements MSALAuthenticationCallback {
 
     private static final String TAG = "ConnectActivity";
+    private PublicClientApplication mApplication;
+    private AuthenticationResult mAuthResult;
+    private Handler mHandler;
+    private boolean mEnablePiiLogging = false;
+    private User mUser;
 
     private Button mConnectButton;
     private TextView mTitleTextView;
     private TextView mDescriptionTextView;
     private ProgressBar mConnectProgressBar;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            AuthenticationManager.getInstance().processAuthorizationCode(getIntent(), this);
-        }
 
+        Bundle extras = getIntent().getExtras();
         setContentView(R.layout.activity_connect);
         setTitle(R.string.app_name);
 
@@ -59,6 +65,7 @@ public class ConnectActivity extends AppCompatActivity implements AuthorizationS
         mTitleTextView = (TextView) findViewById(R.id.titleTextView);
         mDescriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
 
+        Connect.getInstance().setConnectActivity(this);
         // add click listener
         mConnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,44 +85,63 @@ public class ConnectActivity extends AppCompatActivity implements AuthorizationS
                 connect();
             }
         });
+        if (mApplication == null) {
+            mApplication = new PublicClientApplication(
+                    this.getApplicationContext(),
+                    Constants.CLIENT_ID);
+        }
 
-        // Initialize AuthenticationManager
-        AuthenticationManager.getInstance().setContextActivity(this);
     }
 
     private void connect() {
-        AuthenticationManager.getInstance().startAuthorizationFlow();
+
+        // The sample app is having the PII enable setting on the MainActivity. Ideally, app should decide to enable Pii or not,
+        // if it's enabled, it should be  the setting when the application is onCreate.
+        if (mEnablePiiLogging) {
+            Logger.getInstance().setEnablePII(true);
+        } else {
+            Logger.getInstance().setEnablePII(false);
+        }
+
+        AuthenticationManager mgr = AuthenticationManager.getInstance();
+
+          /* Attempt to get a user and acquireTokenSilent
+   * If this fails we do an interactive request
+   */
+        List<User> users = null;
+
+        try {
+            users = mApplication.getUsers();
+
+            if (users != null && users.size() == 1) {
+          /* We have 1 user */
+                mUser = users.get(0);
+                mgr.callAcquireTokenSilent(mUser, true, this);
+            } else {
+          /* We have no user */
+
+          /* Let's do an interactive request */
+                mgr.connect(
+                        this,
+                        this);
+            }
+        } catch (MsalClientException e) {
+            Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString());
+
+        } catch (IndexOutOfBoundsException e) {
+            Log.d(TAG, "User at this position does not exist: " + e.toString());
+        }
+
+
+
+
     }
 
     @Override
-    public void onTokenRequestCompleted(@Nullable TokenResponse tokenResponse, @Nullable AuthorizationException authorizationException) {
-        if(tokenResponse != null) {
-            // get the UserInfo from the auth response
-            JSONObject claims = AuthenticationManager.getInstance().getClaims(tokenResponse.idToken);
-
-            String name = "";
-            String preferredUsername = "";
-            try {
-                name = claims.getString("name");
-                preferredUsername = claims.getString("preferred_username");
-            } catch (JSONException je) {
-                Log.e(TAG, je.getMessage());
-            }
-
-            // start the SendMailActivity
-            Intent sendMailActivity =
-                    new Intent(ConnectActivity.this, SendMailActivity.class);
-
-            // take the user's info along
-            sendMailActivity.putExtra(SendMailActivity.ARG_GIVEN_NAME, name);
-            sendMailActivity.putExtra(SendMailActivity.ARG_DISPLAY_ID, preferredUsername);
-
-            // actually start the Activity
-            startActivity(sendMailActivity);
-
-            resetUIForConnect();
-        } else if (authorizationException != null) {
-            showConnectErrorUI();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (mApplication != null) {
+            mApplication.handleInteractiveRequestRedirect(requestCode, resultCode, data);
         }
     }
 
@@ -154,5 +180,97 @@ public class ConnectActivity extends AppCompatActivity implements AuthorizationS
                 ConnectActivity.this,
                 R.string.connect_toast_text_error,
                 Toast.LENGTH_LONG).show();
+    }
+
+    private void showMessage(final String msg) {
+        getHandler().post(new Runnable() {
+
+            @Override
+            public void run() {
+                Toast.makeText(ConnectActivity.this, msg, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private Handler getHandler() {
+        if (mHandler == null) {
+            return new Handler(ConnectActivity.this.getMainLooper());
+        }
+
+        return mHandler;
+    }
+
+
+    @Override
+    public void onSuccess(AuthenticationResult authenticationResult) {
+        mUser = authenticationResult.getUser();
+        mAuthResult = authenticationResult;
+
+
+        String name = "";
+        String preferredUsername = "";
+
+        try {
+            // get the user info from the id token
+            name = mAuthResult.getUser().getName();
+            preferredUsername = mAuthResult.getUser().getDisplayableId();
+
+            AuthenticationManager mgr = AuthenticationManager.getInstance();
+
+            mgr.setAuthentcationResult(mAuthResult);
+
+        } catch (NullPointerException npe) {
+            Log.e(TAG, npe.getMessage());
+
+        }
+
+        // Prepare the SendMailActivity intent
+        Intent sendMailActivity =
+                new Intent(ConnectActivity.this, SendMailActivity.class);
+
+        // take the user's info along
+        sendMailActivity.putExtra(SendMailActivity.ARG_GIVEN_NAME, name);
+        sendMailActivity.putExtra(SendMailActivity.ARG_DISPLAY_ID, preferredUsername);
+
+
+        // actually start the activity
+        startActivity(sendMailActivity);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                resetUIForConnect();
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onError(MsalException exception) {
+        // Check the exception type.
+        if (exception instanceof MsalClientException) {
+            // This means errors happened in the sdk itself, could be network, Json parse, etc. Check MsalError.java
+            // for detailed list of the errors.
+            showMessage(exception.getMessage());
+        } else if (exception instanceof MsalServiceException) {
+            // This means something is wrong when the sdk is communication to the service, mostly likely it's the client
+            // configuration.
+            showMessage(exception.getMessage());
+        } else if (exception instanceof MsalUiRequiredException) {
+            // This explicitly indicates that developer needs to prompt the user, it could be refresh token is expired, revoked
+            // or user changes the password; or it could be that no token was found in the token cache.
+            AuthenticationManager mgr = AuthenticationManager.getInstance();
+
+
+            mgr.callAcquireToken(ConnectActivity.this, this);
+        }
+
+    }
+
+    @Override
+    public void onCancel() {
+        showMessage("User cancelled the flow.");
+
     }
 }
