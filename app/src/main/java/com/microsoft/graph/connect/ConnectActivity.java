@@ -117,7 +117,7 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
 
     /**
      * Handles redirect response from https://login.microsoftonline.com/common and
-     * notifies the ADAL library that the user has completed the authentication
+     * notifies the MSAL library that the user has completed the authentication
      * dialog
      * @param requestCode
      * @param resultCode
