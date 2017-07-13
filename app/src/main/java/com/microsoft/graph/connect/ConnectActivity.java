@@ -21,12 +21,9 @@ import com.microsoft.identity.client.MsalClientException;
 import com.microsoft.identity.client.MsalException;
 import com.microsoft.identity.client.MsalServiceException;
 import com.microsoft.identity.client.MsalUiRequiredException;
-import com.microsoft.identity.client.PublicClientApplication;
 import com.microsoft.identity.client.User;
 
-import java.net.URI;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Starting Activity of the app. Handles the connection to Office 365.
@@ -38,11 +35,10 @@ import java.util.UUID;
 public class ConnectActivity extends AppCompatActivity implements MSALAuthenticationCallback {
 
     private static final String TAG = "ConnectActivity";
-    private PublicClientApplication mApplication;
-    private AuthenticationResult mAuthResult;
-    private Handler mHandler;
+
     private boolean mEnablePiiLogging = false;
     private User mUser;
+    private Handler mHandler;
 
     private Button mConnectButton;
     private TextView mTitleTextView;
@@ -71,25 +67,9 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
             @Override
             public void onClick(View v) {
                 showConnectingInProgressUI();
-
-                //check that client id and redirect have been configured
-                if (!hasAzureConfiguration()) {
-                    Toast.makeText(
-                            ConnectActivity.this,
-                            getString(R.string.warning_client_id_redirect_uri_incorrect),
-                            Toast.LENGTH_LONG).show();
-                    resetUIForConnect();
-                    return;
-                }
-
                 connect();
             }
         });
-        if (mApplication == null) {
-            mApplication = new PublicClientApplication(
-                    this.getApplicationContext(),
-                    Constants.CLIENT_ID);
-        }
 
     }
 
@@ -111,7 +91,7 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
         List<User> users = null;
 
         try {
-            users = mApplication.getUsers();
+            users = mgr.getPublicClient().getUsers();
 
             if (users != null && users.size() == 1) {
           /* We have 1 user */
@@ -133,27 +113,29 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
         }
 
 
-
-
     }
 
+    /**
+     * Handles redirect response from https://login.microsoftonline.com/common and
+     * notifies the ADAL library that the user has completed the authentication
+     * dialog
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (mApplication != null) {
-            mApplication.handleInteractiveRequestRedirect(requestCode, resultCode, data);
+        if (AuthenticationManager
+                .getInstance()
+                .getPublicClient() != null) {
+            AuthenticationManager
+                    .getInstance()
+                    .getPublicClient()
+                    .handleInteractiveRequestRedirect(requestCode, resultCode, data);
         }
     }
 
-    private static boolean hasAzureConfiguration() {
-        try {
-            UUID.fromString(Constants.CLIENT_ID);
-            URI.create(Constants.REDIRECT_URI);
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
 
     private void resetUIForConnect() {
         mConnectButton.setVisibility(View.VISIBLE);
@@ -204,20 +186,17 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
     @Override
     public void onSuccess(AuthenticationResult authenticationResult) {
         mUser = authenticationResult.getUser();
-        mAuthResult = authenticationResult;
-
 
         String name = "";
         String preferredUsername = "";
 
         try {
             // get the user info from the id token
-            name = mAuthResult.getUser().getName();
-            preferredUsername = mAuthResult.getUser().getDisplayableId();
+            name = authenticationResult.getUser().getName();
+            preferredUsername = authenticationResult.getUser().getDisplayableId();
 
             AuthenticationManager mgr = AuthenticationManager.getInstance();
 
-            mgr.setAuthentcationResult(mAuthResult);
 
         } catch (NullPointerException npe) {
             Log.e(TAG, npe.getMessage());
@@ -273,4 +252,6 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
         showMessage("User cancelled the flow.");
 
     }
+
+
 }

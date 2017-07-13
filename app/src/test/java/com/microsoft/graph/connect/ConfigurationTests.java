@@ -8,18 +8,3 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-/**
- * Test to validate sample configuration
- */
-public class ConfigurationTests {
-    @Test
-    public void configuration_client_id_not_empty() {
-        assertTrue("Client ID value in Constants.java can't be empty", !Constants.CLIENT_ID.equals(""));
-    }
-
-    @Test
-    public void configuration_client_id_not_default() {
-        assertTrue("Configure a valid client ID in Constants.java", !Constants.CLIENT_ID.equals("ENTER_YOUR_CLIENT_ID"));
-    }
-
-}

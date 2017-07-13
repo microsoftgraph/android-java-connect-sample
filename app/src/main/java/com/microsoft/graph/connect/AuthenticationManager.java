@@ -24,7 +24,7 @@ import java.io.IOException;
 public class AuthenticationManager {
     private static final String TAG = "AuthenticationManager";
     private static AuthenticationManager INSTANCE;
-    private static PublicClientApplication mApplication;
+    private static PublicClientApplication mPublicClientApplication;
     private AuthenticationResult mAuthResult;
     private MSALAuthenticationCallback mActivityCallback;
     private AuthenticationManager() {
@@ -33,13 +33,9 @@ public class AuthenticationManager {
     public static synchronized AuthenticationManager getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new AuthenticationManager();
-            if (mApplication == null) {
-                mApplication = new PublicClientApplication(
-                        Connect.getInstance()
-                                .getConnectActivity()
-                                .getApplicationContext(),Constants.CLIENT_ID);
+            if (mPublicClientApplication == null) {
+                mPublicClientApplication = new PublicClientApplication(Connect.getInstance());
             }
-
         }
         return INSTANCE;
     }
@@ -49,9 +45,6 @@ public class AuthenticationManager {
     }
 
 
-    public void setAuthentcationResult(AuthenticationResult authentcationResult) {
-        mAuthResult = authentcationResult;
-    }
      /**
      * Returns the access token obtained in authentication
      *
@@ -61,12 +54,15 @@ public class AuthenticationManager {
         return  mAuthResult.getAccessToken();
     }
 
+    public PublicClientApplication getPublicClient(){
+        return mPublicClientApplication;
+    }
+
+
     public void connect(Activity activity, final MSALAuthenticationCallback authenticationCallback){
-
         mActivityCallback = authenticationCallback;
-        mApplication.acquireToken(
+        mPublicClientApplication.acquireToken(
                 activity, Constants.SCOPES, getAuthInteractiveCallback());
-
     }
 
     /**
@@ -74,27 +70,18 @@ public class AuthenticationManager {
      * to null, and removing the user id from shred preferences.
      */
     public void disconnect() {
-
-        mApplication.remove(mAuthResult.getUser());
+        mPublicClientApplication.remove(mAuthResult.getUser());
         // Reset the AuthenticationManager object
         AuthenticationManager.resetInstance();
     }
 
     public void callAcquireToken(Activity activity, final MSALAuthenticationCallback authenticationCallback) {
-        // The sample app is having the PII enable setting on the MainActivity. Ideally, app should decide to enable Pii or not,
-        // if it's enabled, it should be  the setting when the application is onCreate.
-//        if (mEnablePiiLogging) {
-//            Logger.getInstance().setEnablePII(true);
-//        } else {
-//            Logger.getInstance().setEnablePII(false);
-//        }
         mActivityCallback = authenticationCallback;
-
-        mApplication.acquireToken(activity, Constants.SCOPES, getAuthInteractiveCallback());
+        mPublicClientApplication.acquireToken(activity, Constants.SCOPES, getAuthInteractiveCallback());
     }
     public void callAcquireTokenSilent(User user, boolean forceRefresh, MSALAuthenticationCallback msalAuthenticationCallback) {
         mActivityCallback = msalAuthenticationCallback;
-        mApplication.acquireTokenSilentAsync(Constants.SCOPES, user, null, forceRefresh, getAuthSilentCallback());
+        mPublicClientApplication.acquireTokenSilentAsync(Constants.SCOPES, user, null, forceRefresh, getAuthSilentCallback());
     }
 //
 // App callbacks for MSAL
@@ -133,7 +120,6 @@ public class AuthenticationManager {
                 Log.d(TAG, "Authentication failed: " + exception.toString());
                 if (mActivityCallback != null)
                     mActivityCallback.onError(exception);
-
             }
 
             @Override
@@ -158,9 +144,6 @@ public class AuthenticationManager {
 
             /* Store the auth result */
                 mAuthResult = authenticationResult;
-
-                //invoke UI callback
-                //invoke UI callback
                 if (mActivityCallback != null)
                     mActivityCallback.onSuccess(mAuthResult);
             }
@@ -171,7 +154,6 @@ public class AuthenticationManager {
                 Log.d(TAG, "Authentication failed: " + exception.toString());
                 if (mActivityCallback != null)
                     mActivityCallback.onError(exception);
-
             }
 
             @Override
@@ -181,7 +163,4 @@ public class AuthenticationManager {
             }
         };
     }
-
-
-
 }
