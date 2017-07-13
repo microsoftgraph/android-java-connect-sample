@@ -59,6 +59,12 @@ public class AuthenticationManager {
     }
 
 
+    /**
+     * Authenticates the user and lets the user authorize the app for the requested permissions.
+     * An authentication token is returned via the getAuthInteractiveCalback method
+     * @param activity
+     * @param authenticationCallback
+     */
     public void connect(Activity activity, final MSALAuthenticationCallback authenticationCallback){
         mActivityCallback = authenticationCallback;
         mPublicClientApplication.acquireToken(
