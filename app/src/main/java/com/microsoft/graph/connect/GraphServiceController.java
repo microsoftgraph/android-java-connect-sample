@@ -296,7 +296,7 @@ class GraphServiceController {
                     .getMe()
                     .getDrive()
                     .getItems(id)
-                    .getCreateLink("view", "")
+                    .getCreateLink("organization", "view")
                     .buildRequest()
                     .post(callback);
         } catch (Exception ex) {
