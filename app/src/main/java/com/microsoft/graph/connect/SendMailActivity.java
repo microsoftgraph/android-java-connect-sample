@@ -99,96 +99,10 @@ public class SendMailActivity extends AppCompatActivity {
                     @Override
                     public void success(DriveItem driveItem) {
 
-                        //call get link helper
+                        //3. Get the sharing link and if success, call step 4 helper
+                        Log.i("SendMailActivity", "Getting the sharing link " );
                         getSharingLLink(driveItem, bytes);
 
-                        //3. Get a sharing link to the picture uploaded to OneDrive
-                        graphServiceController.getSharingLink(driveItem.id, new ICallback<Permission>() {
-                            @Override
-                            public void success(final Permission permission) {
-                                //Prepare body message and insert name of sender
-                                String body = getString(R.string.mail_body_text2);
-
-                                try {
-
-                                    //insert sharing link instead of given name
-                                    body = getString(R.string.mail_body_text2);
-
-                                    //replace() is used instead of format() because the mail body string contains several
-                                    //'%' characters, most of which are not string place holders. When format() is used,
-                                    //format exception is thrown. Place holders do not match replacement parameters.
-                                    body = body.replace("a href=%s", "a href="+ permission.link.webUrl.toString());
-                                    final String mailBody = body;
-                                    //4. Create a draft mail message
-                                    graphServiceController.createDraftMail(
-                                            mPreferredName,
-                                            mEmailEditText.getText().toString(),
-                                            getString(R.string.mail_subject_text),
-                                            mailBody,
-                                            new ICallback<Message>() {
-                                                @Override
-                                                public void success(final Message aMessage) {
-                                                    //5. Get draft message
-                                                    graphServiceController.getDraftMessage(aMessage.id, new ICallback<Message>(){
-                                                        public void success (final Message aMessage){
-                                                            //6. Add the profile picture to the draft mail
-                                                            graphServiceController.addPictureToDraftMessage(aMessage.id, bytes, permission.link.webUrl,
-                                                                    new ICallback<Attachment>() {
-                                                                        @Override
-                                                                        public void success(final Attachment anAttachment) {
-
-                                                                            //7. Send the draft message to the recipient
-                                                                            graphServiceController.sendDraftMessage(aMessage.id, new ICallback<Void>() {
-                                                                                @Override
-                                                                                public void success(Void aVoid) {
-                                                                                    showSendMailSuccessUI();
-                                                                                }
-
-                                                                                @Override
-                                                                                public void failure(ClientException ex) {
-                                                                                    Log.i("SendMailActivity", "Exception on send draft message " + ex.getLocalizedMessage() );
-                                                                                    showSendMailErrorUI();
-
-                                                                                }
-                                                                            });
-                                                                        }
-                                                                        @Override
-                                                                        public void failure(ClientException ex) {
-                                                                            Log.i("SendMailActivity", "Exception on add picture to draft message " + ex.getLocalizedMessage() );
-                                                                            showSendMailErrorUI();
-                                                                        }
-                                                                    });
-
-                                                        }
-                                                        public void failure(ClientException ex) {
-                                                            Log.i("SendMailActivity", "Exception on get draft message " + ex.getLocalizedMessage() );
-                                                            showSendMailErrorUI();
-
-                                                        }
-                                                    });
-                                                }
-
-                                                @Override
-                                                public void failure(ClientException ex) {
-                                                    Log.i("SendMailActivity", "Create draft mail " + ex.getLocalizedMessage() );
-                                                    showSendMailErrorUI();
-                                                }
-                                            }
-                                    );
-                                } catch (Exception ex) {
-                                    Log.i("SendMailActivity", "Exception on send mail " + ex.getLocalizedMessage() );
-                                    showSendMailErrorUI();
-
-                                }
-
-                            }
-                            @Override
-                            public void failure(ClientException ex) {
-                                Log.i("SendMailActivity", "Exception on get sharing link " + ex.getLocalizedMessage() );
-                                showSendMailErrorUI();
-
-                            }
-                        });
                     }
 
                     @Override
@@ -234,11 +148,19 @@ public class SendMailActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * Gets the picture sharing link from OneDrive and calls the step 5 helper
+     * @param driveItem
+     * @param bytes
+     */
     private void getSharingLLink(DriveItem driveItem, final byte[] bytes) {
         //3. Get a sharing link to the picture uploaded to OneDrive
         graphServiceController.getSharingLink(driveItem.id, new ICallback<Permission>() {
             @Override
             public void success(final Permission permission) {
+                Log.i("SendMailActivity", "Creating the draft message " );
+
                 createDraftMail(permission, bytes);
             }
             @Override
@@ -251,6 +173,11 @@ public class SendMailActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Creates a draft mail and calls the step 5 helper
+     * @param permission
+     * @param bytes
+     */
     private void createDraftMail(final Permission permission, final byte[] bytes) {
         //Prepare body message and insert name of sender
         String body = getString(R.string.mail_body_text2);
@@ -274,6 +201,7 @@ public class SendMailActivity extends AppCompatActivity {
                     new ICallback<Message>() {
                         @Override
                         public void success(final Message aMessage) {
+                            Log.i("SendMailActivity", "Getting the draft message " );
 
                             getDraftMessage(aMessage, permission, bytes);
                         }
@@ -294,10 +222,18 @@ public class SendMailActivity extends AppCompatActivity {
 
     }
 
+
+    /**
+     * Gets the draft message created in the previous step and calls the step 6 helper
+     * @param aMessage
+     * @param permission
+     * @param bytes
+     */
     private void getDraftMessage(final Message aMessage, final Permission permission, final byte[] bytes) {
         //5. Get draft message
         graphServiceController.getDraftMessage(aMessage.id, new ICallback<Message>(){
             public void success (final Message aMessage){
+                Log.i("SendMailActivity", "Adding picture to draft message " );
 
                 addPictureToDraftMessage(aMessage,permission,bytes);
             }
@@ -310,12 +246,20 @@ public class SendMailActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Adds the picture bytes as attachment to the draft message and calls the step 7 helper
+     * @param aMessage
+     * @param permission
+     * @param bytes
+     */
     private void addPictureToDraftMessage(final Message aMessage, final Permission permission, final byte[] bytes) {
         //6. Add the profile picture to the draft mail
         graphServiceController.addPictureToDraftMessage(aMessage.id, bytes, permission.link.webUrl,
                 new ICallback<Attachment>() {
                     @Override
                     public void success(final Attachment anAttachment) {
+                        Log.i("SendMailActivity", "Sending draft message " );
+
                         sendDraftMessage(aMessage);
 
                     }
@@ -328,6 +272,11 @@ public class SendMailActivity extends AppCompatActivity {
 
     }
 
+
+    /**
+     * Sends the draft message
+     * @param aMessage
+     */
     private void sendDraftMessage(final Message aMessage) {
         //7. Send the draft message to the recipient
         graphServiceController.sendDraftMessage(aMessage.id, new ICallback<Void>() {
