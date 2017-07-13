@@ -58,19 +58,6 @@ public class AuthenticationManager {
         return mPublicClientApplication;
     }
 
-
-    /**
-     * Authenticates the user and lets the user authorize the app for the requested permissions.
-     * An authentication token is returned via the getAuthInteractiveCalback method
-     * @param activity
-     * @param authenticationCallback
-     */
-    public void connect(Activity activity, final MSALAuthenticationCallback authenticationCallback){
-        mActivityCallback = authenticationCallback;
-        mPublicClientApplication.acquireToken(
-                activity, Constants.SCOPES, getAuthInteractiveCallback());
-    }
-
     /**
      * Disconnects the app from Office 365 by clearing the token cache, setting the client objects
      * to null, and removing the user id from shred preferences.
@@ -81,9 +68,16 @@ public class AuthenticationManager {
         AuthenticationManager.resetInstance();
     }
 
+    /**
+     * Authenticates the user and lets the user authorize the app for the requested permissions.
+     * An authentication token is returned via the getAuthInteractiveCalback method
+     * @param activity
+     * @param authenticationCallback
+     */
     public void callAcquireToken(Activity activity, final MSALAuthenticationCallback authenticationCallback) {
         mActivityCallback = authenticationCallback;
-        mPublicClientApplication.acquireToken(activity, Constants.SCOPES, getAuthInteractiveCallback());
+        mPublicClientApplication.acquireToken(
+                activity, Constants.SCOPES, getAuthInteractiveCallback());
     }
     public void callAcquireTokenSilent(User user, boolean forceRefresh, MSALAuthenticationCallback msalAuthenticationCallback) {
         mActivityCallback = msalAuthenticationCallback;

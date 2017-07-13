@@ -96,12 +96,15 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
             if (users != null && users.size() == 1) {
           /* We have 1 user */
                 mUser = users.get(0);
-                mgr.callAcquireTokenSilent(mUser, true, this);
+                mgr.callAcquireTokenSilent(
+                        mUser,
+                        true,
+                        this);
             } else {
           /* We have no user */
 
           /* Let's do an interactive request */
-                mgr.connect(
+                mgr.callAcquireToken(
                         this,
                         this);
             }

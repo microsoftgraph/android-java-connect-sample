@@ -235,6 +235,10 @@ class GraphServiceController {
     }
 
     @VisibleForTesting
+
+    /**
+     * Creates a new Message object
+     */
     Message createMessage(
             String subject,
             String body,
