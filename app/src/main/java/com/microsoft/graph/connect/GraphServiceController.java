@@ -117,7 +117,7 @@ class GraphServiceController {
             FileAttachment fileAttachment = new FileAttachment();
             fileAttachment.oDataType = "#microsoft.graph.fileAttachment";
             fileAttachment.contentBytes = attachementBytes;
-            fileAttachment.contentType = "image/png";
+            //fileAttachment.contentType = "image/png";
             fileAttachment.name = "me.png";
             mGraphServiceClient
                     .getMe()
