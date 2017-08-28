@@ -2,10 +2,11 @@
    - Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license.
    - See LICENSE in the project root for license information.
   -->
+
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.microsoft.graph.connect"
     xmlns:tools="http://schemas.android.com/tools">
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -46,7 +47,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="msalENTER_YOUR_CLIENT_ID"
+                <data android:scheme="@string/msalPrefix"
                     android:host="auth" />
             </intent-filter>
         </activity>
@@ -55,7 +56,7 @@
             android:value="authority string"/>
         <meta-data
             android:name="com.microsoft.identity.client.ClientId"
-            android:value="ENTER_YOUR_CLIENT_ID"/>
+            android:value="@string/client_Id"/>
     </application>
 
 </manifest>
