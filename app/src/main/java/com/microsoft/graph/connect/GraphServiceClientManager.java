@@ -6,6 +6,7 @@ package com.microsoft.graph.connect;
 
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import android.util.Log;
 
 import com.microsoft.graph.authentication.IAuthenticationProvider;
 import com.microsoft.graph.core.DefaultClientConfig;
@@ -40,6 +41,8 @@ public class GraphServiceClientManager implements IAuthenticationProvider {
             // This header has been added to identify this sample in the Microsoft Graph service.
             // If you're using this code for your project please remove the following line.
             request.addHeader("SampleID", "android-java-connect-sample");
+
+            Log.i("Connect","Request: " + request.toString());
         } catch (AuthenticatorException e) {
             e.printStackTrace();
         } catch (IOException e) {

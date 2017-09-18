@@ -223,7 +223,8 @@ public class SendMailActivity extends AppCompatActivity {
         mGraphServiceController.getDraftMessage(aMessage.id, new ICallback<Message>() {
             public void success(final Message aMessage) {
                 Log.i("SendMailActivity", "Adding picture to draft message ");
-                addPictureToDraftMessage(aMessage, permission, bytes);
+                sendDraftMessage(aMessage);
+
             }
 
             public void failure(ClientException ex) {

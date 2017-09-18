@@ -2,6 +2,7 @@ package com.microsoft.graph.connect;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
@@ -33,6 +34,8 @@ public class Connect extends MultiDexApplication {
         super.onCreate();
 
         mLogs = new StringBuffer();
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         // Logging can be turned on four different levels: error, warning, info, and verbose. By default the sdk is turning on
         // verbose level logging. Any apps can use Logger.getInstance().setLogLevel(Loglevel) to enable different level of logging.

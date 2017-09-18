@@ -11,5 +11,5 @@ public class Constants {
     // The Microsoft Graph delegated permissions that you set in the application
     // registration portal must match these scope values.
     // Update this constant with the scope (permission) values for your application:
-    public static final String[] SCOPES = {"openid", "profile","Mail.ReadWrite","mail.send","Files.ReadWrite","User.ReadBasic.All"};
+    public static final String[] SCOPES = {"openid", "Mail.ReadWrite","mail.send","Files.ReadWrite","User.ReadBasic.All"};
 }

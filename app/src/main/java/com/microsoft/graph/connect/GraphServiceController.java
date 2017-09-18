@@ -12,6 +12,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
+import android.os.NetworkOnMainThreadException;
 import android.os.StrictMode;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
@@ -119,6 +120,10 @@ class GraphServiceController {
             fileAttachment.contentBytes = attachementBytes;
             //fileAttachment.contentType = "image/png";
             fileAttachment.name = "me.png";
+            fileAttachment.size = attachementBytes.length;
+            fileAttachment.isInline = false;
+            fileAttachment.id = "blabla";
+            Log.i("connect sample","attachement id " + fileAttachment.id);
             mGraphServiceClient
                     .getMe()
                     .getMessages(messageId)
@@ -189,13 +194,32 @@ class GraphServiceController {
                             try {
                                 byte[] pictureBytes = new byte[1024];
                                 BufferedInputStream bufferedInputStream = (BufferedInputStream) inputStream;
+                                byte[] buff = new byte[8000];
 
-                                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                                StrictMode.setThreadPolicy(policy);
+
+                                ByteArrayOutputStream bao  = new ByteArrayOutputStream();
+                                int bytesRead = 0;
+                                byte[] data = new byte[0];
+                                try {
+                                    //This seems to be executing on the main thread!!!
+                                    while ((bytesRead = bufferedInputStream.read(buff)) != -1) {
+                                        bao.write(buff, 0, bytesRead);
+                                    }
+                                     data = bao.toByteArray();
+
+                                } catch (NetworkOnMainThreadException ex) {
+                                    Log.e("Connect" , "Attempting to read buffered network resource on main thread " + ex.getMessage());
+
+                                }
+
+
+
 
                                 //If the user's photo is not available, get the default test.jpg from the device external
                                 //storage root folder
-                                if (bufferedInputStream.available() < 1) {
+                               // if (bufferedInputStream.available() < 1) {
+                                if (data.length == 0)
+                                {
                                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
                                         pictureBytes = getDefaultPicture();
                                     }
@@ -203,7 +227,7 @@ class GraphServiceController {
                                         pictureBytes = getTestPicture();
                                     }
                                 } else {
-                                    pictureBytes = convertBufferToBytes(bufferedInputStream, inputStream.available());
+                                    pictureBytes = data; //convertBufferToBytes(bufferedInputStream, inputStream.available());
                                 }
                                 callback.success(pictureBytes);
                             } catch (IOException e) {
