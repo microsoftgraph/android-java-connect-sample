@@ -160,6 +160,8 @@ public class AuthenticationManager {
             public void onCancel() {
             /* User canceled the authentication */
                 Log.d(TAG, "User cancelled login.");
+                if (mActivityCallback != null)
+                    mActivityCallback.onCancel();
             }
         };
     }

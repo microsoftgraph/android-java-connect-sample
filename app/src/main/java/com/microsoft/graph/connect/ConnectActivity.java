@@ -75,7 +75,6 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
     }
 
     private void connect() {
-        try {
 
         // The sample app is having the PII enable setting on the MainActivity. Ideally, app should decide to enable Pii or not,
         // if it's enabled, it should be  the setting when the application is onCreate.
@@ -119,16 +118,13 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
             Log.d(TAG, "User at this position does not exist: " + e.toString());
             showConnectErrorUI(e.getMessage());
 
-        }
-
-        } catch (IllegalStateException e) {
-            Log.d(TAG, "MSAL Exception Generated: " + e.toString());
-            showConnectErrorUI(e.getMessage());
+        }catch (IllegalStateException e) {
+                Log.d(TAG, "MSAL Exception Generated: " + e.toString());
+                showConnectErrorUI(e.getMessage());
 
         } catch (Exception e) {
             showConnectErrorUI();
         }
-
     }
 
     /**
@@ -278,8 +274,15 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
     }
 
     @Override
+    public void onError(Exception exception) {
+        showMessage(exception.getMessage());
+        showConnectErrorUI(exception.getMessage());
+    }
+
+    @Override
     public void onCancel() {
         showMessage("User cancelled the flow.");
+        showConnectErrorUI("User cancelled the flow.");
 
     }
 

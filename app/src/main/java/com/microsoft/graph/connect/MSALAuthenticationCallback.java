@@ -10,5 +10,6 @@ import com.microsoft.identity.client.MsalException;
 interface MSALAuthenticationCallback {
     void onSuccess(AuthenticationResult authenticationResult);
     void onError(MsalException exception);
+    void onError(Exception exception);
     void onCancel();
 }
