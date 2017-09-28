@@ -24,6 +24,7 @@ import com.microsoft.identity.client.MsalUiRequiredException;
 import com.microsoft.identity.client.User;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Starting Activity of the app. Handles the connection to Office 365.
@@ -51,29 +52,30 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
         super.onCreate(savedInstanceState);
 
 
-        Bundle extras = getIntent().getExtras();
-        setContentView(R.layout.activity_connect);
-        setTitle(R.string.app_name);
+            Bundle extras = getIntent().getExtras();
+            setContentView(R.layout.activity_connect);
+            setTitle(R.string.app_name);
 
-        // set up our views
-        mConnectButton = (Button) findViewById(R.id.connectButton);
-        mConnectProgressBar = (ProgressBar) findViewById(R.id.connectProgressBar);
-        mTitleTextView = (TextView) findViewById(R.id.titleTextView);
-        mDescriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
+            // set up our views
+            mConnectButton = (Button) findViewById(R.id.connectButton);
+            mConnectProgressBar = (ProgressBar) findViewById(R.id.connectProgressBar);
+            mTitleTextView = (TextView) findViewById(R.id.titleTextView);
+            mDescriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
 
-        Connect.getInstance().setConnectActivity(this);
-        // add click listener
-        mConnectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showConnectingInProgressUI();
-                connect();
-            }
-        });
+            Connect.getInstance().setConnectActivity(this);
+            // add click listener
+            mConnectButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showConnectingInProgressUI();
+                    connect();
+                }
+            });
 
     }
 
     private void connect() {
+        try {
 
         // The sample app is having the PII enable setting on the MainActivity. Ideally, app should decide to enable Pii or not,
         // if it's enabled, it should be  the setting when the application is onCreate.
@@ -110,11 +112,22 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
             }
         } catch (MsalClientException e) {
             Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString());
+            showConnectErrorUI(e.getMessage());
+
 
         } catch (IndexOutOfBoundsException e) {
             Log.d(TAG, "User at this position does not exist: " + e.toString());
+            showConnectErrorUI(e.getMessage());
+
         }
 
+        } catch (IllegalStateException e) {
+            Log.d(TAG, "MSAL Exception Generated: " + e.toString());
+            showConnectErrorUI(e.getMessage());
+
+        } catch (Exception e) {
+            showConnectErrorUI();
+        }
 
     }
 
@@ -160,6 +173,18 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
         mTitleTextView.setText(R.string.title_text_error);
         mTitleTextView.setVisibility(View.VISIBLE);
         mDescriptionTextView.setText(R.string.connect_text_error);
+        mDescriptionTextView.setVisibility(View.VISIBLE);
+        Toast.makeText(
+                ConnectActivity.this,
+                R.string.connect_toast_text_error,
+                Toast.LENGTH_LONG).show();
+    }
+    private void showConnectErrorUI(String errorMessage) {
+        mConnectButton.setVisibility(View.VISIBLE);
+        mConnectProgressBar.setVisibility(View.GONE);
+        mTitleTextView.setText(R.string.title_text_error);
+        mTitleTextView.setVisibility(View.VISIBLE);
+        mDescriptionTextView.setText(errorMessage);
         mDescriptionTextView.setVisibility(View.VISIBLE);
         Toast.makeText(
                 ConnectActivity.this,
@@ -235,10 +260,12 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
             // This means errors happened in the sdk itself, could be network, Json parse, etc. Check MsalError.java
             // for detailed list of the errors.
             showMessage(exception.getMessage());
+            showConnectErrorUI(exception.getMessage());
         } else if (exception instanceof MsalServiceException) {
             // This means something is wrong when the sdk is communication to the service, mostly likely it's the client
             // configuration.
             showMessage(exception.getMessage());
+            showConnectErrorUI(exception.getMessage());
         } else if (exception instanceof MsalUiRequiredException) {
             // This explicitly indicates that developer needs to prompt the user, it could be refresh token is expired, revoked
             // or user changes the password; or it could be that no token was found in the token cache.
