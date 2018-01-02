@@ -1,6 +1,5 @@
-# <a name="connect-sample-for-android-using-the-microsoft-graph-sdk"></a>使用 Microsoft Graph SDK 的适用于 Android 的 Connect 示例
+﻿# <a name="connect-sample-for-android-using-the-microsoft-graph-sdk"></a>使用 Microsoft Graph SDK 的适用于 Android 的 Connect 示例
 
-![生成状态](https://ricalo.visualstudio.com/_apis/public/build/definitions/06256fa7-d8e5-4ca0-8639-7c00eb6f1fe9/6/badge "生成状态")
 
 >**注意：**我们正在更新此示例以使用适用于 Android 应用的[推荐身份验证库](https://docs.microsoft.com/zh-cn/azure/active-directory/develop/active-directory-v2-libraries#compatible-client-libraries)。
 
@@ -9,7 +8,7 @@
 
 > 若要在**所有企业方案**中支持**所有企业客户**，必须使用 Azure AD 终结点并使用 [Azure 管理门户](https://aka.ms/aadapplist)管理应用。有关详细信息，请参阅[在 Azure AD 和 Azure AD v2.0 终结点之间做选择](https://graph.microsoft.io/docs/authorization/auth_overview#deciding-between-azure-ad-and-the-v2-authentication-endpoint)。
 
-[![Microsoft Graph Connect 示例](../readme-images/O365-Android-Connect-video_play_icon.png)](https://www.youtube.com/watch?v=3IQIDFrqhY4 "单击查看使用中的示例")
+[![Microsoft Graph Connect 示例](/readme-images/O365-Android-Connect-video_play_icon.png)](https://www.youtube.com/watch?v=3IQIDFrqhY4 "单击查看使用中的示例")
 
 连接到 Microsoft Graph 是每个 Android 应用开始使用 Office 365 服务和数据必须执行的第一步。该示例演示如何通过 Microsoft Graph SDK 连接并调用一个 API。
 
