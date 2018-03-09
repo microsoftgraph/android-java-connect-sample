@@ -1,6 +1,5 @@
-# <a name="connect-sample-for-android-using-the-microsoft-graph-sdk"></a>Microsoft Graph SDK を使用した Android 用 Connect サンプル
+﻿# <a name="connect-sample-for-android-using-the-microsoft-graph-sdk"></a>Microsoft Graph SDK を使用した Android 用 Connect サンプル
 
-![ビルドの状態](https://ricalo.visualstudio.com/_apis/public/build/definitions/06256fa7-d8e5-4ca0-8639-7c00eb6f1fe9/6/badge "ビルドの状態")
 
 >**注:**Android アプリ向けの[推奨される認証ライブラリ](https://docs.microsoft.com/ja-jp/azure/active-directory/develop/active-directory-v2-libraries#compatible-client-libraries)を使用するこのサンプルは、現在更新中です。
 
@@ -9,7 +8,7 @@
 
 > **すべてのエンタープライズのお客様**の**すべてのエンタープライズ シナリオ**をサポートするには、Azure AD のエンドポイントを使用し、[Azure の管理ポータル](https://aka.ms/aadapplist)でアプリを管理する必要があります。詳細については、「[Azure AD か Azure AD v2.0 エンドポイントかを決定する](https://graph.microsoft.io/docs/authorization/auth_overview#deciding-between-azure-ad-and-the-v2-authentication-endpoint)」を参照してください。
 
-[![Microsoft Graph Connect のサンプル](../readme-images/O365-Android-Connect-video_play_icon.png)](https://www.youtube.com/watch?v=3IQIDFrqhY4 "稼働中のサンプルを確認するにはこちらをクリックしてください")
+[![Microsoft Graph Connect のサンプル](/readme-images/O365-Android-Connect-video_play_icon.png)](https://www.youtube.com/watch?v=3IQIDFrqhY4 "稼働中のサンプルを確認するにはこちらをクリックしてください")
 
 各 Android アプリで Office 365 のサービスとデータの操作を開始するため、最初に Microsoft Graph に接続する必要があります。このサンプルでは、Microsoft Graph SDK 経由で、1 つの API に接続して呼び出す方法を示します。
 
