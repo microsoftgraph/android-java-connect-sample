@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +46,8 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
     private TextView mTitleTextView;
     private TextView mDescriptionTextView;
     private ProgressBar mConnectProgressBar;
+    private RadioButton mCorpSchoolAccount;
+    private RadioButton mConsumerAccount;
 
 
     @Override
@@ -61,6 +64,8 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
             mConnectProgressBar = (ProgressBar) findViewById(R.id.connectProgressBar);
             mTitleTextView = (TextView) findViewById(R.id.titleTextView);
             mDescriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
+            mConsumerAccount = (RadioButton) findViewById(R.id.radioConsumer);
+            mCorpSchoolAccount = (RadioButton) findViewById(R.id.radioCorpSchool);
 
             Connect.getInstance().setConnectActivity(this);
             // add click listener
@@ -74,6 +79,13 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
 
     }
 
+    private String getUserAccountType() {
+        String userAcccountType = Constants.CORPSCHOOL_ACCOUNT;
+        if (mConsumerAccount.isChecked()) {
+            userAcccountType = Constants.CONSUMER_ACCOUNT;
+        }
+        return userAcccountType;
+    }
     private void connect() {
 
         // The sample app is having the PII enable setting on the MainActivity. Ideally, app should decide to enable Pii or not,
@@ -84,7 +96,9 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
             Logger.getInstance().setEnablePII(false);
         }
 
+
         AuthenticationManager mgr = AuthenticationManager.getInstance();
+        mgr.setAccountType(getUserAccountType());
 
           /* Attempt to get a user and acquireTokenSilent
    * If this fails we do an interactive request

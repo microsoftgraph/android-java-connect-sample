@@ -27,6 +27,7 @@ public class AuthenticationManager {
     private static PublicClientApplication mPublicClientApplication;
     private AuthenticationResult mAuthResult;
     private MSALAuthenticationCallback mActivityCallback;
+    private String mAccountType;
     private AuthenticationManager() {
     }
 
@@ -44,6 +45,13 @@ public class AuthenticationManager {
         INSTANCE = null;
     }
 
+
+    public void setAccountType(String accountType) {
+        mAccountType = accountType;
+    }
+    public String getAccountType(){
+        return mAccountType;
+    }
 
      /**
      * Returns the access token obtained in authentication

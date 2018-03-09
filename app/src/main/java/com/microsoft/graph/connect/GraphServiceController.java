@@ -356,19 +356,22 @@ class GraphServiceController {
 
             // TODO: Need to discover authentication type
             //Can we discover the kind of authentication? (org/school vs. consumer)
-            //if (authType != "org/school") {
-            //   linkType = "anonymous";
-            //}
+            if (AuthenticationManager.getInstance().getAccountType() == Constants.CONSUMER_ACCOUNT) {
+               linkType = "anonymous";
+            }
 
             mGraphServiceClient
                     .getMe()
                     .getDrive()
                     .getItems(id)
-                    .getCreateLink(linkType, "view")
+                    .getCreateLink("view", "")
                     .buildRequest()
                     .post(callback);
         } catch (Exception ex) {
-            showException(ex, "exception on get OneDrive sharing link ","Get sharing link failed", "The get sharing link method failed");
+            showException(ex,
+                    "exception on get OneDrive sharing link ",
+                    "Get sharing link failed",
+                    "The get sharing link method failed");
         }
     }
 

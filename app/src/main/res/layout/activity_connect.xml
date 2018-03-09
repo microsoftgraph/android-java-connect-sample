@@ -49,4 +49,36 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:visibility="gone" />
 
+
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/connectButton"
+        android:layout_alignLeft="@+id/connectButton"
+        android:layout_alignStart="@+id/connectButton"
+        android:layout_marginBottom="57dp"
+        android:layout_marginLeft="38dp"
+        android:layout_marginStart="38dp">
+        <RadioButton
+            android:checked="true"
+            android:id="@+id/radioCorpSchool"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/connectButton"
+            android:layout_alignLeft="@+id/connectButton"
+            android:layout_alignStart="@+id/connectButton"
+            android:layout_marginBottom="10dp"
+            android:text="Corp/School account" />
+
+        <RadioButton
+            android:id="@+id/radioConsumer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/radioCorpSchool"
+            android:layout_alignLeft="@+id/radioCorpSchool"
+            android:layout_alignStart="@+id/radioCorpSchool"
+            android:text="Consumer" />
+    </RadioGroup>
+
 </RelativeLayout>
