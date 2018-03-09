@@ -39,6 +39,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.logging.Level;
 
 /**
  * Handles the creation of the message and using the GraphServiceClient to
@@ -118,7 +119,6 @@ class GraphServiceController {
             FileAttachment fileAttachment = new FileAttachment();
             fileAttachment.oDataType = "#microsoft.graph.fileAttachment";
             fileAttachment.contentBytes = attachementBytes;
-            //fileAttachment.contentType = "image/png";
             fileAttachment.name = "me.png";
             fileAttachment.size = attachementBytes.length;
             fileAttachment.isInline = false;
@@ -133,6 +133,37 @@ class GraphServiceController {
 
         } catch (Exception ex) {
             showException(ex, "exception on add picture to draft message","Draft attachment failed", "The post file attachment method failed");
+        }
+    }
+    /**
+     * Creates a new email message with attachment and sends it to a specified recipient
+     *
+     * @param emailAddress Recipient email address
+     * @param subject      Subject of the email message
+     * @param body         Email body
+     * @param callback     Callback invoked when send mail operation is complete
+     * @throws SendMailException Exception thrown by Graph SDK with custom exception description
+     */
+    public void sendNewMessageAsync(
+            final String emailAddress,
+            final String subject,
+            final String body,
+            ICallback<Void> callback
+    )  {
+        try {
+            Message message = createMessage(subject, body, emailAddress);
+            mGraphServiceClient.getMe()
+                    .getSendMail(message, true)
+                    .buildRequest()
+                    .post(callback);
+
+        } catch (Exception ex) {
+            try {
+                showException(ex, "exception on send message ","Send  mail failed", "The send  mail method failed");
+            } catch (Exception e) {
+                //throw new SendMailException("SendNewMessageAsync failed ", e);
+            }
+
         }
     }
 
@@ -320,11 +351,20 @@ class GraphServiceController {
 
         try {
 
+            //If user is AAD user, this value should be sent in request
+            String linkType = "organization";
+
+            // TODO: Need to discover authentication type
+            //Can we discover the kind of authentication? (org/school vs. consumer)
+            //if (authType != "org/school") {
+            //   linkType = "anonymous";
+            //}
+
             mGraphServiceClient
                     .getMe()
                     .getDrive()
                     .getItems(id)
-                    .getCreateLink("organization", "view")
+                    .getCreateLink(linkType, "view")
                     .buildRequest()
                     .post(callback);
         } catch (Exception ex) {

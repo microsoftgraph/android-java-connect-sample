@@ -105,7 +105,21 @@ public class SendMailActivity extends AppCompatActivity {
                         @Override
                         public void failure(ClientException ex) {
                             Log.i("SendMailActivity", "Exception on upload image to OneDrive " + ex.getLocalizedMessage());
-                            showSendMailErrorUI();
+                            mGraphServiceController.sendNewMessageAsync(
+                                    mEmailEditText.getText().toString(),
+                                    getString(R.string.mail_subject_text),
+                                    getString(R.string.mail_body_text_NoAttach),new ICallback<Void>() {
+                                        @Override
+                                        public void success(Void aVoid) {
+                                            Log.i("SendMailActivity", "Getting the draft message ");
+                                        }
+
+                                        @Override
+                                        public void failure(ClientException ex) {
+                                            Log.i("SendMailActivity", "Create draft mail " + ex.getLocalizedMessage());
+                                            showSendMailErrorUI();
+                                        }
+                                    });
                         }
                     });
                 }
