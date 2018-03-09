@@ -13,7 +13,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
 import android.os.NetworkOnMainThreadException;
-import android.os.StrictMode;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
