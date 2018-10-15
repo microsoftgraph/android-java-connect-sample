@@ -33,7 +33,6 @@ public class SendMailActivity extends AppCompatActivity {
 
     // arguments for this activity
     public static final String ARG_GIVEN_NAME = "givenName";
-    public static final String ARG_DISPLAY_ID = "displayableId";
     public static final String ARG_UPN = "upn";
 
     // views
@@ -41,7 +40,6 @@ public class SendMailActivity extends AppCompatActivity {
     private Button mSendMailButton;
     private ProgressBar mSendMailProgressBar;
     private String mGivenName;
-    private String mPreferredName;
     private TextView mConclusionTextView;
     final private GraphServiceController mGraphServiceController = new GraphServiceController();
 
@@ -61,8 +59,7 @@ public class SendMailActivity extends AppCompatActivity {
         // Extract the givenName and displayableId and use it in the UI.
         mGivenName = getIntent().getStringExtra(ARG_GIVEN_NAME);
         mTitleTextView.append(mGivenName + "!");
-        mEmailEditText.setText(getIntent().getStringExtra(ARG_DISPLAY_ID));
-        mPreferredName = getIntent().getStringExtra(ARG_DISPLAY_ID);
+        mEmailEditText.setText(mGivenName);
     }
 
     /**
@@ -156,6 +153,7 @@ public class SendMailActivity extends AppCompatActivity {
                 Log.i("SendMailActivity", "Creating the draft message ");
                 createDraftMail(permission, bytes);
             }
+
             @Override
             public void failure(ClientException ex) {
                 Log.i("SendMailActivity", "Exception on get sharing link " + ex.getLocalizedMessage());
@@ -185,23 +183,23 @@ public class SendMailActivity extends AppCompatActivity {
             final String mailBody = body;
             //4. Create a draft mail message
             mGraphServiceController.createDraftMail(
-                mPreferredName,
-                mEmailEditText.getText().toString(),
-                getString(R.string.mail_subject_text),
-                mailBody,
-                new ICallback<Message>() {
-                    @Override
-                    public void success(final Message aMessage) {
-                        Log.i("SendMailActivity", "Getting the draft message ");
-                        getDraftMessage(aMessage, permission, bytes);
-                    }
+                    mGivenName,
+                    mEmailEditText.getText().toString(),
+                    getString(R.string.mail_subject_text),
+                    mailBody,
+                    new ICallback<Message>() {
+                        @Override
+                        public void success(final Message aMessage) {
+                            Log.i("SendMailActivity", "Getting the draft message ");
+                            getDraftMessage(aMessage, permission, bytes);
+                        }
 
-                    @Override
-                    public void failure(ClientException ex) {
-                        Log.i("SendMailActivity", "Create draft mail " + ex.getLocalizedMessage());
-                        showSendMailErrorUI();
+                        @Override
+                        public void failure(ClientException ex) {
+                            Log.i("SendMailActivity", "Create draft mail " + ex.getLocalizedMessage());
+                            showSendMailErrorUI();
+                        }
                     }
-                }
             );
         } catch (Exception ex) {
             Log.i("SendMailActivity", "Exception on send mail " + ex.getLocalizedMessage());
@@ -246,19 +244,19 @@ public class SendMailActivity extends AppCompatActivity {
     private void addPictureToDraftMessage(final Message aMessage, final Permission permission, final byte[] bytes) {
         //6. Add the profile picture to the draft mail
         mGraphServiceController.addPictureToDraftMessage(aMessage.id, bytes, permission.link.webUrl,
-            new ICallback<Attachment>() {
-                @Override
-                public void success(final Attachment anAttachment) {
-                    Log.i("SendMailActivity", "Sending draft message ");
-                    sendDraftMessage(aMessage);
-                }
+                new ICallback<Attachment>() {
+                    @Override
+                    public void success(final Attachment anAttachment) {
+                        Log.i("SendMailActivity", "Sending draft message ");
+                        sendDraftMessage(aMessage);
+                    }
 
-                @Override
-                public void failure(ClientException ex) {
-                    Log.i("SendMailActivity", "Exception on add picture to draft message " + ex.getLocalizedMessage());
-                    showSendMailErrorUI();
-                }
-            });
+                    @Override
+                    public void failure(ClientException ex) {
+                        Log.i("SendMailActivity", "Exception on add picture to draft message " + ex.getLocalizedMessage());
+                        showSendMailErrorUI();
+                    }
+                });
     }
 
 

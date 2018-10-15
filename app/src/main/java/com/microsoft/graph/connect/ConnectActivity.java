@@ -16,12 +16,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.microsoft.identity.client.AuthenticationResult;
+import com.microsoft.identity.client.IAccount;
 import com.microsoft.identity.client.Logger;
-import com.microsoft.identity.client.MsalClientException;
-import com.microsoft.identity.client.MsalException;
-import com.microsoft.identity.client.MsalServiceException;
-import com.microsoft.identity.client.MsalUiRequiredException;
-import com.microsoft.identity.client.User;
+import com.microsoft.identity.client.exception.MsalClientException;
+import com.microsoft.identity.client.exception.MsalException;
+import com.microsoft.identity.client.exception.MsalServiceException;
+import com.microsoft.identity.client.exception.MsalUiRequiredException;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -38,7 +38,7 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
     private static final String TAG = "ConnectActivity";
 
     private boolean mEnablePiiLogging = false;
-    private User mUser;
+    private IAccount mAccount;
     private Handler mHandler;
 
     private Button mConnectButton;
@@ -51,31 +51,28 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Bundle extras = getIntent().getExtras();
+        setContentView(R.layout.activity_connect);
+        setTitle(R.string.app_name);
 
-            Bundle extras = getIntent().getExtras();
-            setContentView(R.layout.activity_connect);
-            setTitle(R.string.app_name);
+        // set up our views
+        mConnectButton = (Button) findViewById(R.id.connectButton);
+        mConnectProgressBar = (ProgressBar) findViewById(R.id.connectProgressBar);
+        mTitleTextView = (TextView) findViewById(R.id.titleTextView);
+        mDescriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
 
-            // set up our views
-            mConnectButton = (Button) findViewById(R.id.connectButton);
-            mConnectProgressBar = (ProgressBar) findViewById(R.id.connectProgressBar);
-            mTitleTextView = (TextView) findViewById(R.id.titleTextView);
-            mDescriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
-
-            Connect.getInstance().setConnectActivity(this);
-            // add click listener
-            mConnectButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showConnectingInProgressUI();
-                    connect();
-                }
-            });
-
+        Connect.getInstance().setConnectActivity(this);
+        // add click listener
+        mConnectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showConnectingInProgressUI();
+                connect();
+            }
+        });
     }
 
     private void connect() {
-
         // The sample app is having the PII enable setting on the MainActivity. Ideally, app should decide to enable Pii or not,
         // if it's enabled, it should be  the setting when the application is onCreate.
         if (mEnablePiiLogging) {
@@ -86,44 +83,25 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
 
         AuthenticationManager mgr = AuthenticationManager.getInstance();
 
-          /* Attempt to get a user and acquireTokenSilent
-   * If this fails we do an interactive request
-   */
-        List<User> users = null;
+        /* Attempt to get a user and acquireTokenSilent
+         * If this fails we do an interactive request
+         */
+        List<IAccount> accounts = mgr.getPublicClient().getAccounts();
 
-        try {
-            users = mgr.getPublicClient().getUsers();
+        if (!accounts.isEmpty() && accounts.size() == 1) {
+            /* We have 1 user */
+            mAccount = accounts.get(0);
+            mgr.callAcquireTokenSilent(
+                    mAccount,
+                    true,
+                    this);
+        } else {
+            /* We have no user */
 
-            if (users != null && users.size() == 1) {
-          /* We have 1 user */
-                mUser = users.get(0);
-                mgr.callAcquireTokenSilent(
-                        mUser,
-                        true,
-                        this);
-            } else {
-          /* We have no user */
-
-          /* Let's do an interactive request */
-                mgr.callAcquireToken(
-                        this,
-                        this);
-            }
-        } catch (MsalClientException e) {
-            Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString());
-            showConnectErrorUI(e.getMessage());
-
-
-        } catch (IndexOutOfBoundsException e) {
-            Log.d(TAG, "User at this position does not exist: " + e.toString());
-            showConnectErrorUI(e.getMessage());
-
-        }catch (IllegalStateException e) {
-                Log.d(TAG, "MSAL Exception Generated: " + e.toString());
-                showConnectErrorUI(e.getMessage());
-
-        } catch (Exception e) {
-            showConnectErrorUI();
+            /* Let's do an interactive request */
+            mgr.callAcquireToken(
+                    this,
+                    this);
         }
     }
 
@@ -131,6 +109,7 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
      * Handles redirect response from https://login.microsoftonline.com/common and
      * notifies the MSAL library that the user has completed the authentication
      * dialog
+     *
      * @param requestCode
      * @param resultCode
      * @param data
@@ -175,6 +154,7 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
                 R.string.connect_toast_text_error,
                 Toast.LENGTH_LONG).show();
     }
+
     private void showConnectErrorUI(String errorMessage) {
         mConnectButton.setVisibility(View.VISIBLE);
         mConnectProgressBar.setVisibility(View.GONE);
@@ -206,26 +186,12 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
         return mHandler;
     }
 
-
     @Override
     public void onSuccess(AuthenticationResult authenticationResult) {
-        mUser = authenticationResult.getUser();
+        mAccount = authenticationResult.getAccount();
 
-        String name = "";
-        String preferredUsername = "";
-
-        try {
-            // get the user info from the id token
-            name = authenticationResult.getUser().getName();
-            preferredUsername = authenticationResult.getUser().getDisplayableId();
-
-            AuthenticationManager mgr = AuthenticationManager.getInstance();
-
-
-        } catch (NullPointerException npe) {
-            Log.e(TAG, npe.getMessage());
-
-        }
+        // get the user info from the id token
+        String name = mAccount.getUsername();
 
         // Prepare the SendMailActivity intent
         Intent sendMailActivity =
@@ -233,8 +199,6 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
 
         // take the user's info along
         sendMailActivity.putExtra(SendMailActivity.ARG_GIVEN_NAME, name);
-        sendMailActivity.putExtra(SendMailActivity.ARG_DISPLAY_ID, preferredUsername);
-
 
         // actually start the activity
         startActivity(sendMailActivity);
@@ -245,8 +209,6 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
                 resetUIForConnect();
             }
         });
-
-
     }
 
     @Override
@@ -267,10 +229,8 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
             // or user changes the password; or it could be that no token was found in the token cache.
             AuthenticationManager mgr = AuthenticationManager.getInstance();
 
-
             mgr.callAcquireToken(ConnectActivity.this, this);
         }
-
     }
 
     @Override
@@ -285,6 +245,4 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
         showConnectErrorUI("User cancelled the flow.");
 
     }
-
-
 }

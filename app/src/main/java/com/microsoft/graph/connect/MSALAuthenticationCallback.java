@@ -1,7 +1,7 @@
 package com.microsoft.graph.connect;
 
 import com.microsoft.identity.client.AuthenticationResult;
-import com.microsoft.identity.client.MsalException;
+import com.microsoft.identity.client.exception.MsalException;
 
 /**
  * Created by johnaustin on 7/5/17.
@@ -9,7 +9,10 @@ import com.microsoft.identity.client.MsalException;
 
 interface MSALAuthenticationCallback {
     void onSuccess(AuthenticationResult authenticationResult);
+
     void onError(MsalException exception);
+
     void onError(Exception exception);
+
     void onCancel();
 }

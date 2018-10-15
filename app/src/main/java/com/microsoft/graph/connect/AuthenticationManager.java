@@ -12,9 +12,9 @@ import android.util.Log;
 
 import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.AuthenticationResult;
-import com.microsoft.identity.client.MsalException;
+import com.microsoft.identity.client.IAccount;
 import com.microsoft.identity.client.PublicClientApplication;
-import com.microsoft.identity.client.User;
+import com.microsoft.identity.client.exception.MsalException;
 
 import java.io.IOException;
 
@@ -27,6 +27,7 @@ public class AuthenticationManager {
     private static PublicClientApplication mPublicClientApplication;
     private AuthenticationResult mAuthResult;
     private MSALAuthenticationCallback mActivityCallback;
+
     private AuthenticationManager() {
     }
 
@@ -34,7 +35,7 @@ public class AuthenticationManager {
         if (INSTANCE == null) {
             INSTANCE = new AuthenticationManager();
             if (mPublicClientApplication == null) {
-                mPublicClientApplication = new PublicClientApplication(Connect.getInstance());
+                mPublicClientApplication = new PublicClientApplication(Connect.getInstance(), R.raw.auth_config);
             }
         }
         return INSTANCE;
@@ -45,16 +46,16 @@ public class AuthenticationManager {
     }
 
 
-     /**
+    /**
      * Returns the access token obtained in authentication
      *
      * @return mAccessToken
      */
     public String getAccessToken() throws AuthenticatorException, IOException, OperationCanceledException {
-        return  mAuthResult.getAccessToken();
+        return mAuthResult.getAccessToken();
     }
 
-    public PublicClientApplication getPublicClient(){
+    public PublicClientApplication getPublicClient() {
         return mPublicClientApplication;
     }
 
@@ -63,7 +64,7 @@ public class AuthenticationManager {
      * to null, and removing the user id from shred preferences.
      */
     public void disconnect() {
-        mPublicClientApplication.remove(mAuthResult.getUser());
+        mPublicClientApplication.removeAccount(mAuthResult.getAccount());
         // Reset the AuthenticationManager object
         AuthenticationManager.resetInstance();
     }
@@ -71,6 +72,7 @@ public class AuthenticationManager {
     /**
      * Authenticates the user and lets the user authorize the app for the requested permissions.
      * An authentication token is returned via the getAuthInteractiveCalback method
+     *
      * @param activity
      * @param authenticationCallback
      */
@@ -79,9 +81,10 @@ public class AuthenticationManager {
         mPublicClientApplication.acquireToken(
                 activity, Constants.SCOPES, getAuthInteractiveCallback());
     }
-    public void callAcquireTokenSilent(User user, boolean forceRefresh, MSALAuthenticationCallback msalAuthenticationCallback) {
+
+    public void callAcquireTokenSilent(IAccount account, boolean forceRefresh, MSALAuthenticationCallback msalAuthenticationCallback) {
         mActivityCallback = msalAuthenticationCallback;
-        mPublicClientApplication.acquireTokenSilentAsync(Constants.SCOPES, user, null, forceRefresh, getAuthSilentCallback());
+        mPublicClientApplication.acquireTokenSilentAsync(Constants.SCOPES, account, null, forceRefresh, getAuthSilentCallback());
     }
 //
 // App callbacks for MSAL
@@ -103,10 +106,10 @@ public class AuthenticationManager {
         return new AuthenticationCallback() {
             @Override
             public void onSuccess(AuthenticationResult authenticationResult) {
-            /* Successfully got a token, call Graph now */
+                /* Successfully got a token, call Graph now */
                 Log.d(TAG, "Successfully authenticated");
 
-            /* Store the authResult */
+                /* Store the authResult */
                 mAuthResult = authenticationResult;
 
                 //invoke UI callback
@@ -116,7 +119,7 @@ public class AuthenticationManager {
 
             @Override
             public void onError(MsalException exception) {
-            /* Failed to acquireToken */
+                /* Failed to acquireToken */
                 Log.d(TAG, "Authentication failed: " + exception.toString());
                 if (mActivityCallback != null)
                     mActivityCallback.onError(exception);
@@ -124,7 +127,7 @@ public class AuthenticationManager {
 
             @Override
             public void onCancel() {
-            /* User canceled the authentication */
+                /* User canceled the authentication */
                 Log.d(TAG, "User cancelled login.");
             }
         };
@@ -132,17 +135,17 @@ public class AuthenticationManager {
 
 
     /* Callback used for interactive request.  If succeeds we use the access
-         * token to call the Microsoft Graph. Does not check cache
-         */
+     * token to call the Microsoft Graph. Does not check cache
+     */
     private AuthenticationCallback getAuthInteractiveCallback() {
         return new AuthenticationCallback() {
             @Override
             public void onSuccess(AuthenticationResult authenticationResult) {
-            /* Successfully got a token, call graph now */
+                /* Successfully got a token, call graph now */
                 Log.d(TAG, "Successfully authenticated");
                 Log.d(TAG, "ID Token: " + authenticationResult.getIdToken());
 
-            /* Store the auth result */
+                /* Store the auth result */
                 mAuthResult = authenticationResult;
                 if (mActivityCallback != null)
                     mActivityCallback.onSuccess(mAuthResult);
@@ -150,7 +153,7 @@ public class AuthenticationManager {
 
             @Override
             public void onError(MsalException exception) {
-            /* Failed to acquireToken */
+                /* Failed to acquireToken */
                 Log.d(TAG, "Authentication failed: " + exception.toString());
                 if (mActivityCallback != null)
                     mActivityCallback.onError(exception);
@@ -158,7 +161,7 @@ public class AuthenticationManager {
 
             @Override
             public void onCancel() {
-            /* User canceled the authentication */
+                /* User canceled the authentication */
                 Log.d(TAG, "User cancelled login.");
                 if (mActivityCallback != null)
                     mActivityCallback.onCancel();
