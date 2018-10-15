@@ -17,7 +17,7 @@ Connecting to Microsoft Graph is the first step every Android app must take to s
 To run the Connect sample, your device needs to meet the following requirements:
 
 * A screen size of 800 x 480 or larger.
-* Android API level 16 or higher.
+* Android API level 21 or higher.
  
 ## Prerequisites
 
@@ -54,11 +54,9 @@ To learn about authenticating with MSAL for Android to make calls to Microsoft G
 	2. Browse to your local repository and choose the Android-Connect project. Click **OK**.
 	
 	> Note: Android Studio shows a **Frameworks detected** notification if you don't have the **Android Support Repository** installed. Open the SDK manager and add the Android Support Repository to avoid the Frameworks detected notification.
-5. Open AndroidManifest.xml
-	* Replace *ENTER_YOUR_CLIENT_ID* in two places with the application id from the previous section.
+5. Open /res/raw/auth_config.json
+	* Replace *ENTER_YOUR_CLIENT_ID* with the application id from the previous section.
 6. Build the app and install the .APK on your device or emulator.
-7. Enable the **Storage** permission for the installed sample app on your device or emulator
-8. Download the test.jpg image located in:  `android-java-connect-sample/app/src/main/res/drawable/test.jpg` to your device's external storage root folder.
 
 
 
