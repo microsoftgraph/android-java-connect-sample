@@ -1,7 +1,7 @@
 {
-  "client_id": "ENTER_YOUR_CLIENT_ID",
-  "authorization_user_agent": "WEBVIEW",
-  "redirect_uri": "urn:ietf:wg:oauth:2.0:oob",
+  "client_id": "<YOUR_CLIENT_ID>",
+  "authorization_user_agent": "DEFAULT",
+  "redirect_uri": "msal<YOUR_CLIENT_ID>://auth",
   "authorities": [
     {
       "type": "AAD",

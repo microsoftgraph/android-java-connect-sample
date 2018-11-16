@@ -49,13 +49,15 @@ To learn about authenticating with MSAL for Android to make calls to Microsoft G
 
 1. Install [Android Studio](http://developer.android.com/sdk/index.html) and add the Android SDK packages according to the [instructions](http://developer.android.com/sdk/installing/adding-packages.html) on developer.android.com.
 2. Download or clone this sample.
-4. Start Android Studio.
+3. Start Android Studio.
 	1. Close any projects that you might have open, and then choose **Open an existing Android Studio project**.
 	2. Browse to your local repository and choose the Android-Connect project. Click **OK**.
 	
 	> Note: Android Studio shows a **Frameworks detected** notification if you don't have the **Android Support Repository** installed. Open the SDK manager and add the Android Support Repository to avoid the Frameworks detected notification.
+4. Open AndroidManifest.xml
+    * Replace *<YOUR_CLIENT_ID>* with the application id from the previous section.
 5. Open /res/raw/auth_config.json
-	* Replace *ENTER_YOUR_CLIENT_ID* with the application id from the previous section.
+	* Replace *<YOUR_CLIENT_ID>* in two places with the application id from the previous section.
 6. Build the app and install the .APK on your device or emulator.
 
 
