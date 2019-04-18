@@ -292,14 +292,19 @@ public class SendMailActivity extends AppCompatActivity {
     }
 
     private void showSendMailSuccessUI() {
-        mSendMailProgressBar.setVisibility(View.GONE);
-        mSendMailButton.setVisibility(View.VISIBLE);
-        mConclusionTextView.setText(R.string.conclusion_text);
-        mConclusionTextView.setVisibility(View.VISIBLE);
-        Toast.makeText(
-                SendMailActivity.this,
-                R.string.send_mail_toast_text,
-                Toast.LENGTH_SHORT).show();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mSendMailProgressBar.setVisibility(View.GONE);
+                mSendMailButton.setVisibility(View.VISIBLE);
+                mConclusionTextView.setText(R.string.conclusion_text);
+                mConclusionTextView.setVisibility(View.VISIBLE);
+                Toast.makeText(
+                        SendMailActivity.this,
+                        R.string.send_mail_toast_text,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showSendMailErrorUI() {
