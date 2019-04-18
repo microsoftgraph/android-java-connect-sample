@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.microsoft.graph.connect"
         minSdkVersion 16
@@ -34,6 +33,7 @@ android {
     packagingOptions {
         exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
         exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
+        exclude 'META-INF/jersey-module-version'
     }
 }
 
@@ -41,14 +41,12 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:25.1.0'
-
-    compile ('com.microsoft.identity.client:msal:0.1.+') {
+    compile('com.microsoft.identity.client:msal:0.1.+') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
     }
     compile 'com.android.volley:volley:1.0.0'
     // Include the SDK as a dependency
-    compile 'com.microsoft.graph:msgraph-sdk-android:1.3.2'
-
+    compile 'com.microsoft.graph:microsoft-graph:1.2.0'
     // Include GSON as a dependency
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'commons-io:commons-io:2.0.1'

@@ -19,10 +19,10 @@ import android.widget.Toast;
 
 import com.microsoft.graph.concurrency.ICallback;
 import com.microsoft.graph.core.ClientException;
-import com.microsoft.graph.extensions.Attachment;
-import com.microsoft.graph.extensions.DriveItem;
-import com.microsoft.graph.extensions.Message;
-import com.microsoft.graph.extensions.Permission;
+import com.microsoft.graph.models.extensions.Attachment;
+import com.microsoft.graph.models.extensions.DriveItem;
+import com.microsoft.graph.models.extensions.Message;
+import com.microsoft.graph.models.extensions.Permission;
 
 /**
  * This activity handles the send mail operation of the app.
@@ -303,13 +303,18 @@ public class SendMailActivity extends AppCompatActivity {
     }
 
     private void showSendMailErrorUI() {
-        mSendMailProgressBar.setVisibility(View.GONE);
-        mSendMailButton.setVisibility(View.VISIBLE);
-        mConclusionTextView.setText(R.string.send_mail_text_error);
-        mConclusionTextView.setVisibility(View.VISIBLE);
-        Toast.makeText(
-                SendMailActivity.this,
-                R.string.send_mail_toast_text_error,
-                Toast.LENGTH_LONG).show();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mSendMailProgressBar.setVisibility(View.GONE);
+                mSendMailButton.setVisibility(View.VISIBLE);
+                mConclusionTextView.setText(R.string.send_mail_text_error);
+                mConclusionTextView.setVisibility(View.VISIBLE);
+                Toast.makeText(
+                        SendMailActivity.this,
+                        R.string.send_mail_toast_text_error,
+                        Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
