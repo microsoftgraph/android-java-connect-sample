@@ -323,7 +323,7 @@ class GraphServiceController {
                     .me()
                     .drive()
                     .items(id)
-                    .createLink(null, "view")
+                    .createLink("view", "organization")
                     .buildRequest()
                     .post(callback);
         } catch (Exception ex) {
