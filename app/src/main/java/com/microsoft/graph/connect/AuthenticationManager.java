@@ -12,9 +12,10 @@ import android.util.Log;
 
 import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.AuthenticationResult;
-import com.microsoft.identity.client.MsalException;
+import com.microsoft.identity.client.IAccount;
+import com.microsoft.identity.client.exception.MsalException;
 import com.microsoft.identity.client.PublicClientApplication;
-import com.microsoft.identity.client.User;
+import com.microsoft.identity.client.IAccount;
 
 import java.io.IOException;
 
@@ -63,7 +64,7 @@ public class AuthenticationManager {
      * to null, and removing the user id from shred preferences.
      */
     public void disconnect() {
-        mPublicClientApplication.remove(mAuthResult.getUser());
+        mPublicClientApplication.removeAccount(mAuthResult.getAccount());
         // Reset the AuthenticationManager object
         AuthenticationManager.resetInstance();
     }
@@ -79,9 +80,9 @@ public class AuthenticationManager {
         mPublicClientApplication.acquireToken(
                 activity, Constants.SCOPES, getAuthInteractiveCallback());
     }
-    public void callAcquireTokenSilent(User user, boolean forceRefresh, MSALAuthenticationCallback msalAuthenticationCallback) {
+    public void callAcquireTokenSilent(IAccount account, boolean forceRefresh, MSALAuthenticationCallback msalAuthenticationCallback) {
         mActivityCallback = msalAuthenticationCallback;
-        mPublicClientApplication.acquireTokenSilentAsync(Constants.SCOPES, user, null, forceRefresh, getAuthSilentCallback());
+        mPublicClientApplication.acquireTokenSilentAsync(Constants.SCOPES, account, null, forceRefresh, getAuthSilentCallback());
     }
 //
 // App callbacks for MSAL
