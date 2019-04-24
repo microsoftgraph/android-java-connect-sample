@@ -109,11 +109,7 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
                         this,
                         this);
             }
-        } catch (MsalClientException e) {
-            Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString());
-            showConnectErrorUI(e.getMessage());
-
-        } catch (IndexOutOfBoundsException e) {
+        }catch (IndexOutOfBoundsException e) {
             Log.d(TAG, "User at this position does not exist: " + e.toString());
             showConnectErrorUI(e.getMessage());
 
