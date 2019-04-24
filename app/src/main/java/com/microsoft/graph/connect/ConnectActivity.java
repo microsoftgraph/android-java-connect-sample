@@ -24,7 +24,6 @@ import com.microsoft.identity.client.exception.MsalUiRequiredException;
 import com.microsoft.identity.client.IAccount;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Starting Activity of the app. Handles the connection to Office 365.
@@ -71,7 +70,6 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
                     connect();
                 }
             });
-
     }
 
     private void connect() {
@@ -265,7 +263,6 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
 
             mgr.callAcquireToken(ConnectActivity.this, this);
         }
-
     }
 
     @Override
@@ -278,8 +275,5 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
     public void onCancel() {
         showMessage("User cancelled the flow.");
         showConnectErrorUI("User cancelled the flow.");
-
     }
-
-
 }

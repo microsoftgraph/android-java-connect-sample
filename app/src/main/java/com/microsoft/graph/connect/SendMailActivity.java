@@ -141,7 +141,6 @@ public class SendMailActivity extends AppCompatActivity {
         }
     }
 
-
     /**
      * Gets the picture sharing link from OneDrive and calls the step 4 helper
      *
@@ -210,7 +209,6 @@ public class SendMailActivity extends AppCompatActivity {
         }
     }
 
-
     /**
      * Gets the draft message created in the previous step and calls the step 6 helper
      *
@@ -233,7 +231,6 @@ public class SendMailActivity extends AppCompatActivity {
 
             }
         });
-
     }
 
     /**
@@ -260,7 +257,6 @@ public class SendMailActivity extends AppCompatActivity {
                 }
             });
     }
-
 
     /**
      * Sends the draft message

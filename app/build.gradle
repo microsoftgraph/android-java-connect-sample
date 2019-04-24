@@ -38,22 +38,22 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:27.0.0'
-    compile 'com.android.volley:volley:1.0.0'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.android.support:appcompat-v7:27.0.0'
+    implementation 'com.android.volley:volley:1.1.0'
     // Include the SDK as a dependency
-    compile 'com.microsoft.graph:microsoft-graph:1.2.0'
-    compile 'com.microsoft.identity.client:msal:0.2.2'
+    implementation 'com.microsoft.graph:microsoft-graph:1.2.0'
+    implementation 'com.microsoft.identity.client:msal:0.2.2'
     // Include GSON as a dependency
-    compile 'com.google.code.gson:gson:2.6.2'
-    compile 'commons-io:commons-io:2.0.1'
+    implementation 'com.google.code.gson:gson:2.6.2'
+    implementation 'commons-io:commons-io:2.0.1'
     // Test libraries
-    androidTestCompile 'com.android.support:support-annotations:25.3.1'
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2'
-    androidTestCompile 'com.android.support.test.espresso:espresso-web:2.2.2'
+    androidTestImplementation 'com.android.support:support-annotations:25.3.1'
+    androidTestImplementation 'com.android.support.test:runner:0.5'
+    androidTestImplementation 'com.android.support.test:rules:0.5'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-intents:2.2.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-web:2.2.2'
 
 }
