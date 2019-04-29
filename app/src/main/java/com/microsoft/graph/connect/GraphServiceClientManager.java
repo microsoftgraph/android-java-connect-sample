@@ -72,7 +72,6 @@ public class GraphServiceClientManager implements IAuthenticationProvider {
             );
             mGraphServiceClient = GraphServiceClient.fromConfig(clientConfig);
         }
-// GraphServiceClient.Builder().fromConfig(clientConfig).buildClient();
         return mGraphServiceClient;
     }
 }
