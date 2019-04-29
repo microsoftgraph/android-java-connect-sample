@@ -46,7 +46,7 @@ To use the Connect sample for Android, you need the following:
 
     ![A screenshot of Application Id](./readme-images/aad-application-id.PNG)
 
-1. Still on the app page, select **Authentication**. Locate the section **Redirect URIs**. In the _Suggested Redirect URIs for public clients(mobile,desktop)_, check the second box so that the app can work with the MSAL libraries used in the application. (The box should contain the option _msal<YOUR_CLIENT_ID>c://auth_). Choose **Save**.
+1. Still on the app page, select **Authentication**. Locate the section **Redirect URIs**. In the _Suggested Redirect URIs for public clients(mobile,desktop)_, check the second box so that the app can work with the MSAL libraries used in the application. (The box should contain the option _msal<YOUR_CLIENT_ID>://auth_). Choose **Save**.
 
     ![A screenshot of Suggested Redirect URIs for Public Client](./readme-images/aad-redirect-uri-public-client.PNG)
   
