@@ -10,6 +10,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
+import com.microsoft.graph.connect.util.IManifestReader;
+import com.microsoft.graph.connect.util.ManifestReader;
 import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.AuthenticationResult;
 import com.microsoft.identity.client.IAccount;
@@ -33,8 +35,12 @@ public class AuthenticationManager {
     public static synchronized AuthenticationManager getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new AuthenticationManager();
+
+            IManifestReader metaDataReader = new ManifestReader();
+            String clientID = metaDataReader.getApplicationMetadataValueString("com.microsoft.identity.client.ClientId");
+
             if (mPublicClientApplication == null) {
-                mPublicClientApplication = new PublicClientApplication(Connect.getInstance());
+                mPublicClientApplication = new PublicClientApplication(Connect.getInstance(), clientID);
             }
         }
         return INSTANCE;
