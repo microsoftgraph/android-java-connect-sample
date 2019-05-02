@@ -6,11 +6,12 @@ package com.microsoft.graph.connect;
 
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import android.app.Activity;
+import android.app.Application;
 import android.util.Log;
 
 import com.microsoft.graph.authentication.IAuthenticationProvider;
-import com.microsoft.graph.core.DefaultClientConfig;
-import com.microsoft.graph.core.IClientConfig;
+import com.microsoft.graph.authentication.MSALAuthenticationProvider;
 import com.microsoft.graph.requests.extensions.GraphServiceClient;
 import com.microsoft.graph.models.extensions.IGraphServiceClient;
 import com.microsoft.graph.http.IHttpRequest;
@@ -21,11 +22,20 @@ import java.io.IOException;
  * Singleton class that manages a GraphServiceClient object.
  * It implements IAuthentication provider to authenticate requests using an access token.
  */
-public class GraphServiceClientManager implements IAuthenticationProvider {
+public class GraphServiceClientManager extends Application implements IAuthenticationProvider {
     private IGraphServiceClient mGraphServiceClient;
     private static GraphServiceClientManager INSTANCE;
+    private AuthenticationManager mAuthenticationManager;
+    private static Activity connectActivity;
 
-    private GraphServiceClientManager() {}
+    public static GraphServiceClientManager getApp() {
+        return INSTANCE;
+    }
+    public static Activity getAppActivity() {return connectActivity;}
+
+    private GraphServiceClientManager() {
+        mAuthenticationManager = AuthenticationManager.getInstance();
+    }
 
     /**
      * Appends an access token obtained from the {@link AuthenticationManager} class to the
@@ -67,10 +77,18 @@ public class GraphServiceClientManager implements IAuthenticationProvider {
 
     public synchronized IGraphServiceClient getGraphServiceClient(IAuthenticationProvider authenticationProvider) {
         if (mGraphServiceClient == null) {
-            IClientConfig clientConfig = DefaultClientConfig.createWithAuthenticationProvider(
-                    authenticationProvider
-            );
-            mGraphServiceClient = GraphServiceClient.fromConfig(clientConfig);
+            MSALAuthenticationProvider msalAuthenticationProvider = new MSALAuthenticationProvider(
+                    getAppActivity(),
+                    GraphServiceClientManager.getApp(),
+                    mAuthenticationManager.getPublicClient(),
+                    Constants.SCOPES);
+
+            IGraphServiceClient graphClient =
+                    GraphServiceClient
+                            .builder()
+                            .authenticationProvider(msalAuthenticationProvider)
+                            .buildClient();
+            return graphClient;
         }
         return mGraphServiceClient;
     }
