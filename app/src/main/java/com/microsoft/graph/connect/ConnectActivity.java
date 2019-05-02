@@ -32,7 +32,9 @@ import java.util.List;
  * If there are cached tokens, the app tries to reuse them.
  * The activity redirects the user to the SendMailActivity upon successful connection.
  */
-public class ConnectActivity extends AppCompatActivity implements MSALAuthenticationCallback {
+public class ConnectActivity
+        extends AppCompatActivity
+        implements MSALAuthenticationCallback {
 
     private static final String TAG = "ConnectActivity";
 
