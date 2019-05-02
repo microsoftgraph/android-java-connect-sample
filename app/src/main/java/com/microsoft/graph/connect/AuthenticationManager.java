@@ -50,7 +50,6 @@ public class AuthenticationManager {
         INSTANCE = null;
     }
 
-
      /**
      * Returns the access token obtained in authentication
      *
