@@ -7,7 +7,6 @@ import android.os.Bundle;
 
 import com.microsoft.graph.connect.Connect;
 
-import java.util.HashMap;
 
 /*
 Contains methods that access the application manifest
@@ -36,42 +35,5 @@ public class ManifestReader implements IManifestReader{
         }
         return returnValue;
     }
-
-    @Override
-    public int getApplicationMetadataValueInt(String key) {
-        return 0;
-    }
-
-    @Override
-    public boolean getApplicationMetadataValueBoolean(String key) {
-        return false;
-    }
-
-    @Override
-    public int getApplicationMetadataValueColor(String key) {
-        return 0;
-    }
-
-    @Override
-    public float getApplicationMetadataValueFloat(String key) {
-        return 0;
-    }
-
-    @Override
-    public String getIntentFilterAction(String activityName) {
-        return null;
-    }
-
-    @Override
-    public String[] getIntentFilterCategories(String activityName) {
-        return new String[0];
-    }
-
-    @Override
-    public HashMap<String, String> getIntentFilterData(String activityName) {
-        return null;
-    }
-
-
 }
 
