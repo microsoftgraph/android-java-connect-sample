@@ -29,18 +29,26 @@ To use the Connect sample for Android, you need the following:
 <a name="register"></a>
 ## Register and configure the app
 
-1. Sign into the [App Registration Portal](https://apps.dev.microsoft.com/) using either your personal or work or school account.
-2. Add a new **Converged application** by Selecting **Add an app**.
-   > **Note:** The app registration portal also allows you to create **Azure AD Only** applications. The authentication library used in this sample is not compatible with Azure AD Only applications.
+1. Open a browser and navigate to the [Azure Active Directory admin center](https://aad.portal.azure.com). Login using a **Work or School Account**.
 
-3. Enter a name for the app, and select **Create application**.
-	
-	The registration page displays, listing the properties of your app.
- 
-4. Under **Platforms**, select **Add platform**.
-5. Select **Mobile application**.
-6. Copy the **Application Id**, you'll need it in the next section.
-7. Click **Save**.
+1. Select **Azure Active Directory** in the left-hand navigation, then select **App registrations (Preview)** under **Manage**.
+
+    ![A screenshot of the App registrations ](./readme-images/aad-portal-app-registrations.png)
+
+1. Select **New registration**. On the **Register an application** page, set the values as follows.
+
+    - Set a preferred **Name** e.g. `AndroidJavaConnect`
+    - Set **Supported account types** to **Accounts in any organizational directory**.
+
+    ![A screenshot of the Register an application page](./readme-images/aad-register-an-app.PNG)
+
+1. Choose **Register**. On the **AndroidJavaConnect** app page, select **Overview** and copy the value of the **Application (client) ID** and save it, you will need it in the next step.
+
+    ![A screenshot of Application Id](./readme-images/aad-application-id.PNG)
+
+1. Still on the app page, select **Authentication**. Locate the section **Redirect URIs**. In the _Suggested Redirect URIs for public clients(mobile,desktop)_, check the second box so that the app can work with the MSAL libraries used in the application. (The box should contain the option _msal<YOUR_CLIENT_ID>://auth_). Choose **Save**.
+
+    ![A screenshot of Suggested Redirect URIs for Public Client](./readme-images/aad-redirect-uri-public-client.PNG)
   
 To learn about authenticating with MSAL for Android to make calls to Microsoft Graph, see [Call the Microsoft Graph API from an Android app](https://docs.microsoft.com/en-us/azure/active-directory/develop/guidedsetups/active-directory-android).
 
@@ -91,4 +99,4 @@ This sample just shows the essentials that your apps need to work with Microsoft
 * [Snippets sample for Android](../../../android-java-snippets-sample)
 
 ## Copyright
-Copyright (c) 2016 Microsoft. All rights reserved.
+Copyright (c) 2019 Microsoft. All rights reserved.

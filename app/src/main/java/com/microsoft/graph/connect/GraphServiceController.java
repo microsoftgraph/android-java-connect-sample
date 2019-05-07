@@ -18,16 +18,16 @@ import android.util.Log;
 
 import com.microsoft.graph.concurrency.ICallback;
 import com.microsoft.graph.core.ClientException;
-import com.microsoft.graph.extensions.Attachment;
-import com.microsoft.graph.extensions.BodyType;
-import com.microsoft.graph.extensions.DriveItem;
-import com.microsoft.graph.extensions.EmailAddress;
-import com.microsoft.graph.extensions.FileAttachment;
-import com.microsoft.graph.extensions.IGraphServiceClient;
-import com.microsoft.graph.extensions.ItemBody;
-import com.microsoft.graph.extensions.Message;
-import com.microsoft.graph.extensions.Permission;
-import com.microsoft.graph.extensions.Recipient;
+import com.microsoft.graph.models.extensions.Attachment;
+import com.microsoft.graph.models.generated.BodyType;
+import com.microsoft.graph.models.extensions.DriveItem;
+import com.microsoft.graph.models.extensions.EmailAddress;
+import com.microsoft.graph.models.extensions.FileAttachment;
+import com.microsoft.graph.models.extensions.IGraphServiceClient;
+import com.microsoft.graph.models.extensions.ItemBody;
+import com.microsoft.graph.models.extensions.Message;
+import com.microsoft.graph.models.extensions.Permission;
+import com.microsoft.graph.models.extensions.Recipient;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
@@ -78,8 +78,8 @@ class GraphServiceController {
             // create the email message
             Message message = createMessage(subject, body, emailAddress);
             mGraphServiceClient
-                    .getMe()
-                    .getMessages()
+                    .me()
+                    .messages()
                     .buildRequest()
                     .post(message, callback);
 
@@ -124,9 +124,9 @@ class GraphServiceController {
             fileAttachment.id = "blabla";
             Log.i("connect sample","attachement id " + fileAttachment.id);
             mGraphServiceClient
-                    .getMe()
-                    .getMessages(messageId)
-                    .getAttachments()
+                    .me()
+                    .messages(messageId)
+                    .attachments()
                     .buildRequest()
                     .post(fileAttachment, callback);
 
@@ -146,9 +146,9 @@ class GraphServiceController {
         try {
 
             mGraphServiceClient
-                    .getMe()
-                    .getMessages(messageId)
-                    .getSend()
+                    .me()
+                    .messages(messageId)
+                    .send()
                     .buildRequest()
                     .post(callback);
 
@@ -164,10 +164,10 @@ class GraphServiceController {
      */
     public void getDraftMessage(String messageId, ICallback<Message> callback) {
         try {
-            mGraphServiceClient.getMe()
-                    .getMessages(messageId)
+            mGraphServiceClient.me()
+                    .messages(messageId)
                     .buildRequest()
-                    .getMessage(callback);
+                    .get(callback);
 
         } catch (Exception ex) {
             showException(ex, "exception on get draft message ","Get draft mail failed", "The get draft mail method failed");
@@ -182,9 +182,9 @@ class GraphServiceController {
     public void getUserProfilePicture(final ICallback<byte[]> callback) {
         try {
             mGraphServiceClient
-                    .getMe()
-                    .getPhoto()
-                    .getContent()
+                    .me()
+                    .photo()
+                    .content()
                     .buildRequest()
                     .get(new ICallback<InputStream>() {
 
@@ -286,7 +286,7 @@ class GraphServiceController {
         message.toRecipients = Collections.singletonList(recipient);
         ItemBody itemBody = new ItemBody();
         itemBody.content = body;
-        itemBody.contentType = BodyType.html;
+        itemBody.contentType = BodyType.HTML;
         message.body = itemBody;
         message.subject = subject;
         return message;
@@ -303,11 +303,11 @@ class GraphServiceController {
 
         try {
             mGraphServiceClient
-                    .getMe()
-                    .getDrive()
-                    .getRoot()
-                    .getItemWithPath("me.png")
-                    .getContent()
+                    .me()
+                    .drive()
+                    .root()
+                    .itemWithPath("me.png")
+                    .content()
                     .buildRequest()
                     .put(picture, callback);
         } catch (Exception ex) {
@@ -320,10 +320,10 @@ class GraphServiceController {
         try {
 
             mGraphServiceClient
-                    .getMe()
-                    .getDrive()
-                    .getItems(id)
-                    .getCreateLink(null, "view")
+                    .me()
+                    .drive()
+                    .items(id)
+                    .createLink("view", "organization")
                     .buildRequest()
                     .post(callback);
         } catch (Exception ex) {

@@ -17,14 +17,13 @@ import android.widget.Toast;
 
 import com.microsoft.identity.client.AuthenticationResult;
 import com.microsoft.identity.client.Logger;
-import com.microsoft.identity.client.MsalClientException;
-import com.microsoft.identity.client.MsalException;
-import com.microsoft.identity.client.MsalServiceException;
-import com.microsoft.identity.client.MsalUiRequiredException;
-import com.microsoft.identity.client.User;
+import com.microsoft.identity.client.exception.MsalException;
+import com.microsoft.identity.client.exception.MsalClientException;
+import com.microsoft.identity.client.exception.MsalServiceException;
+import com.microsoft.identity.client.exception.MsalUiRequiredException;
+import com.microsoft.identity.client.IAccount;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Starting Activity of the app. Handles the connection to Office 365.
@@ -33,12 +32,14 @@ import java.util.concurrent.ExecutionException;
  * If there are cached tokens, the app tries to reuse them.
  * The activity redirects the user to the SendMailActivity upon successful connection.
  */
-public class ConnectActivity extends AppCompatActivity implements MSALAuthenticationCallback {
+public class ConnectActivity
+        extends AppCompatActivity
+        implements MSALAuthenticationCallback {
 
     private static final String TAG = "ConnectActivity";
 
     private boolean mEnablePiiLogging = false;
-    private User mUser;
+    private IAccount mAccount;
     private Handler mHandler;
 
     private Button mConnectButton;
@@ -71,7 +72,6 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
                     connect();
                 }
             });
-
     }
 
     private void connect() {
@@ -89,16 +89,16 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
           /* Attempt to get a user and acquireTokenSilent
    * If this fails we do an interactive request
    */
-        List<User> users = null;
+        List<IAccount> accounts = null;
 
         try {
-            users = mgr.getPublicClient().getUsers();
+            accounts = mgr.getPublicClient().getAccounts();
 
-            if (users != null && users.size() == 1) {
+            if (accounts != null && accounts.size() == 1) {
           /* We have 1 user */
-                mUser = users.get(0);
+                mAccount = accounts.get(0);
                 mgr.callAcquireTokenSilent(
-                        mUser,
+                        mAccount,
                         true,
                         this);
             } else {
@@ -109,12 +109,7 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
                         this,
                         this);
             }
-        } catch (MsalClientException e) {
-            Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString());
-            showConnectErrorUI(e.getMessage());
-
-
-        } catch (IndexOutOfBoundsException e) {
+        }catch (IndexOutOfBoundsException e) {
             Log.d(TAG, "User at this position does not exist: " + e.toString());
             showConnectErrorUI(e.getMessage());
 
@@ -209,15 +204,15 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
 
     @Override
     public void onSuccess(AuthenticationResult authenticationResult) {
-        mUser = authenticationResult.getUser();
+        mAccount = authenticationResult.getAccount();
 
         String name = "";
         String preferredUsername = "";
 
         try {
             // get the user info from the id token
-            name = authenticationResult.getUser().getName();
-            preferredUsername = authenticationResult.getUser().getDisplayableId();
+            name = authenticationResult.getAccount().getUsername();
+            preferredUsername = authenticationResult.getAccount().getUsername();
 
             AuthenticationManager mgr = AuthenticationManager.getInstance();
 
@@ -270,7 +265,6 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
 
             mgr.callAcquireToken(ConnectActivity.this, this);
         }
-
     }
 
     @Override
@@ -283,8 +277,5 @@ public class ConnectActivity extends AppCompatActivity implements MSALAuthentica
     public void onCancel() {
         showMessage("User cancelled the flow.");
         showConnectErrorUI("User cancelled the flow.");
-
     }
-
-
 }
