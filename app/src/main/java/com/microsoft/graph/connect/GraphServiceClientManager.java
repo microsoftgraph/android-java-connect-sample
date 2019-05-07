@@ -27,6 +27,9 @@ public class GraphServiceClientManager extends Application implements IAuthentic
     private static GraphServiceClientManager INSTANCE;
     private AuthenticationManager mAuthenticationManager;
     private static Activity connectActivity;
+    private MSALAuthenticationProvider msalAuthenticationProvider;
+    private IGraphServiceClient graphClient;
+
 
     public static GraphServiceClientManager getApp() {
         return INSTANCE;
@@ -77,17 +80,20 @@ public class GraphServiceClientManager extends Application implements IAuthentic
 
     public synchronized IGraphServiceClient getGraphServiceClient(IAuthenticationProvider authenticationProvider) {
         if (mGraphServiceClient == null) {
-            MSALAuthenticationProvider msalAuthenticationProvider = new MSALAuthenticationProvider(
-                    getAppActivity(),
-                    GraphServiceClientManager.getApp(),
-                    mAuthenticationManager.getPublicClient(),
-                    Constants.SCOPES);
-
-            IGraphServiceClient graphClient =
-                    GraphServiceClient
-                            .builder()
-                            .authenticationProvider(msalAuthenticationProvider)
-                            .buildClient();
+            if(msalAuthenticationProvider == null){
+                msalAuthenticationProvider = new MSALAuthenticationProvider(
+                        getAppActivity(),
+                        GraphServiceClientManager.getApp(),
+                        mAuthenticationManager.getPublicClient(),
+                        Constants.SCOPES);
+            }
+            if(graphClient == null){
+                graphClient =
+                        GraphServiceClient
+                                .builder()
+                                .authenticationProvider(msalAuthenticationProvider)
+                                .buildClient();
+            }
             return graphClient;
         }
         return mGraphServiceClient;
