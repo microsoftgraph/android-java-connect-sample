@@ -1,84 +1,102 @@
-﻿# <a name="connect-sample-for-android-using-the-microsoft-graph-sdk"></a>Ejemplo de Connect para Android con SDK de Microsoft Graph
+# Ejemplo de Connect para Android con SDK de Microsoft Graph
 
 
->**Nota**: Estamos actualizando este ejemplo para poder usarlo con la [biblioteca de autenticación recomendada](https://docs.microsoft.com/es-es/azure/active-directory/develop/active-directory-v2-libraries#compatible-client-libraries) para las aplicaciones de Android.
+>**Nota:** Hemos actualizado este ejemplo para usar la [Biblioteca de autenticación de Microsoft (MSAL)](https://github.com/AzureAD/microsoft-authentication-library-for-android) para aplicaciones Android.
 
 
-> **¿Desea compilar aplicaciones para clientes empresariales?** Es posible que la aplicación no funcione si su cliente empresarial activa características de seguridad de movilidad empresarial como el <a href="https://azure.microsoft.com/es-es/documentation/articles/active-directory-conditional-access-device-policies/" target="_newtab">acceso condicional al dispositivo</a>. En casos así, es posible que no tenga constancia de esta activación y que sus clientes obtengan errores. 
+> **¿Quiere crear aplicaciones para clientes empresariales?** Es posible que la aplicación no funcione si su cliente empresarial activa características de seguridad de movilidad empresarial como el <a href="https://azure.microsoft.com/en-us/documentation/articles/active-directory-conditional-access-device-policies/" target="_newtab">acceso condicional al dispositivo</a>. En este caso, es posible que no tenga constancia de esta activación y que sus clientes obtengan errores. 
 
-> Para ser compatible con **todos los clientes empresariales** en **todos los escenarios de empresa**, tiene que usar el punto de conexión de AD de Azure y administrar las aplicaciones mediante el [Portal de administración de Azure](https://aka.ms/aadapplist). Para obtener más información, consulte [Decidir entre los puntos de conexión de Azure AD y Azure AD v2.0 ](https://graph.microsoft.io/docs/authorization/auth_overview#deciding-between-azure-ad-and-the-v2-authentication-endpoint).
+> Para admitir **todos los clientes empresariales** en **todos los escenarios de empresa**, deberá usar el punto de conexión de Azure AD y administrar las aplicaciones mediante el [Portal de administración de Azure](https://aka.ms/aadapplist). Para obtener más información, vea [Decidir entre los puntos de conexión de Azure AD y Azure AD v2.0](https://graph.microsoft.io/docs/authorization/auth_overview#deciding-between-azure-ad-and-the-v2-authentication-endpoint).
 
-[![Ejemplo de Connect para Microsoft Graph](/readme-images/O365-Android-Connect-video_play_icon.png)](https://www.youtube.com/watch?v=3IQIDFrqhY4 "Haga clic para ver el ejemplo en acción").
+[![Ejemplo de Connect de Microsoft Graph](/readme-images/O365-Android-Connect-video_play_icon.png)![Haga clic para ver el ejemplo en acción](/readme-images/O365-Android-Connect-video_play_icon.png)
 
 Conectarse a Microsoft Graph es el primer paso que tiene que realizar cada aplicación Android para empezar a trabajar con los datos y servicios de Office 365. Este ejemplo muestra cómo conectar y cómo llamar después a una API a través del SDK de Microsoft Graph.
 
-## <a name="device-requirements"></a>Requisitos del dispositivo
+## Requisitos del dispositivo
 
 Para ejecutar el ejemplo Connect, el dispositivo debe cumplir los siguientes requisitos:
 
 * Una pantalla de tamaño de 800 x 480 o superior.
 * Nivel de API de Android 16 o superior.
  
-## <a name="prerequisites"></a>Requisitos previos
+## Requisitos previos
 
 Para usar el ejemplo Connect de Android, necesita lo siguiente:
 
-* Versión 1.0 de [Android Studio](http://developer.android.com/sdk/index.html) o superior.
+* Versión 1.0 o posterior de [Android Studio](http://developer.android.com/sdk/index.html).
 * [Kit de desarrollo Java (JDK) 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html).
 
 <a name="register"></a>
-##<a name="register-and-configure-the-app"></a>Registrar y configurar la aplicación
+## Registrar y configurar la aplicación
 
-1. Inicie sesión en el [Portal de registro de la aplicación](https://apps.dev.microsoft.com/) mediante su cuenta personal, profesional o educativa.
-2. Seleccione **Agregar una aplicación**.
-3. Escriba un nombre para la aplicación y seleccione **Crear aplicación**.
-    
-    Se muestra la página de registro, indicando las propiedades de la aplicación.
- 
-4. En **Plataformas**, seleccione **Agregar plataforma**.
-5. Seleccione **Aplicación móvil**.
-6. Copie el **identificador de la aplicación**, ya que lo necesitará en la sección siguiente.
-7. Haga clic en **Guardar**.
+1. Abra un explorador y vaya al [Centro de administración de Azure Active Directory](https://aad.portal.azure.com). Inicie sesión con **una cuenta profesional o educativa**.
+
+1. Seleccione **Azure Active Directory** en el panel de navegación izquierdo y, después, seleccione **Registros de aplicaciones (versión preliminar)** en **Administrar**.
+
+    ![Una captura de pantalla de los registros de la aplicación ](./readme-images/aad-portal-app-registrations.png)
+
+1. Seleccione **Nuevo registro**. En la página **Registrar una aplicación**, establezca los valores siguientes.
+
+    - Establezca un **Nombre** preferido por ejemplo, ` AndroidJavaConnect`
+    - Establezca **los tipos de cuenta compatibles** en **Cuentas en cualquier directorio de la organización**.
+
+    ![Una captura de pantalla de la página Registrar una aplicación](./readme-images/aad-register-an-app.PNG)
+
+1. Elija **Registrar**. En la página de la aplicación **AndroidJavaConnect**, seleccione **Información general**, copie el valor del **Id. de la aplicación (cliente)** y guárdelo. Lo necesitará en el siguiente paso.
+
+    ![Una captura de pantalla del Id. de aplicación](./readme-images/aad-application-id.PNG)
+
+1. En la página de la aplicación, seleccione **Autenticación**. Localice la sección **URI de redirección**. En los _URI de redirección sugeridos para clientes públicos (móvil, escritorio)_, marque el segundo cuadro para que la aplicación pueda funcionar con las bibliotecas de MSAL utilizadas en la aplicación. (El cuadro debe contener la opción _msal<ID\_DE\_CLIENTE>://auth_). Elija **Guardar**.
+
+    ![Captura de pantalla de URI de redirección sugeridos para cliente público](./readme-images/aad-redirect-uri-public-client.PNG)
   
-## <a name="open-the-sample-using-android-studio"></a>Abrir el ejemplo con Android Studio
+Para obtener información sobre cómo autenticarse con MSAL para Android para realizar llamadas a Microsoft Graph, vea [Llamar a la API de Microsoft Graph desde una aplicación de Android](https://docs.microsoft.com/en-us/azure/active-directory/develop/guidedsetups/active-directory-android).
+
+  
+## Abrir el ejemplo con Android Studio
 
 1. Instale [Android Studio](http://developer.android.com/sdk/index.html) y agregue los paquetes del SDK de Android según las [instrucciones](http://developer.android.com/sdk/installing/adding-packages.html) de developer.android.com.
 2. Descargue o clone este ejemplo.
-3. Inicie Android Studio.
-    1. Cierre todos los proyectos que tenga abiertos y, después, elija **Abrir un proyecto existente de Android Studio**.
-    2. Examine su repositorio local y elija el proyecto Android-Connect. Haga clic en **Aceptar**.
-    
-    > Nota: Android Studio muestra una notificación **Marcos de trabajo detectados** si no tiene instalado el **repositorio de soporte de Android**. Abra el administrador de SDK y agregue el repositorio de soporte de Android para evitar la notificación Marcos de trabajo detectados.
-4. Abra el archivo Constants.java.
-    * Reemplace *ENTER_YOUR_CLIENT_ID* con el identificador de la aplicación de la sección anterior.
+4. Inicie Android Studio.
+	1. Cierre todos los proyectos que tenga abiertos y, después, elija **Abrir un proyecto existente de Android Studio**.
+	2. Examine su repositorio local y elija el proyecto Android-Connect. Haga clic en **Aceptar**.
+	
+	> Nota: Android Studio muestra una notificación de **Marcos de trabajo detectados** si no tiene instalado el **Repositorio de soporte de Android**. Abra el administrador de SDK y agregue el repositorio de soporte de Android para evitar la notificación Marcos de trabajo detectados.
+5. Abra AndroidManifest.xml
+	* Reemplace *ESCRIBIR\_ID \_CLIENTE* en dos lugares con el id. de la aplicación de la sección anterior.
+6. Cree la aplicación e instale el .APK en su dispositivo o emulador.
+7. Habilite el permiso de **almacenamiento** para la aplicación de ejemplo instalada en el dispositivo o en el emulador.
+8. Descargue la imagen de test.jpg ubicada en: ` android-java-connect-sample/app/src/main/res/drawable/test.jpg` en la carpeta raíz de almacenamiento externo del dispositivo.
+
+
 
 Una vez creado el ejemplo Connect, puede ejecutarlo en un emulador o en un dispositivo. Elija un dispositivo con un nivel de API 16 o superior desde el cuadro de diálogo **Elegir dispositivo**.
 
-Para obtener más información acerca del ejemplo, consulte [Llamar a Microsoft Graph en una aplicación Android](https://graph.microsoft.io/en-us/docs/platform/android).
+Para obtener más información sobre el ejemplo, vea [Llamar a Microsoft Graph en una aplicación Android](https://developer.microsoft.com/en-us/graph/docs/concepts/android).
 
 <a name="contributing"></a>
-## <a name="contributing"></a>Colaboradores ##
+## Colaboradores ##
 
-Si le gustaría contribuir a este ejemplo, consulte [CONTRIBUTING.MD](/CONTRIBUTING.md).
+Si le gustaría contribuir a este ejemplo, vea [CONTRIBUTING.MD](/CONTRIBUTING.md).
 
-Este proyecto ha adoptado el [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/) (Código de conducta de código abierto de Microsoft). Para obtener más información, consulte las [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) (Preguntas más frecuentes del código de conducta) o póngase en contacto con [opencode@microsoft.com](mailto:opencode@microsoft.com) con otras preguntas o comentarios.
+Este proyecto ha adoptado el [Código de conducta de código abierto de Microsoft](https://opensource.microsoft.com/codeofconduct/). Para obtener más información, vea [Preguntas frecuentes sobre el código de conducta](https://opensource.microsoft.com/codeofconduct/faq/) o póngase en contacto con [opencode@microsoft.com](mailto:opencode@microsoft.com) si tiene otras preguntas o comentarios.
 
-## <a name="questions-and-comments"></a>Preguntas y comentarios
+## Preguntas y comentarios
 
-Nos encantaría recibir sus comentarios acerca del ejemplo Connect. Puede enviarnos sus preguntas y sugerencias a través de la sección [Problemas](issues) de este repositorio.
+Nos encantaría recibir sus comentarios sobre el ejemplo Connect. Puede enviarnos sus preguntas y sugerencias a través de la sección [Problemas](issues) de este repositorio.
 
-Las preguntas generales sobre el desarrollo de Microsoft Graph deben publicarse en [Stack Overflow](http://stackoverflow.com/questions/tagged/MicrosoftGraph+API). Asegúrese de que sus preguntas o comentarios se etiquetan con y [MicrosoftGraph] y [API].
+Las preguntas generales sobre el desarrollo de Microsoft Graph deben publicarse en [Stack Overflow](http://stackoverflow.com/questions/tagged/MicrosoftGraph+API). Asegúrese de que sus preguntas o comentarios se etiquetan con \[MicrosoftGraph] y \[API].
 
-## <a name="next-steps"></a>Pasos siguientes
+## Pasos siguientes
 
-Este ejemplo muestra solo los elementos esenciales que las aplicaciones necesitan para funcionar en Microsoft Graph. Sus aplicaciones pueden hacer muchas más cosas con las API de Office 365, como ayudar a sus usuarios a administrar su día de trabajo con el calendario, encontrar la información que necesitan en todos los archivos que almacenan en OneDrive o encontrar la persona exacta que necesitan de la lista de contactos. Disponemos de más información para compartir con usted en el [Ejemplo de fragmentos de código para Android](../../../android-java-snippets-sample). 
+Este ejemplo muestra solo los elementos esenciales que las aplicaciones necesitan para funcionar en Microsoft Graph. Sus aplicaciones pueden hacer muchas más cosas con las API de Office 365, como ayudar a sus usuarios a administrar su día de trabajo con el calendario, encontrar la información que necesitan en todos los archivos que almacenan en OneDrive o encontrar la persona exacta que necesitan en la lista de contactos. Disponemos de más información para compartir con usted en el [Ejemplo de fragmentos de código para Android](../../../android-java-snippets-sample). 
   
-## <a name="additional-resources"></a>Recursos adicionales
+## Recursos adicionales
 
-* [Empiece a trabajar con la API de Office 365 con tecnología de Microsoft Graph](http://dev.office.com/getting-started/office365apis)
+* [Introducción a las API de Office 365 con tecnología de Microsoft Graph](http://dev.office.com/getting-started/office365apis)
 * [Información general de Microsoft Graph](http://graph.microsoft.io)
 * [SDK de Microsoft Graph para Android](../../../msgraph-sdk-android)
 * [Ejemplo de fragmentos de código para Android](../../../android-java-snippets-sample)
 
-## <a name="copyright"></a>Copyright
-Copyright (c) 2016 Microsoft. Todos los derechos reservados.
+## Copyright
+Copyright (c) 2019 Microsoft. Todos los derechos reservados.
