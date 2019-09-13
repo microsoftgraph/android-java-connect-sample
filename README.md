@@ -5,6 +5,7 @@ products:
 - ms-graph
 languages:
 - java
+description: "Use Microsoft Graph to access a user’s Microsoft account data from within an Android app. This sample uses the Microsoft Graph Client Library to work with the data, and uses the Azure AD v2.0 endpoint for authentication."
 extensions:
   contentType: samples
   technologies:
