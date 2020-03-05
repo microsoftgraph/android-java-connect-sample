@@ -1,24 +1,3 @@
----
-page_type: sample
-products:
-- office-365 
-- ms-graph
-languages:
-- java
-description: "Use Microsoft Graph to access a user’s Microsoft account data from within an Android app. This sample uses the Microsoft Graph Client Library to work with the data, and uses the Azure AD v2.0 endpoint for authentication."
-extensions:
-  contentType: samples
-  technologies:
-  - Microsoft Graph
-  - Microsoft identity platform
-  services:
-  - Office 365
-  - Microsoft identity platform
-  - Users
-  platforms:
-  - Android
-  createdDate: 5/11/2016 12:14:33 PM
----
 # Connect Sample for Android Using the Microsoft Graph SDK
 
 
